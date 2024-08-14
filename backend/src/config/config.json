@@ -1,10 +1,11 @@
 {
   "development": {
     "username": "root",
-    "password": null,
-    "database": "example",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "password": "Team1pw!",
+    "database": "buchi",
+    "host": "52.79.243.144",
+    "dialect": "mysql",
+    "port": 3306
   },
   "test": {
     "username": "root",
