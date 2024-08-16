@@ -38,6 +38,11 @@ class User extends Sequelize.Model {
           allowNull: false,
           defaultValue: "main",
         },
+        provider: {
+          type: Sequelize.ENUM("local", "kakao", "naver"),
+          allowNull: false,
+          defaultValue: "naver",
+        },
       },
       {
         sequelize,
