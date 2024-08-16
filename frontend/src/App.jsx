@@ -1,15 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Login from './routes/Login';
-import { AuthProvider } from './contexts/AuthContext';
+import Login from './components/Login';
+import Agreement from './components/Agreement';
 
 function App() {
   return (
     <div>
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
+      <Agreement />
     </div>
   );
 }
