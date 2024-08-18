@@ -28,12 +28,7 @@ router.get(
     console.log("GET /auth/naver route hit"); // 네이버 로그인 라우트 확인
     next();
   },
-  passport.authenticate("naver", {
-    scope: ["profile", "email"],
-    authorizationParams: {
-      prompt: "consent", // 동의 화면을 다시 표시
-    },
-  })
+  passport.authenticate("naver", { authType: "reprompt" })
 );
 
 // GET /auth/naver/callback
