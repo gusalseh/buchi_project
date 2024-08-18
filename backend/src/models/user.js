@@ -6,7 +6,7 @@ class User extends Sequelize.Model {
       {
         email: {
           type: Sequelize.STRING(40),
-          allowNull: true,
+          allowNull: false,
           unique: true,
         },
         password: {
@@ -17,19 +17,17 @@ class User extends Sequelize.Model {
           type: Sequelize.STRING(15),
           allowNull: false,
         },
-        phone: {
+        mobile: {
           type: Sequelize.STRING(20),
-          // allowNull: false,
-          allowNull: true,
-        },
-        birth: {
-          type: Sequelize.INTEGER(8),
           allowNull: false,
         },
-        sex: {
-          type: Sequelize.ENUM("male", "female"),
-          // allowNull: false,
-          allowNull: true,
+        birth: {
+          type: Sequelize.STRING(20),
+          allowNull: false,
+        },
+        gender: {
+          type: Sequelize.ENUM("M", "F"),
+          allowNull: false,
         },
         company_name: {
           type: Sequelize.STRING(40),

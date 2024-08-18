@@ -1,5 +1,8 @@
 const passport = require("passport");
-const NaverStrategy = require("passport-naver").Strategy;
+const {
+  Strategy: NaverStrategy,
+  Profile: NaverProfile,
+} = require("passport-naver-v2");
 
 const User = require("../models/user");
 
@@ -16,16 +19,21 @@ module.exports = () => {
         console.log("naver profile", profile);
         try {
           const exUser = await User.findOne({
-            where: { email: profile.emails[0].value },
+            where: { email: profile.email },
           });
           if (exUser) {
             done(null, exUser);
           } else {
+            const email = profile.email || profile._json.response.email;
+            const birthyear = profile.birthYear;
+            const birthday = profile.birthday;
+            const fullBirthday = `${birthyear}-${birthday}`;
+
             const newUser = await User.create({
-              email: profile.emails[0].value,
-              nick: profile.displayName,
-              sex: profile.gender,
-              birth: profile.birthyear + profile.birthday,
+              email: email,
+              nick: profile.nickname,
+              gender: profile.gender,
+              birth: fullBirthday,
               mobile: profile.mobile,
               provider: "naver",
             });
