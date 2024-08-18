@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Checkbox, Button, Collapse, Typography } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+// import { RightOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 

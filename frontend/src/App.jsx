@@ -7,7 +7,7 @@ import Agreement from './components/Agreement';
 function App() {
   return (
     <div>
-      <Agreement />
+      <Login />
     </div>
   );
 }

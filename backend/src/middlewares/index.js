@@ -1,3 +1,4 @@
+// corsMiddleware만 내보내지던 이슈 고쳤습니다.
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
@@ -16,6 +17,4 @@ exports.isNotLoggedIn = (req, res, next) => {
 };
 
 const corsMiddleware = require('./cors');
-module.exports = {
-  corsMiddleware,
-};
+exports.corsMiddleware = corsMiddleware;

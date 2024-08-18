@@ -6,10 +6,7 @@ const naverIcon = `${process.env.PUBLIC_URL}/Img/naver.png`;
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); /*모달 상태 변화*/
   const handleNaverLogin = () => {
-    setIsModalVisible(true);
-  };
-  const handleCancel = () => {
-    setIsModalVisible(false);
+    window.open('http://localhost:3000/auth/naver', '_blank', 'width=500,height=600');
   };
 
   return (
@@ -54,14 +51,6 @@ const Login = () => {
         >
           네이버로 로그인하기
         </Button>
-        {/* 네이버 로그인 모달 */}
-        <Modal title="네이버 로그인" visible={isModalVisible} onCancel={handleCancel} footer={null} width={400}>
-          <iframe
-            src="http://localhost:3000/naver"
-            title="Naver Login"
-            style={{ width: '100%', height: '500px', border: 'none' }}
-          />
-        </Modal>
 
         {/* <Button
         icon={<FacebookOutlined />}
