@@ -1,8 +1,9 @@
-const express = require('express');
-const { sequelize } = require('./models');
-const { corsMiddleware } = require('./middlewares');
-const passport = require('passport');
-require('./passport/index')();
+const express = require("express");
+const session = require("express-session");
+const { sequelize } = require("./models");
+const { corsMiddleware } = require("./middlewares");
+const passport = require("passport");
+require("./passport/index")();
 
 const app = express();
 
@@ -10,12 +11,23 @@ const app = express();
 app.use(corsMiddleware);
 app.use(express.json());
 
+// 세션 설정
+app.use(
+  session({
+    secret: process.env.SESSION_PRIVATE_KEY, // 세션 암호화를 위한 비밀 키
+    resave: false, // 세션이 변경되지 않아도 항상 저장할지 여부
+    saveUninitialized: false, // 초기화되지 않은 세션도 저장할지 여부
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // HTTPS 환경에서만 쿠키를 전송하려면 true로 설정, 1일 동안 유효
+  })
+);
+
 // Passport 초기화
 app.use(passport.initialize());
+app.use(passport.session());
 
 // 라우트 설정
-const authRoutes = require('./routes/auth');
-app.use('/auth', authRoutes);
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

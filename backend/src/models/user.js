@@ -19,7 +19,8 @@ class User extends Sequelize.Model {
         },
         phone: {
           type: Sequelize.STRING(20),
-          allowNull: false,
+          // allowNull: false,
+          allowNull: true,
         },
         birth: {
           type: Sequelize.INTEGER(8),
@@ -27,15 +28,18 @@ class User extends Sequelize.Model {
         },
         sex: {
           type: Sequelize.ENUM("male", "female"),
-          allowNull: false,
+          // allowNull: false,
+          allowNull: true,
         },
         company_name: {
           type: Sequelize.STRING(40),
-          allowNull: false,
+          // allowNull: false,
+          allowNull: true,
         },
         company_branch: {
           type: Sequelize.STRING(40),
-          allowNull: false,
+          // allowNull: false,
+          allowNull: true,
           defaultValue: "main",
         },
         provider: {
