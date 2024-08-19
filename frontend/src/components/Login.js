@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Modal, Typography, Divider } from 'antd';
+import { Button, Typography, Divider } from 'antd';
 // import { GoogleOutlined, FacebookOutlined, AppleOutlined } from '@ant-design/icons';
 const naverIcon = `${process.env.PUBLIC_URL}/Img/naver.png`;
 
-const Login = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false); /*모달 상태 변화*/
-  const handleNaverLogin = () => {
-    window.open('http://localhost:3000/auth/naver', '_blank', 'width=500,height=600');
-  };
-
+const Login = ({ onNaverLogin }) => {
   return (
     <div
       style={{
@@ -38,7 +32,7 @@ const Login = () => {
         <Divider style={{ margin: '8px 0' }} />
 
         <Button
-          onClick={handleNaverLogin}
+          onClick={onNaverLogin}
           icon={<img src={naverIcon} alt="Naver" style={{ width: '20px', marginRight: '10px' }} />}
           style={{
             marginLeft: '13%',

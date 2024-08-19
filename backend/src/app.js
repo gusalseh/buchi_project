@@ -1,9 +1,9 @@
-const express = require("express");
-const session = require("express-session");
-const { sequelize } = require("./models");
-const { corsMiddleware } = require("./middlewares");
-const passport = require("passport");
-require("./passport/index")();
+const express = require('express');
+const session = require('express-session');
+const { sequelize } = require('./models');
+const { corsMiddleware } = require('./middlewares');
+const passport = require('passport');
+require('./passport/index')();
 
 const app = express();
 
@@ -26,8 +26,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // 라우트 설정
-const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
