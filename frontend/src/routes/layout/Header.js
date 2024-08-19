@@ -9,14 +9,18 @@ export default function Header() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // 백엔드에서 사용자 정보 요청
     axios
       .get('http://localhost:3000/auth/api/user', { withCredentials: true })
       .then((response) => {
-        setUser(response.data); // 로그인된 사용자 정보를 설정
+        setUser(response.data);
       })
-      .catch(() => {
-        setUser(null); // 오류 발생 시 user를 null로 설정
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          // 401 Unauthorized는 로그인되지 않은 상태를 의미하므로, 에러 로그를 출력하지 않음
+          setUser(null);
+        } else {
+          console.error('사용자 정보 가져오기 실패:', error);
+        }
       });
   }, []);
 

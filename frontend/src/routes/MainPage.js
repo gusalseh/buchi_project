@@ -65,9 +65,10 @@ const MainPage = () => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          // 401 Unauthorized 오류는 로그인되지 않은 상태이므로 에러 로그 출력하지 않음
+          // 401 Unauthorized는 로그인되지 않은 상태를 의미하므로, 에러 로그를 출력하지 않음
+          setUser(null);
         } else {
-          setError('사용자 정보를 가져오는 데 실패했습니다.');
+          console.error('사용자 정보 가져오기 실패:', error);
         }
       })
       .finally(() => {
