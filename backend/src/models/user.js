@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 
 class User extends Sequelize.Model {
   static initiate(sequelize) {
@@ -13,7 +13,7 @@ class User extends Sequelize.Model {
           type: Sequelize.STRING(100),
           allowNull: true,
         },
-        nick: {
+        nickname: {
           type: Sequelize.STRING(15),
           allowNull: false,
         },
@@ -26,7 +26,7 @@ class User extends Sequelize.Model {
           allowNull: false,
         },
         gender: {
-          type: Sequelize.ENUM("M", "F"),
+          type: Sequelize.ENUM('M', 'F'),
           allowNull: false,
         },
         company_name: {
@@ -38,23 +38,23 @@ class User extends Sequelize.Model {
           type: Sequelize.STRING(40),
           // allowNull: false,
           allowNull: true,
-          defaultValue: "main",
+          defaultValue: 'main',
         },
         provider: {
-          type: Sequelize.ENUM("local", "kakao", "naver"),
+          type: Sequelize.ENUM('local', 'kakao', 'naver'),
           allowNull: false,
-          defaultValue: "naver",
+          defaultValue: 'naver',
         },
       },
       {
         sequelize,
         timestamps: true,
         underscored: false,
-        modelName: "User",
-        tableName: "users",
+        modelName: 'User',
+        tableName: 'users',
         paranoid: true,
-        charset: "utf8",
-        collate: "utf8_general_ci",
+        charset: 'utf8',
+        collate: 'utf8_general_ci',
       }
     );
   }
