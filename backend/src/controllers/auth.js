@@ -41,13 +41,13 @@ exports.login = (req, res, next) => {
         console.error(loginError);
         return next(loginError);
       }
-      return res.redirect('http://localhost:3001/');
+      return res.redirect('/');
     });
   })(req, res, next);
 };
 
 exports.logout = (req, res) => {
   req.logout(() => {
-    res.redirect('http://localhost:3001/');
+    res.redirect('/');
   });
 };

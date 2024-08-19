@@ -42,8 +42,13 @@ router.get(
     failureRedirect: '/?error=네이버로그인 실패',
   }),
   (req, res) => {
+    const user = {
+      email: req.user.email,
+      name: req.user.name,
+    };
     console.log('Naver login successful, redirecting...'); // 로그인 성공 후 리다이렉트 확인
-    res.redirect('http://localhost:3001/');
+    // res.redirect('http://localhost:3001/');
+    res.redirect(`http://localhost:3001/?email=${user.email}&name=${user.name}`);
   }
 );
 
