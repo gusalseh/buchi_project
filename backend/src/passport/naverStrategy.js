@@ -3,6 +3,7 @@ const {
   Strategy: NaverStrategy,
   Profile: NaverProfile,
 } = require("passport-naver-v2");
+const axios = require("axios");
 
 const User = require("../models/user");
 
@@ -39,6 +40,24 @@ module.exports = () => {
             });
             done(null, newUser);
           }
+
+          // 약관 동의 상태 확인 API 호출
+          const response = await axios.get(
+            "https://openapi.naver.com/v1/nid/agreement",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          const agreementData = response.data;
+          console.log("AGREDATA");
+          console.log(agreementData);
+          let agreement = agreementData.agreement
+            ? agreementData.agreement.termsAgreed
+            : false;
+          console.log("AGREEEEEEEEEEEEE");
+          console.log(agreement);
         } catch (error) {
           console.error("Error during Naver authentication:", error); // 오류 발생 시 로그
           done(error);
