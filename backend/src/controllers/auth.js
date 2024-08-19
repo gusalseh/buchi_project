@@ -47,7 +47,13 @@ exports.login = (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  req.logout(() => {
-    res.redirect('/');
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Logout failed' });
+    }
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid'); // 세션 쿠키 삭제
+      res.status(200).json({ message: 'Logged out successfully' }); // 클라이언트로 응답 전송
+    });
   });
 };

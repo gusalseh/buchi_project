@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ email: '', nickname: '' });
+  const [user, setUser] = useState(null);
 
   const handleLoginClick = () => {
     navigate('/login'); // '/login' 경로로 이동
   };
 
   useEffect(() => {
-    // URL 쿼리 파라미터에서 사용자 정보 추출
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get('email');
-    const nickname = params.get('nickname');
-
-    // 사용자 정보를 상태에 저장
-    if (email && nickname) {
-      setUser({ email, nickname });
-    }
+    // 백엔드에서 사용자 정보 요청
+    axios
+      .get('http://localhost:3000/auth/api/user', { withCredentials: true })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.error('사용자 정보 가져오기 실패:', error);
+        setUser(null); // 오류 발생 시 user를 null로 설정
+      });
   }, []);
 
   return (
     <div>
       <div>부취부취</div>
-      {user.email && user.nickname ? (
+      {user ? (
         <div>
           <p>Email: {user.email}</p>
           <p>Nickname: {user.nickname}</p>

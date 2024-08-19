@@ -47,9 +47,17 @@ router.get(
       nickname: req.user.nickname,
     };
     console.log('Naver login successful, redirecting...'); // 로그인 성공 후 리다이렉트 확인
-    // res.redirect('http://localhost:3001/');
-    res.redirect(`http://localhost:3001/?email=${user.email}&nickname=${user.nickname}`);
+    res.redirect('http://localhost:3001/');
   }
 );
+
+// 사용자 정보를 반환하는 API 엔드포인트
+router.get('/api/user', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(req.user);
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+});
 
 module.exports = router;
