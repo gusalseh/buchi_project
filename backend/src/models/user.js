@@ -8,6 +8,7 @@ class User extends Sequelize.Model {
           type: Sequelize.INTEGER,
           autoIncrement: true,
           primaryKey: true,
+          allowNull: false,
         },
         // company_id: {
         //   type: Sequelize.INTEGER,
@@ -67,7 +68,10 @@ class User extends Sequelize.Model {
     );
   }
 
-  static associate(db) {}
+  static associate(db) {
+    // User는 여러 Tag를 가질 수 있으며, UserTag를 통해 연결
+    User.belongsToMany(db.Tag, { through: db.UserTag, foreignKey: 'user_id' });
+  }
 }
 
 module.exports = User;
