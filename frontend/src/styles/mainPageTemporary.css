@@ -1,0 +1,23 @@
+.filter-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.filter-header {
+  background-color: #4a4a4a;
+  color: white;
+  border: solid;
+  padding: 15px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.filter-card {
+  margin-top: 20px;
+  border: solid;
+  padding: 40px;
+  text-align: center;
+  font-size: 18px;
+  background-color: #f5f5f5;
+}
