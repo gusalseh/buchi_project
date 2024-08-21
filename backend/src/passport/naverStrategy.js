@@ -45,23 +45,28 @@ module.exports = () => {
             },
           });
 
+          // term4, term5가 존재하는지 확인
           const agreementData = response.data;
-          console.log('agreementData:', agreementData);
-
-          // 'term5'가 존재하는지 확인
+          const hasTerm4 = agreementData.agreementInfos.some((info) => info.termCode === 'term4');
           const hasTerm5 = agreementData.agreementInfos.some((info) => info.termCode === 'term5');
 
+          // term4가 존재하면 agreement_sms 칼럼을 true로 업데이트
+          // term5가 존재하면 agreement_email 칼럼을 true로 업데이트
+          if (hasTerm4) {
+            await User.update({ agreement_sms: true }, { where: { email } });
+          } else {
+            console.log('term4 not found, no action taken');
+          }
+
           if (hasTerm5) {
-            // 'term5'가 존재하면 agreement 칼럼을 true로 업데이트
-            await User.update({ agreement: true }, { where: { email } });
-            console.log('User agreement updated to true');
+            await User.update({ agreement_email: true }, { where: { email } });
           } else {
             console.log('term5 not found, no action taken');
           }
 
           done(null, user);
         } catch (error) {
-          console.error('Error during Naver authentication:', error); // 오류 발생 시 로그
+          console.error('Error during Naver authentication:', error);
           done(error);
         }
       }

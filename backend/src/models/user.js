@@ -49,7 +49,12 @@ class User extends Sequelize.Model {
           allowNull: false,
           defaultValue: 'naver',
         },
-        agreement: {
+        agreement_sms: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
+        agreement_email: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: false,
