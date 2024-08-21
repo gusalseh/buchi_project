@@ -10,14 +10,14 @@ class User extends Sequelize.Model {
           primaryKey: true,
           allowNull: false,
         },
-        // company_id: {
-        //   type: Sequelize.INTEGER,
-        //   allowNull: false,
-        //   references: {
-        //     model: 'company',
-        //     key: 'company_id',
-        //   },
-        // },
+        company_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+          references: {
+            model: 'company',
+            key: 'company_id',
+          },
+        },
         email: {
           type: Sequelize.STRING(40),
           allowNull: false,
