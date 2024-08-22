@@ -36,6 +36,7 @@
 
 ### 폴더 구조
 
+```
 buchi_project
 ├─ backend
 │ ├─ package.json
@@ -109,3 +110,4 @@ buchi_project
 │ ├─ tailwind.config.js
 │ └─ tsconfig.json
 └─ package.json
+```
