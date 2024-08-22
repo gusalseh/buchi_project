@@ -1,35 +1,24 @@
-import React /*{ useEffect, useState }*/ from 'react';
-// import { Modal, Form, Input, Button, Card } from 'antd';
+import React, { useEffect, useState } from 'react';
+// import { Form, Input, Button } from 'antd';
+// import CustomModal from '../components/common/Modal'
 import { Card } from 'antd';
 import '../styles/mainPageTemporary.css';
 // import axios from 'axios';
 
 const MainPage = () => {
   /* 추후에 추가할 회사정보 등록 모달 코드 */
-  // const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // useEffect(() => {
-  //   const checkCompanyId = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:3000/api/user/check-company-id');
-  //       if (response.data.showModal) {
-  //         setIsModalVisible(true);
-  //       }
-  //     } catch (error) {
-  //       console.error('Failed to check company ID', error);
-  //     }
-  //   };
+  const handleOk = () => {
+    // 확인 버튼 클릭 시의 로직
+    console.log('회사 등록 처리');
+    setIsModalVisible(false);
+  };
 
-  //   checkCompanyId();
-  // }, []);
-
-  // const handleOk = () => {
-  //   setIsModalVisible(false);
-  // };
-
-  // const handleCancel = () => {
-  //   setIsModalVisible(false);
-  // };
+  const handleCancel = () => {
+    // 취소 버튼 클릭 시의 로직
+    setIsModalVisible(false);
+  };
 
   return (
     <div className="filter-container">
@@ -48,7 +37,10 @@ const MainPage = () => {
     </div>
     /* 추후에 추가할 회사정보 등록 모달 코드 */
     // <div>
-    //   <Modal
+    //   <Button type="primary" onClick={() => setIsModalVisible(true)}>
+    //     회사 등록하기
+    //   </Button>
+    //   <CustomModal
     //     title="회사 등록하기"
     //     visible={isModalVisible}
     //     onOk={handleOk}
@@ -63,11 +55,15 @@ const MainPage = () => {
     //     ]}
     //   >
     //     <Form>
-    //       <Form.Item label="회사명" name="companyName" rules={[{ required: true, message: '회사명을 입력하세요' }]}>
+    //       <Form.Item
+    //         label="회사명"
+    //         name="companyName"
+    //         rules={[{ required: true, message: '회사명을 입력하세요' }]}
+    //       >
     //         <Input placeholder="회사명" />
     //       </Form.Item>
     //     </Form>
-    //   </Modal>
+    //   </CustomModal>
     // </div>
   );
 };

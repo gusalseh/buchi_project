@@ -4,16 +4,6 @@ const naverIcon = `${process.env.PUBLIC_URL}/Img/naver.png`;
 
 const Login = ({ onNaverLogin }) => {
   return (
-    // <div
-    //   style={{
-    //     display: 'flex',
-    //     flexDirection: 'column',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     height: '100vh',
-    //     backgroundColor: 'white',
-    //   }}
-    // >
     <div
       style={{
         width: 540,
@@ -23,12 +13,10 @@ const Login = ({ onNaverLogin }) => {
         justifyContent: 'center',
       }}
     >
-      {/* 로그인 또는 회원 가입 문구 */}
       <Typography.Title level={5} style={{ fontSize: 18, margin: '20px', textAlign: 'center' }}>
         로그인 또는 회원 가입
       </Typography.Title>
 
-      {/* 밑줄 추가 */}
       <Divider style={{ margin: '8px 0' }} />
 
       <Button
@@ -45,29 +33,7 @@ const Login = ({ onNaverLogin }) => {
       >
         네이버로 로그인하기
       </Button>
-
-      {/* <Button
-        icon={<FacebookOutlined />}
-        style={{ marginBottom: '10px', color: 'black', width: '250px', fontSize: '16px' }}
-      >
-        페이스북으로 로그인하기
-      </Button>
-
-      <Button
-        icon={<GoogleOutlined />}
-        style={{ marginBottom: '10px', color: 'black', width: '250px', fontSize: '16px' }}
-      >
-        구글로 로그인하기
-      </Button>
-
-      <Button
-        icon={<AppleOutlined />}
-        style={{ marginBottom: '10px', color: 'black', width: '250px', fontSize: '16px' }}
-      >
-        애플로 로그인하기
-      </Button> */}
     </div>
-    // </div>
   );
 };
 

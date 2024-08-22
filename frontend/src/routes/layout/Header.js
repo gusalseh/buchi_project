@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
-import Login from '../LoginPage';
+import Login from '../../pages/LoginPage';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUser, logoutUser } from '../../features/userSlice';
-import SearchInput from '../../components/SearchInput';
+import SearchInput from '../../components/common/SearchInput';
 import { BellOutlined, UserOutlined } from '@ant-design/icons';
 
 export default function Header() {

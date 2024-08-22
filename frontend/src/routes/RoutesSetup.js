@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from './LoginPage';
-import MainPage from './MainPage';
+import LoginPage from '../pages/LoginPage';
+import MainPage from '../pages/MainPage';
 import Layout from './layout';
 // 필요한 다른 페이지 컴포넌트도 임포트
 

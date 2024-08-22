@@ -78,30 +78,37 @@ buchi_project
 │ │ ├─ index.html
 │ │ ├─ manifest.json
 │ │ └─ robots.txt
-│ ├─ src
-│ │ ├─ .DS_Store
-│ │ ├─ App.css
-│ │ ├─ App.jsx
-│ │ ├─ App.test.jsx
-│ │ ├─ components
-│ │ │ ├─ .DS_Store
-│ │ │ ├─ Login.js
-│ │ │ └─ SearchInput.js
-│ │ ├─ features
-│ │ │ └─ userSlice.js
-│ │ ├─ index.css
-│ │ ├─ index.jsx
-│ │ ├─ logo.svg
-│ │ ├─ react-app-env.d.js
-│ │ ├─ reportWebVitals.js
-│ │ ├─ routes
-│ │ │ ├─ ImagePage.js
-│ │ │ ├─ LoginPage.js
-│ │ │ ├─ MainPage.js
-│ │ │ ├─ RoutesSetup.js
-│ │ │ └─ layout
-│ │ │ ├─ Header.js
-│ │ │ └─ index.js
+│src/
+├── assets/
+│   ├── images/
+│   │   └── logo.svg
+├── components/
+│   ├── common/
+│   │   └── SearchInput.js
+│   └── auth/
+│       └── Login.js
+├── features/
+│   ├── user/
+│   │   ├── userSlice.js
+│   │   └── userThunks.js
+├── pages/
+│   ├── HomePage.js
+│   ├── LoginPage.js
+├── routes/
+│   ├── RoutesSetup.js
+│   └── layout/
+│       ├── Header.js
+│       └── index.js
+├── store/
+│   └── store.js
+├── styles/
+│   ├── global.css
+│   └── App.css
+├── App.jsx
+├── index.jsx
+├── react-app-env.d.js
+├── reportWebVitals.js
+└── setupTests.js
 │ │ ├─ setupTests.js
 │ │ ├─ store.js
 │ │ └─ styles
