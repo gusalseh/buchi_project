@@ -1,0 +1,73 @@
+buchi_project
+├─ backend
+│ ├─ package.json
+│ └─ src
+│ │ ├─ app.js
+│ │ ├─ aws
+│ │ │ ├─ index.js
+│ │ │ └─ s3.js
+│ │ ├─ config
+│ │ │ ├─ config.js
+│ │ │ └─ config.json
+│ │ ├─ controllers
+│ │ │ └─ auth.js
+│ │ ├─ middlewares
+│ │ │ ├─ cors.js
+│ │ │ └─ index.js
+│ │ ├─ models
+│ │ │ ├─ company.js
+│ │ │ ├─ index.js
+│ │ │ ├─ tag.js
+│ │ │ ├─ user.js
+│ │ │ └─ userTag.js
+│ │ ├─ passport
+│ │ │ ├─ index.js
+│ │ │ └─ naverStrategy.js
+│ │ └─ routes
+│ │ ├─ auth.js
+│ │ └─ s3.js
+├─ frontend
+│ ├─ package.json
+│ ├─ postcss.config.js
+│ ├─ public
+│ │ ├─ .DS_Store
+│ │ ├─ Img
+│ │ │ ├─ .DS_Store
+│ │ │ ├─ buchi_logo_full.png
+│ │ │ └─ naver.png
+│ │ ├─ favicon.ico
+│ │ ├─ index.html
+│ │ ├─ manifest.json
+│ │ └─ robots.txt
+│ ├─ src
+│ │ ├─ .DS_Store
+│ │ ├─ App.css
+│ │ ├─ App.jsx
+│ │ ├─ App.test.jsx
+│ │ ├─ components
+│ │ │ ├─ .DS_Store
+│ │ │ ├─ Login.js
+│ │ │ └─ SearchInput.js
+│ │ ├─ features
+│ │ │ └─ userSlice.js
+│ │ ├─ index.css
+│ │ ├─ index.jsx
+│ │ ├─ logo.svg
+│ │ ├─ react-app-env.d.js
+│ │ ├─ reportWebVitals.js
+│ │ ├─ routes
+│ │ │ ├─ ImagePage.js
+│ │ │ ├─ LoginPage.js
+│ │ │ ├─ MainPage.js
+│ │ │ ├─ RoutesSetup.js
+│ │ │ └─ layout
+│ │ │ ├─ Header.js
+│ │ │ └─ index.js
+│ │ ├─ setupTests.js
+│ │ ├─ store.js
+│ │ └─ styles
+│ │ ├─ global.css
+│ │ └─ mainPageTemporary.css
+│ ├─ tailwind.config.js
+│ └─ tsconfig.json
+└─ package.json

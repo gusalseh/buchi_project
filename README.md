@@ -30,6 +30,82 @@
 - **mysql2**: MySQL 데이터베이스와 상호작용하기 위한 클라이언트입니다.
 - **passport**: 사용자 인증을 위한 미들웨어로, 다양한 전략(Strategy)을 사용하여 인증을 처리할 수 있습니다.
 - **passport-naver-v2**: Naver OAuth 2.0 인증 전략을 위한 Passport.js 라이브러리입니다.
-- **sequelize**: Node.js에서 SQL 기반의 데이터베이스를 ORM(Object-Relational Mapping) 방식으로 사용할 수 있게 해주는 라이브러리입니다. MySQL 등과 함께      사용되어 데이터를 객체로 관리할 수 있습니다.
+- **sequelize**: Node.js에서 SQL 기반의 데이터베이스를 ORM(Object-Relational Mapping) 방식으로 사용할 수 있게 해주는 라이브러리입니다. MySQL 등과 함께 사용되어 데이터를 객체로 관리할 수 있습니다.
 
 ### 기타
+
+### 폴더 구조
+
+buchi_project
+├─ backend
+│ ├─ package.json
+│ └─ src
+│ │ ├─ app.js
+│ │ ├─ aws
+│ │ │ ├─ index.js
+│ │ │ └─ s3.js
+│ │ ├─ config
+│ │ │ ├─ config.js
+│ │ │ └─ config.json
+│ │ ├─ controllers
+│ │ │ └─ auth.js
+│ │ ├─ middlewares
+│ │ │ ├─ cors.js
+│ │ │ └─ index.js
+│ │ ├─ models
+│ │ │ ├─ company.js
+│ │ │ ├─ index.js
+│ │ │ ├─ tag.js
+│ │ │ ├─ user.js
+│ │ │ └─ userTag.js
+│ │ ├─ passport
+│ │ │ ├─ index.js
+│ │ │ └─ naverStrategy.js
+│ │ └─ routes
+│ │ ├─ auth.js
+│ │ └─ s3.js
+├─ frontend
+│ ├─ package.json
+│ ├─ postcss.config.js
+│ ├─ public
+│ │ ├─ .DS_Store
+│ │ ├─ Img
+│ │ │ ├─ .DS_Store
+│ │ │ ├─ buchi_logo_full.png
+│ │ │ └─ naver.png
+│ │ ├─ favicon.ico
+│ │ ├─ index.html
+│ │ ├─ manifest.json
+│ │ └─ robots.txt
+│ ├─ src
+│ │ ├─ .DS_Store
+│ │ ├─ App.css
+│ │ ├─ App.jsx
+│ │ ├─ App.test.jsx
+│ │ ├─ components
+│ │ │ ├─ .DS_Store
+│ │ │ ├─ Login.js
+│ │ │ └─ SearchInput.js
+│ │ ├─ features
+│ │ │ └─ userSlice.js
+│ │ ├─ index.css
+│ │ ├─ index.jsx
+│ │ ├─ logo.svg
+│ │ ├─ react-app-env.d.js
+│ │ ├─ reportWebVitals.js
+│ │ ├─ routes
+│ │ │ ├─ ImagePage.js
+│ │ │ ├─ LoginPage.js
+│ │ │ ├─ MainPage.js
+│ │ │ ├─ RoutesSetup.js
+│ │ │ └─ layout
+│ │ │ ├─ Header.js
+│ │ │ └─ index.js
+│ │ ├─ setupTests.js
+│ │ ├─ store.js
+│ │ └─ styles
+│ │ ├─ global.css
+│ │ └─ mainPageTemporary.css
+│ ├─ tailwind.config.js
+│ └─ tsconfig.json
+└─ package.json

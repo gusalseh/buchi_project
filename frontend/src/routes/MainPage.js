@@ -34,6 +34,7 @@ const MainPage = () => {
   return (
     <div className="filter-container">
       <div className="filter-header">필터 항목</div>
+      <Card className="filter-card"># 태그 추천</Card>
       <div style={{ display: 'flex', gap: 8 }}>
         <Card style={{ flex: 1 }} className="filter-card">
           우리 회사 사람들이 가는 장소
@@ -42,9 +43,8 @@ const MainPage = () => {
           같은 업종 사람들이 가는 장소 (회사 산업군)
         </Card>
       </div>
-      <Card className="filter-card">프로모션</Card>
       <Card className="filter-card">가장 많이 방문 랭킹</Card>
-      <Card className="filter-card"># 태그 추천</Card>
+      <Card className="filter-card">프로모션</Card>
     </div>
     /* 추후에 추가할 회사정보 등록 모달 코드 */
     // <div>
