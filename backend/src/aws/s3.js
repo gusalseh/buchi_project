@@ -1,6 +1,9 @@
 const { s3 } = require('.');
 const { ListObjectsV2Command } = require('@aws-sdk/client-s3');
 
+// CloudFront 배포 도메인 설정
+const cloudFrontDomain = process.env.AWS_CLOUDFRONT_DOMAIN;
+
 const listImagesInDirectory = async (directory) => {
   const params = {
     Bucket: 'team01-buchi-bucket',
@@ -11,8 +14,9 @@ const listImagesInDirectory = async (directory) => {
     const command = new ListObjectsV2Command(params);
     const data = await s3.send(command);
 
+    // CloudFront URL로 변환
     const imageUrls = data.Contents.filter((item) => item.Key.endsWith('.jpg')) // .jpg 파일만 필터링
-      .map((item) => `https://${params.Bucket}.s3.ap-northeast-2.amazonaws.com/${item.Key}`);
+      .map((item) => `https://${cloudFrontDomain}/${item.Key}`);
 
     return imageUrls;
   } catch (error) {

@@ -11,7 +11,7 @@ const ImagePage = () => {
     // Spot 이미지 가져오기
     const fetchSpotImages = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/s3/spot/1/images');
+        const response = await axios.get('http://localhost:3000/image/spot/1/images');
         setSpotImages(response.data.imageUrls);
         setSpotError(null);
       } catch (error) {
@@ -26,7 +26,7 @@ const ImagePage = () => {
     // Menu 이미지 가져오기
     const fetchMenuImages = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/s3/menu/1/images');
+        const response = await axios.get('http://localhost:3000/image/menu/1/images');
         setMenuImages(response.data.imageUrls);
         setMenuError(null);
       } catch (error) {

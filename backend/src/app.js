@@ -29,8 +29,8 @@ app.use(passport.session());
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
-const s3Routes = require('./routes/s3');
-app.use('/s3', s3Routes);
+const imageRoutes = require('./routes/image');
+app.use('/image', imageRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
