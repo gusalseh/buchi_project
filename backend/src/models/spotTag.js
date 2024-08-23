@@ -1,15 +1,15 @@
 const Sequelize = require('sequelize');
 
-class UserTag extends Sequelize.Model {
+class SpotTag extends Sequelize.Model {
   static initiate(sequelize) {
-    UserTag.init(
+    SpotTag.init(
       {
-        user_id: {
+        spot_id: {
           type: Sequelize.INTEGER,
           primaryKey: true,
           references: {
-            model: 'user',
-            key: 'user_id',
+            model: 'spot',
+            key: 'spot_id',
           },
         },
         tag_id: {
@@ -25,8 +25,8 @@ class UserTag extends Sequelize.Model {
         sequelize,
         timestamps: true,
         underscored: false,
-        modelName: 'UserTag',
-        tableName: 'user_tag',
+        modelName: 'SpotTag',
+        tableName: 'spot_tag',
         paranoid: true,
         charset: 'utf8',
         collate: 'utf8_general_ci',
@@ -35,8 +35,8 @@ class UserTag extends Sequelize.Model {
   }
 
   static associate(db) {
-    // UserTag는 User와 Tag를 참조합니다.
+    // SpotTag는 Spot과 Tag를 참조합니다.
   }
 }
 
-module.exports = UserTag;
+module.exports = SpotTag;

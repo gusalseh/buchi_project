@@ -29,6 +29,7 @@ module.exports = () => {
 
             user = await User.create({
               email: email,
+              name: profile.name,
               nickname: profile.nickname,
               gender: profile.gender,
               birth: fullBirthday,

@@ -15,6 +15,7 @@ class Tag extends Sequelize.Model {
           allowNull: true,
         },
         tag_type: {
+          // ENUM 데이터 확정 필요
           type: Sequelize.ENUM('tagtype1', 'tagtype2'),
           allowNull: true,
         },
@@ -33,8 +34,8 @@ class Tag extends Sequelize.Model {
   }
 
   static associate(db) {
-    // Tag는 user_tag를 통해 여러 사용자와 연결됩니다.
-    Tag.belongsToMany(db.User, { through: db.UserTag, foreignKey: 'tag_id' });
+    // Tag는 spot_tag를 통해 여러 식당과 연결됩니다.
+    Tag.belongsToMany(db.User, { through: db.SpotTag, foreignKey: 'tag_id' });
   }
 }
 

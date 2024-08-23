@@ -19,9 +19,13 @@ class User extends Sequelize.Model {
           },
         },
         email: {
-          type: Sequelize.STRING(40),
+          type: Sequelize.STRING(100),
           allowNull: false,
           unique: true,
+        },
+        name: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
         },
         password: {
           type: Sequelize.STRING(100),
@@ -45,7 +49,7 @@ class User extends Sequelize.Model {
           defaultValue: 'U',
         },
         provider: {
-          type: Sequelize.ENUM('local', 'kakao', 'naver'),
+          type: Sequelize.ENUM('local', 'kakao', 'naver', 'google'),
           allowNull: false,
           defaultValue: 'naver',
         },
@@ -75,7 +79,7 @@ class User extends Sequelize.Model {
 
   static associate(db) {
     // User는 여러 Tag를 가질 수 있으며, UserTag를 통해 연결
-    User.belongsToMany(db.Tag, { through: db.UserTag, foreignKey: 'user_id' });
+    User.belongsToMany(db.Tag, { through: db.SpotTag, foreignKey: 'user_id' });
   }
 }
 
