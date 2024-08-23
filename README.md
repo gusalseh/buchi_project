@@ -46,8 +46,7 @@ buchi_project
 │ │ │ ├─ index.js
 │ │ │ └─ s3.js
 │ │ ├─ config
-│ │ │ ├─ config.js
-│ │ │ └─ config.json
+│ │ │ └─ config.js
 │ │ ├─ controllers
 │ │ │ └─ auth.js
 │ │ ├─ middlewares
@@ -63,8 +62,9 @@ buchi_project
 │ │ │ ├─ index.js
 │ │ │ └─ naverStrategy.js
 │ │ └─ routes
-│ │ ├─ auth.js
-│ │ └─ s3.js
+│ │ │ ├─ auth.js
+│ │ │ └─ s3.js
+│ │ │
 ├─ frontend
 │ ├─ package.json
 │ ├─ postcss.config.js
