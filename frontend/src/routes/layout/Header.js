@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import Login from '../../pages/LoginPage';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUser, logoutUser } from '../../features/userSlice';
+import { fetchUser, logoutUser } from '../../features/userThunk';
 import SearchInput from '../../components/common/SearchInput';
 import { BellOutlined, UserOutlined } from '@ant-design/icons';
+import logo from '../../assets/Img/buchi_logo_full.png';
 
 export default function Header() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -36,11 +37,12 @@ export default function Header() {
     <div
       style={{
         width: '100%',
-        display: 'inline-flex',
+        height: 112,
+        display: 'flex',
         paddingTop: 24,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
         backgroundColor: '#FFF',
       }}
     >
@@ -48,62 +50,61 @@ export default function Header() {
         style={{
           display: 'flex',
           width: '100%',
-          height: 88,
-          paddingLeft: '15%',
-          paddingRight: '15%',
+          padding: '19.11px 340px 18.11px 340px',
+          justifyContent: 'center',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          flexShrink: 0,
         }}
       >
-        <div style={{ width: 248, height: 50.78, flexShrink: 0 }}>
-          <Link to="/">
-            <img
-              src={`${process.env.PUBLIC_URL}/Img/buchi_logo_full.png`}
-              alt="logo"
-              style={{ width: 248, height: 50.78 }}
-            />
-          </Link>
-        </div>
-        <SearchInput
-          placeholder="음식, 식당명 검색"
-          style={{
-            display: 'flex',
-            width: '35%',
-            alignItems: 'center',
-            flexShrink: 0,
-            borderRadius: '6px',
-          }}
-        />
-        <div style={{ minWidth: 192, height: 24 }} className="flex">
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <BellOutlined style={{ width: 24, height: 24, color: '#000', fontWeight: '500' }} />
-              <button style={{ marginLeft: 13 }}>
-                <UserOutlined style={{ width: 24, height: 24, color: '#000', fontWeight: '500' }} />
-                <span style={{ marginLeft: '3px', fontSize: '18px', fontWeight: 'normal', color: '#000' }}>
-                  {user.nickname}
-                </span>
-              </button>
+        <div
+          style={{ display: 'flex', width: 1240, justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}
+        >
+          <div style={{ width: 248, height: 50.78, flexShrink: 0 }}>
+            <Link to="/">
+              <img src={logo} alt="logo" style={{ width: 248, height: 50.78 }} />
+            </Link>
+          </div>
+          <SearchInput
+            placeholder="음식, 식당명 검색"
+            style={{
+              display: 'flex',
+              width: '35%',
+              alignItems: 'center',
+              flexShrink: 0,
+              borderRadius: '6px',
+            }}
+          />
+          <div style={{ minWidth: 192, height: 24 }} className="flex">
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <BellOutlined style={{ width: 24, height: 24, color: '#000', fontWeight: '500' }} />
+                <button style={{ marginLeft: 13 }}>
+                  <UserOutlined style={{ width: 24, height: 24, color: '#000', fontWeight: '500' }} />
+                  <span style={{ marginLeft: '3px', fontSize: '18px', fontWeight: 'normal', color: '#000' }}>
+                    {user.nickname}
+                  </span>
+                </button>
 
-              {/* 개발 편의를 위해 로그아웃 버튼 임시 추가  */}
-              <button onClick={handleLogout}>Logout</button>
-            </div>
-          ) : (
-            <div
-              style={{
-                color: 'black',
-                textOverflow: 'ellipsis',
-                fontSize: 20,
-                fontWeight: '500',
-                lineHeight: '100%',
-              }}
-            >
-              <button style={{ marginRight: 15 }} onClick={showModal}>
-                회원가입
-              </button>
-              <button onClick={showModal}>로그인</button>
-            </div>
-          )}
+                {/* 개발 편의를 위해 로그아웃 버튼 임시 추가  */}
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            ) : (
+              <div
+                style={{
+                  color: 'black',
+                  textOverflow: 'ellipsis',
+                  fontSize: 17,
+                  fontWeight: '500',
+                  lineHeight: '100%',
+                }}
+              >
+                <button style={{ marginRight: 15 }} onClick={showModal}>
+                  회원가입
+                </button>
+                <button onClick={showModal}>로그인</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <Modal

@@ -3,35 +3,44 @@ import React, { useEffect, useState } from 'react';
 // import CustomModal from '../components/common/Modal'
 import { Card } from 'antd';
 import '../styles/mainPageTemporary.css';
+import Filter from '../components/common/Filter';
+import Tag from '../components/common/Tag';
 // import axios from 'axios';
 
 const MainPage = () => {
   /* 추후에 추가할 회사정보 등록 모달 코드 */
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleOk = () => {
-    // 확인 버튼 클릭 시의 로직
-    console.log('회사 등록 처리');
-    setIsModalVisible(false);
+  // const handleOk = () => {
+  //   // 확인 버튼 클릭 시의 로직
+  //   console.log('회사 등록 처리');
+  //   setIsModalVisible(false);
+  // };
+
+  // const handleCancel = () => {
+  //   // 취소 버튼 클릭 시의 로직
+  //   setIsModalVisible(false);
+  // };
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const totalCards = 5; // SpotCard의 총 개수
+
+  const handleNext = () => {
+    if (currentIndex < totalCards - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
   };
 
-  const handleCancel = () => {
-    // 취소 버튼 클릭 시의 로직
-    setIsModalVisible(false);
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
   };
 
   return (
-    <div className="filter-container">
-      <div className="filter-header">필터 항목</div>
-      <Card className="filter-card"># 태그 추천</Card>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <Card style={{ flex: 1 }} className="filter-card">
-          우리 회사 사람들이 가는 장소
-        </Card>
-        <Card style={{ flex: 1 }} className="filter-card">
-          같은 업종 사람들이 가는 장소 (회사 산업군)
-        </Card>
-      </div>
+    <div style={{ width: '100%' }}>
+      <div style={{ width: '100%', height: 460, textAlign: 'center', backgroundColor: 'gray' }}>프로모션 배너</div>
+      <Filter />
+      <Tag />
       <Card className="filter-card">가장 많이 방문 랭킹</Card>
       <Card className="filter-card">프로모션</Card>
     </div>

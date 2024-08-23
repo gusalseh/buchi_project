@@ -1,15 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
-  const response = await axios.get('http://localhost:3000/auth/api/user', { withCredentials: true });
-  return response.data;
-});
-
-export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
-  await axios.get('http://localhost:3000/auth/logout', { withCredentials: true });
-  window.location.href = 'http://localhost:3001'; // 로그아웃 후 리다이렉트
-});
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchUser, logoutUser } from './userThunk';
 
 const userSlice = createSlice({
   name: 'user',
