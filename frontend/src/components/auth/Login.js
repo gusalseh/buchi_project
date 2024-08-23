@@ -1,6 +1,6 @@
 import { Button, Typography, Divider } from 'antd';
 // import { GoogleOutlined, FacebookOutlined, AppleOutlined } from '@ant-design/icons';
-const naverIcon = `${process.env.PUBLIC_URL}/Img/naver.png`;
+import naverIcon from '../../assets/Img/naver.png';
 
 const Login = ({ onNaverLogin }) => {
   return (

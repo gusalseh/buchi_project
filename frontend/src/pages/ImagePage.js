@@ -1,50 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchSpotImages, fetchMenuImages } from '../features/imageThunk';
 
 const ImagePage = () => {
-  const [spotImages, setSpotImages] = useState([]);
-  const [menuImages, setMenuImages] = useState([]);
-  const [spotError, setSpotError] = useState(null);
-  const [menuError, setMenuError] = useState(null);
+  const dispatch = useDispatch();
+
+  const { spotImages, menuImages, spotError, menuError, loading } = useSelector((state) => state.images);
 
   useEffect(() => {
-    // Spot 이미지 가져오기
-    const fetchSpotImages = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/image/spot/1/images');
-        setSpotImages(response.data.imageUrls);
-        setSpotError(null);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setSpotError('No spot images found.');
-        } else {
-          setSpotError('Failed to fetch spot images.');
-        }
-      }
-    };
-
-    // Menu 이미지 가져오기
-    const fetchMenuImages = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/image/menu/1/images');
-        setMenuImages(response.data.imageUrls);
-        setMenuError(null);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setMenuError('No menu images found.');
-        } else {
-          setMenuError('Failed to fetch menu images.');
-        }
-      }
-    };
-
-    fetchSpotImages();
-    fetchMenuImages();
-  }, []);
+    dispatch(fetchSpotImages());
+    dispatch(fetchMenuImages());
+  }, [dispatch]);
 
   return (
     <div>
       <h2>Spot Images</h2>
+      {loading && <p>Loading...</p>}
       {spotError ? (
         <p>{spotError}</p>
       ) : (
@@ -56,6 +27,7 @@ const ImagePage = () => {
       )}
 
       <h2>Menu Images</h2>
+      {loading && <p>Loading...</p>}
       {menuError ? (
         <p>{menuError}</p>
       ) : (
