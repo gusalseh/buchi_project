@@ -21,20 +21,6 @@ const MainPage = () => {
   //   // 취소 버튼 클릭 시의 로직
   //   setIsModalVisible(false);
   // };
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const totalCards = 5; // SpotCard의 총 개수
-
-  const handleNext = () => {
-    if (currentIndex < totalCards - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
 
   return (
     <div style={{ width: '100%' }}>
