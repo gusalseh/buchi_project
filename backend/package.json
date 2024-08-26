@@ -4,22 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.635.0",
+    "aws-sdk": "^2.1679.0",
+    "axios": "^1.7.4",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "mysql2": "^3.11.0",
+    "passport": "^0.6.0",
+    "passport-naver-v2": "^2.0.8",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
     "nodemon": "^3.1.4",
-    "sequelize-cli": "^6.6.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "sequelize-cli": "^6.6.2"
   }
 }
