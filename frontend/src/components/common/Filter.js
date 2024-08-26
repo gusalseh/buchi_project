@@ -1,13 +1,30 @@
-// import React from 'react';
+import React, { useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
-import React from 'react';
-import { Layout, Typography, Select, DatePicker, TimePicker, Input, Row, Col, Button } from 'antd';
+import { Modal } from 'antd';
+import { Layout, Typography, DatePicker, TimePicker, InputNumber, Row, Col, Button } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
+import UserLocation from './UserLocationModal';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Filter = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
+
+  const showLocationModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setModalKey(modalKey + 1);
+  };
+
   return (
     // <div
     //   style={{
@@ -83,7 +100,7 @@ const Filter = () => {
             }}
             value="location"
           >
-            역삼역 2번 출구 <DownOutlined />
+            역삼역 2번 출구 <DownOutlined onClick={showLocationModal} />
           </Button>
 
           <div
@@ -117,10 +134,27 @@ const Filter = () => {
             />
           </Col>
           <Col style={{ MinWidth: 240 }}>
-            <Input placeholder="인원수 입력" style={{ MinWidth: 240, width: 240 }} suffixIcon={<UserOutlined />} />
+            <InputNumber
+              placeholder="인원수 입력"
+              style={{ MinWidth: 240, width: 240 }}
+              suffixIcon={<UserOutlined />}
+            />
           </Col>
         </Row>
       </Content>
+      <Modal
+        key={modalKey}
+        title=""
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+        width="fit-content"
+        style={{ maxWidth: '90%' }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <UserLocation visible={isModalVisible} />
+      </Modal>
     </Layout>
   );
 };
