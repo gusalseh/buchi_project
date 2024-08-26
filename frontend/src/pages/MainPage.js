@@ -14,7 +14,7 @@ const MainPage = () => {
       <div style={{ width: '100%', height: 460, textAlign: 'center', backgroundColor: 'gray' }}>프로모션 배너</div>
       <Filter />
       <Tag />
-
+      <TeamSpot />
       <Card className="filter-card">가장 많이 방문 랭킹</Card>
       <Card className="filter-card">프로모션</Card>
 
