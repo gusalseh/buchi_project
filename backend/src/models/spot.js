@@ -14,9 +14,17 @@ class Spot extends Sequelize.Model {
           type: Sequelize.STRING(120),
           allowNull: false,
         },
-        location: {
+        spot_address: {
           type: Sequelize.STRING(120),
           allowNull: false,
+        },
+        spot_lat: {
+          type: Sequelize.DECIMAL(10, 8),
+          allowNull: true,
+        },
+        spot_lng: {
+          type: Sequelize.DECIMAL(11, 8),
+          allowNull: true,
         },
         // 대분류 카테고리 확정 필요
         spot_category_1: {
