@@ -27,8 +27,8 @@ const Tag = () => {
         display: 'flex',
         flexDirection: 'column',
         height: 570,
-        backgroundColor: 'seagreen',
         gap: 20,
+        backgroundColor: 'white',
         position: 'relative',
         overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
       }}

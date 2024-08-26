@@ -99,9 +99,9 @@ export default function Header() {
                 }}
               >
                 <button style={{ marginRight: 15 }} onClick={showModal}>
-                  회원가입
+                  로그인
                 </button>
-                <button onClick={showModal}>로그인</button>
+                <button onClick={showModal}>회원가입</button>
               </div>
             )}
           </div>
