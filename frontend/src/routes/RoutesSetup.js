@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from '../pages/MainPage';
 import Layout from './layout';
 import ImagePage from '../pages/ImagePage';
+import ConsentPage from '../pages/ConsentPage';
 // 필요한 다른 페이지 컴포넌트도 임포트
 
 const RoutesSetup = () => {
@@ -13,6 +14,7 @@ const RoutesSetup = () => {
           <Route path="/" element={<MainPage />} />
           <Route path="/imagetest" element={<ImagePage />} />
         </Route>
+        <Route path="/consent" element={<ConsentPage />}></Route>
       </Routes>
     </Router>
   );
