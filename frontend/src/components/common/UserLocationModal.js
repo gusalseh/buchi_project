@@ -132,32 +132,33 @@ const UserLocation = ({ saveLocation, visible }) => {
               style={{ width: '100%', height: '450px', border: 'none' }}
             />
           )}
-          {!isIframeVisible && registeredLocations.length === 0 && (
-            <div style={{ marginTop: 200, color: '#737373' }}>근무지(출발 위치)를 검색해주세요</div>
-          )}
-          {registeredLocations.length > 0 && (
-            <div style={{ marginTop: 20, width: '100%' }}>
-              {registeredLocations.map((location, index) => (
-                <div
-                  key={index}
-                  style={{
-                    marginBottom: 10,
-                    padding: 10,
-                    border: '1px solid #d9d9d9',
-                    borderRadius: 4,
-                    backgroundColor: '#fafafa',
-                  }}
-                >
-                  <div style={{ fontWeight: 'bold' }}>
-                    {location.locationType} {location.locationName && `- ${location.locationName}`}
+          {/* 등록된 주소지가 유무에 따른 UI 구분 */}
+          {!isIframeVisible &&
+            (registeredLocations.length === 0 ? (
+              <div style={{ marginTop: 200, color: '#737373' }}>근무지(출발 위치)를 검색해주세요</div>
+            ) : (
+              <div style={{ marginTop: 20, width: '100%' }}>
+                {registeredLocations.map((location, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom: 10,
+                      padding: 10,
+                      border: '1px solid #d9d9d9',
+                      borderRadius: 4,
+                      backgroundColor: '#fafafa',
+                    }}
+                  >
+                    <div style={{ fontWeight: 'bold' }}>
+                      {location.locationType} {location.locationName && `- ${location.locationName}`}
+                    </div>
+                    <div>{location.roadAddress}</div>
+                    <div>{location.jibunAddress}</div>
+                    <div>{location.buildingName}</div>
                   </div>
-                  <div>{location.roadAddress}</div>
-                  <div>{location.jibunAddress}</div>
-                  <div>{location.buildingName}</div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            ))}
         </div>
       ) : (
         <div style={{ width: '100%' }}>
