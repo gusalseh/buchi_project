@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Row, Col, Typography } from 'antd';
-import axios from 'axios'; // Axios를 사용하여 API 호출
+import { useSelector } from 'react-redux';
 
 const { Text } = Typography;
 
@@ -8,12 +8,11 @@ const TeamSpot = () => {
   const [companyId, setCompanyId] = useState(null); // 회사 ID 상태 관리
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
 
+  const user = useSelector((state) => state.user);
+
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
-        const response = await axios.get('/api/users/no-company');
-        const user = response.data;
-
         if (user.length === 0) {
           // 회사 ID가 없는 경우
           setCompanyId(null);
