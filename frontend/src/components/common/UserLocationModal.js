@@ -81,7 +81,11 @@ const UserLocation = ({ saveLocation, visible }) => {
   };
 
   const handleDeleteLocation = (index) => {
-    setRegisteredLocations(registeredLocations.filter((_, i) => i !== index));
+    const sortedLocations = getSortedLocations();
+    const locationToDelete = sortedLocations[index];
+
+    // 원래의 registeredLocations에서 해당 location을 찾아 삭제
+    setRegisteredLocations(registeredLocations.filter((location) => location !== locationToDelete));
   };
 
   const handleIframeMessage = (event) => {
@@ -108,6 +112,16 @@ const UserLocation = ({ saveLocation, visible }) => {
       default:
         return <EnvironmentOutlined />;
     }
+  };
+
+  const getSortedLocations = () => {
+    const priority = {
+      근무지: 1,
+      출장지: 2,
+      기타: 3,
+    };
+
+    return [...registeredLocations].sort((a, b) => priority[a.locationType] - priority[b.locationType]);
   };
 
   const menu = (index) => (
@@ -179,12 +193,50 @@ const UserLocation = ({ saveLocation, visible }) => {
             </Spin>
           )}
           {/* 등록된 주소지가 유무에 따른 UI 구분 */}
-          {!isIframeVisible &&
+          {/* {!isIframeVisible &&
             (registeredLocations.length === 0 ? (
               <div style={{ marginTop: 200, color: '#737373' }}>근무지(출발 위치)를 검색해주세요</div>
             ) : (
               <div style={{ marginTop: 20, width: '100%', overflow: 'hidden' }}>
                 {registeredLocations.map((location, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      marginBottom: 10,
+                      paddingTop: 10,
+                      paddingRight: 10,
+                      paddingBottom: 10,
+                      paddingLeft: 15,
+                      border: '1px solid var(--0Gray-200, #E5E5E5)',
+                      borderRadius: 8,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      // alignItems: 'center',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      {React.cloneElement(getLocationIcon(location.locationType), {
+                        style: { fontSize: 36, marginRight: 20, color: '#A3A3A3' },
+                      })}
+                      <div style={{ textAlign: 'start' }}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>{location.locationType}</div>
+                        <div>{location.locationName}</div>
+                        <div style={{ color: '#737373' }}>{location.roadAddress}</div>
+                      </div>
+                    </div>
+                    <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
+                      <Button type="text" icon={<MoreOutlined />} />
+                    </Dropdown>
+                  </div>
+                ))}
+              </div>
+            ))} */}
+          {!isIframeVisible &&
+            (registeredLocations.length === 0 ? (
+              <div style={{ marginTop: 200, color: '#737373' }}>근무지(출발 위치)를 검색해주세요</div>
+            ) : (
+              <div style={{ marginTop: 20, width: '100%', overflow: 'hidden' }}>
+                {getSortedLocations().map((location, index) => (
                   <div
                     key={index}
                     style={{
@@ -313,11 +365,12 @@ const UserLocation = ({ saveLocation, visible }) => {
               bottom: 0,
               left: 0,
               width: '100%',
-              backgroundColor: '#CC3C28',
-              borderColor: '#CC3C28',
+              backgroundColor: locationType ? '#CC3C28' : '#A3A3A3',
+              borderColor: locationType ? '#CC3C28' : '#A3A3A3',
               height: '40px',
             }}
             onClick={handleRegisterLocation}
+            disabled={!locationType}
           >
             등록하기
           </Button>
