@@ -22,9 +22,21 @@ class UserLocation extends Sequelize.Model {
           type: Sequelize.ENUM('onsite', 'offsite', 'etc'),
           allowNull: false,
         },
-        location_address: {
+        location_name: {
+          type: Sequelize.STRING(120),
+          allowNull: true,
+        },
+        location_building_name: {
+          type: Sequelize.STRING(120),
+          allowNull: true,
+        },
+        location_road_address: {
           type: Sequelize.STRING(120),
           allowNull: false,
+        },
+        location_jibun_address: {
+          type: Sequelize.STRING(120),
+          allowNull: true,
         },
         location_lat: {
           type: Sequelize.DECIMAL(10, 8),
@@ -38,10 +50,6 @@ class UserLocation extends Sequelize.Model {
           type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: false,
-        },
-        location_name: {
-          type: Sequelize.STRING(120),
-          allowNull: true,
         },
       },
       {
