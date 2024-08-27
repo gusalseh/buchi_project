@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Row, Col, Typography, Divider } from 'antd';
-import { EnvironmentOutlined } from '@ant-design/icons';
+import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu } from 'antd';
+import { EnvironmentOutlined, MoreOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
 
 const UserLocation = ({ saveLocation, visible }) => {
@@ -70,6 +70,10 @@ const UserLocation = ({ saveLocation, visible }) => {
     setIsIframeVisible(false);
   };
 
+  const handleDeleteLocation = (index) => {
+    setRegisteredLocations(registeredLocations.filter((_, i) => i !== index));
+  };
+
   const handleIframeMessage = (event) => {
     if (event.data && typeof event.data === 'object' && event.data.type === 'address') {
       handleAddressSelect(event.data.address);
@@ -84,15 +88,38 @@ const UserLocation = ({ saveLocation, visible }) => {
     };
   }, []);
 
+  const getLocationIcon = (type) => {
+    switch (type) {
+      case '근무지':
+        return <Domain />;
+      case '출장지':
+        return <Work />;
+      case '기타':
+      default:
+        return <EnvironmentOutlined />;
+    }
+  };
+
+  const menu = (index) => (
+    <Menu>
+      <Menu.Item key="1" onClick={() => handleDeleteLocation(index)}>
+        삭제하기
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div
       style={{
         width: 558,
-        height: 550,
+        // height: 550,
+        height: 600,
         border: 'none',
         // alignItems: 'center',
         // justifyContent: 'center',
         position: 'relative',
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
       <Typography.Title
@@ -109,7 +136,7 @@ const UserLocation = ({ saveLocation, visible }) => {
         위치 입력하기
       </Typography.Title>
 
-      <Divider style={{ margin: '8px 0' }} />
+      <Divider style={{ marginTop: '8px', marginBottom: '16px' }} />
 
       {!isAddressSelected ? (
         <div style={{ textAlign: 'center', width: '100%' }}>
@@ -137,24 +164,36 @@ const UserLocation = ({ saveLocation, visible }) => {
             (registeredLocations.length === 0 ? (
               <div style={{ marginTop: 200, color: '#737373' }}>근무지(출발 위치)를 검색해주세요</div>
             ) : (
-              <div style={{ marginTop: 20, width: '100%' }}>
+              <div style={{ marginTop: 20, width: '100%', overflow: 'hidden' }}>
                 {registeredLocations.map((location, index) => (
                   <div
                     key={index}
                     style={{
                       marginBottom: 10,
-                      padding: 10,
-                      border: '1px solid #d9d9d9',
-                      borderRadius: 4,
-                      backgroundColor: '#fafafa',
+                      paddingTop: 10,
+                      paddingRight: 10,
+                      paddingBottom: 10,
+                      paddingLeft: 15,
+                      border: '1px solid var(--0Gray-200, #E5E5E5)',
+                      borderRadius: 8,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      // alignItems: 'center',
                     }}
                   >
-                    <div style={{ fontWeight: 'bold' }}>
-                      {location.locationType} {location.locationName && `- ${location.locationName}`}
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      {React.cloneElement(getLocationIcon(location.locationType), {
+                        style: { fontSize: 36, marginRight: 20, color: '#A3A3A3' },
+                      })}
+                      <div style={{ textAlign: 'start' }}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>{location.locationType}</div>
+                        <div>{location.locationName}</div>
+                        <div style={{ color: '#737373' }}>{location.roadAddress}</div>
+                      </div>
                     </div>
-                    <div>{location.roadAddress}</div>
-                    <div>{location.jibunAddress}</div>
-                    <div>{location.buildingName}</div>
+                    <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
+                      <Button type="text" icon={<MoreOutlined />} />
+                    </Dropdown>
                   </div>
                 ))}
               </div>
@@ -162,7 +201,7 @@ const UserLocation = ({ saveLocation, visible }) => {
         </div>
       ) : (
         <div style={{ width: '100%' }}>
-          <div style={{ marginBottom: '16px', marginTop: '16px' }}>
+          <div style={{ marginBottom: '16px' }}>
             <Typography.Text style={{ fontSize: '16px', color: '#333333', fontWeight: 'bold' }}>
               {addressDetail.roadAddress}
               {addressDetail.buildingName && ` (${addressDetail.buildingName})`}
@@ -173,54 +212,57 @@ const UserLocation = ({ saveLocation, visible }) => {
             </Typography.Text>
           </div>
 
-          <Divider style={{ margin: '8px 0' }} />
+          <Divider style={{ marginTop: '8px', marginBottom: '16px' }} />
 
           <div style={{ display: 'flex', marginBottom: '16px' }}>
             <Button
-              type={locationType === 'onsite' ? 'default' : 'default'}
-              icon={<Domain />}
-              onClick={() => handleTypeChange('onsite')}
+              type={locationType === '근무지' ? 'default' : 'default'}
+              icon={React.cloneElement(<Domain />, { style: { fontSize: 15 } })}
+              onClick={() => handleTypeChange('근무지')}
               style={{
-                borderColor: locationType === 'onsite' ? '#CC3C28' : '#d9d9d9',
-                color: locationType === 'onsite' ? '#CC3C28' : 'inherit',
+                borderColor: locationType === '근무지' ? '#CC3C28' : '#d9d9d9',
+                color: locationType === '근무지' ? '#CC3C28' : 'inherit',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '48px',
                 marginRight: '16px',
+                borderRadius: 8,
               }}
             >
               근무지
             </Button>
 
             <Button
-              type={locationType === 'offsite' ? 'default' : 'default'}
-              icon={<Work />}
-              onClick={() => handleTypeChange('offsite')}
+              type={locationType === '출장지' ? 'default' : 'default'}
+              icon={React.cloneElement(<Work />, { style: { fontSize: 15 } })}
+              onClick={() => handleTypeChange('출장지')}
               style={{
-                borderColor: locationType === 'offsite' ? '#CC3C28' : '#d9d9d9',
-                color: locationType === 'offsite' ? '#CC3C28' : 'inherit',
+                borderColor: locationType === '출장지' ? '#CC3C28' : '#d9d9d9',
+                color: locationType === '출장지' ? '#CC3C28' : 'inherit',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '48px',
                 marginRight: '16px',
+                borderRadius: 8,
               }}
             >
               출장지
             </Button>
 
             <Button
-              type={locationType === 'etc' ? 'default' : 'default'}
-              icon={<EnvironmentOutlined />}
-              onClick={() => handleTypeChange('etc')}
+              type={locationType === '기타' ? 'default' : 'default'}
+              icon={React.cloneElement(<EnvironmentOutlined />, { style: { fontSize: 15 } })}
+              onClick={() => handleTypeChange('기타')}
               style={{
-                borderColor: locationType === 'etc' ? '#CC3C28' : '#d9d9d9',
-                color: locationType === 'etc' ? '#CC3C28' : 'inherit',
+                borderColor: locationType === '기타' ? '#CC3C28' : '#d9d9d9',
+                color: locationType === '기타' ? '#CC3C28' : 'inherit',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '48px',
+                borderRadius: 8,
               }}
             >
               기타
