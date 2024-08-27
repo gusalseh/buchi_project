@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu } from 'antd';
+import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin } from 'antd';
 import { EnvironmentOutlined, MoreOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
 
@@ -11,6 +11,7 @@ const UserLocation = ({ saveLocation, visible }) => {
   const [isIframeVisible, setIsIframeVisible] = useState(false);
   const [registeredLocations, setRegisteredLocations] = useState([]);
   const [addressDetail, setAddressDetail] = useState({ roadAddress: '', jibunAddress: '', buildingName: '' });
+  const [loading, setLoading] = useState(false);
 
   // 모달이 열릴 때마다 상태를 초기화
   useEffect(() => {
@@ -21,6 +22,7 @@ const UserLocation = ({ saveLocation, visible }) => {
       setAddress('');
       setAddressDetail({ roadAddress: '', jibunAddress: '', buildingName: '' });
       setIsIframeVisible(false);
+      setLoading(false);
     }
   }, [visible]);
 
@@ -33,6 +35,7 @@ const UserLocation = ({ saveLocation, visible }) => {
     });
     setIsAddressSelected(true);
     setIsIframeVisible(false);
+    setLoading(false);
   };
 
   const handleTypeChange = (e) => {
@@ -42,9 +45,15 @@ const UserLocation = ({ saveLocation, visible }) => {
   const handleInputClick = () => {
     if (!isIframeVisible) {
       setIsIframeVisible(true);
+      setLoading(true);
     } else {
       setIsIframeVisible(false);
+      setLoading(false);
     }
+  };
+
+  const handleIframeLoad = () => {
+    setLoading(false);
   };
 
   const handleRegisterLocation = () => {
@@ -68,6 +77,7 @@ const UserLocation = ({ saveLocation, visible }) => {
     setAddress('');
     setAddressDetail({ roadAddress: '', jibunAddress: '', buildingName: '' });
     setIsIframeVisible(false);
+    setLoading(false);
   };
 
   const handleDeleteLocation = (index) => {
@@ -115,8 +125,6 @@ const UserLocation = ({ saveLocation, visible }) => {
         // height: 550,
         height: 600,
         border: 'none',
-        // alignItems: 'center',
-        // justifyContent: 'center',
         position: 'relative',
         overflowY: 'auto',
         overflowX: 'hidden',
@@ -153,11 +161,14 @@ const UserLocation = ({ saveLocation, visible }) => {
             </Col>
           </Row>
           {isIframeVisible && (
-            <iframe
-              src="/daum-postcode.html"
-              title="Daum Postcode"
-              style={{ width: '100%', height: '450px', border: 'none' }}
-            />
+            <Spin spinning={loading} tip="주소 검색 로딩 중...">
+              <iframe
+                src="/daum-postcode.html"
+                title="Daum Postcode"
+                style={{ width: '100%', height: '450px', border: 'none' }}
+                onLoad={handleIframeLoad}
+              />
+            </Spin>
           )}
           {/* 등록된 주소지가 유무에 따른 UI 구분 */}
           {!isIframeVisible &&
