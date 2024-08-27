@@ -150,7 +150,15 @@ const UserLocation = ({ saveLocation, visible }) => {
         <div style={{ textAlign: 'center', width: '100%' }}>
           <Row gutter={8} justify="center" style={{ marginBottom: '12px' }}>
             <Col span={12}>
-              <Button onClick={handleInputClick} style={{ cursor: 'pointer', width: '100%' }}>
+              <Button
+                onClick={handleInputClick}
+                style={{
+                  cursor: 'pointer',
+                  width: '100%',
+                  backgroundColor: isIframeVisible ? '#CC3C28' : '',
+                  color: isIframeVisible ? '#fff' : '',
+                }}
+              >
                 주소 검색하기
               </Button>
             </Col>
@@ -165,7 +173,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               <iframe
                 src="/daum-postcode.html"
                 title="Daum Postcode"
-                style={{ width: '100%', height: '450px', border: 'none' }}
+                style={{ width: '100%', height: '450px', border: 'none', marginLeft: '20px' }}
                 onLoad={handleIframeLoad}
               />
             </Spin>
@@ -228,7 +236,9 @@ const UserLocation = ({ saveLocation, visible }) => {
           <div style={{ display: 'flex', marginBottom: '16px' }}>
             <Button
               type={locationType === '근무지' ? 'default' : 'default'}
-              icon={React.cloneElement(<Domain />, { style: { fontSize: 15 } })}
+              icon={React.cloneElement(<Domain />, {
+                style: { fontSize: 15, color: locationType === '근무지' ? '#CC3C28' : '#A3A3A3' },
+              })}
               onClick={() => handleTypeChange('근무지')}
               style={{
                 borderColor: locationType === '근무지' ? '#CC3C28' : '#d9d9d9',
@@ -246,7 +256,9 @@ const UserLocation = ({ saveLocation, visible }) => {
 
             <Button
               type={locationType === '출장지' ? 'default' : 'default'}
-              icon={React.cloneElement(<Work />, { style: { fontSize: 15 } })}
+              icon={React.cloneElement(<Work />, {
+                style: { fontSize: 15, color: locationType === '출장지' ? '#CC3C28' : '#A3A3A3' },
+              })}
               onClick={() => handleTypeChange('출장지')}
               style={{
                 borderColor: locationType === '출장지' ? '#CC3C28' : '#d9d9d9',
@@ -264,7 +276,9 @@ const UserLocation = ({ saveLocation, visible }) => {
 
             <Button
               type={locationType === '기타' ? 'default' : 'default'}
-              icon={React.cloneElement(<EnvironmentOutlined />, { style: { fontSize: 15 } })}
+              icon={React.cloneElement(<EnvironmentOutlined />, {
+                style: { fontSize: 15, color: locationType === '기타' ? '#CC3C28' : '#A3A3A3' },
+              })}
               onClick={() => handleTypeChange('기타')}
               style={{
                 borderColor: locationType === '기타' ? '#CC3C28' : '#d9d9d9',
@@ -287,6 +301,8 @@ const UserLocation = ({ saveLocation, visible }) => {
             style={{
               borderColor: '#d9d9d9',
               color: '#737373',
+              height: '40px',
+              borderRadius: 8,
             }}
           />
 
