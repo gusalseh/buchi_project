@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux';
 import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin, Modal } from 'antd';
 import { EnvironmentOutlined, MoreOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
-import { createLocation, updateLocation, fetchUserLocations } from '../../features/userLocation';
+import { createLocation, fetchUserLocations, updateSelectedLocation } from '../../features/userLocation';
 
+//TODO: fetchUserLocations 이거 따로 함수화 시켜야 하는데... 다음에 이 주석보면 함수화해서 빼둘것!
 const UserLocation = ({ saveLocation, visible }) => {
   const user = useSelector((state) => state.user.user);
   const [isAddressSelected, setIsAddressSelected] = useState(false);
@@ -31,6 +32,11 @@ const UserLocation = ({ saveLocation, visible }) => {
       const fetchData = async () => {
         try {
           const fetchLocations = await fetchUserLocations(user.user_id);
+          fetchLocations.sort((a, b) => {
+            if (b.selected && !a.selected) return 1;
+            if (a.selected && !b.selected) return -1;
+            return 0;
+          });
           setRegisteredLocations(fetchLocations);
         } catch (error) {
           console.error('Error fetching user locations:', error);
@@ -93,6 +99,11 @@ const UserLocation = ({ saveLocation, visible }) => {
       // 주소를 등록한 후, 해당 유저의 주소 리스트를 다시 가져와 상태 업데이트
       // 사실 등록한 직후에는 useState에서 관리하는 주소목록으로 핸들링하는게 서버 부담 적을듯
       const fetchLocations = await fetchUserLocations(user.user_id);
+      fetchLocations.sort((a, b) => {
+        if (b.selected && !a.selected) return 1;
+        if (a.selected && !b.selected) return -1;
+        return 0;
+      });
       setRegisteredLocations(fetchLocations);
 
       setIsAddressSelected(false);
@@ -114,11 +125,15 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleSelectLocation = async (locationId) => {
     try {
-      const updateSelectedLocation = await updateSelectedLocation(locationId, { selected: true, user_id: user.id });
-      // Update the locations state to reflect the change
-      setRegisteredLocations((prevLocations) =>
-        prevLocations.map((loc) => (loc.location_id === locationId ? updateSelectedLocation : loc))
-      );
+      await updateSelectedLocation(locationId, { selected: true, user_id: user.user_id });
+
+      const fetchLocations = await fetchUserLocations(user.user_id);
+      fetchLocations.sort((a, b) => {
+        if (b.selected && !a.selected) return 1;
+        if (a.selected && !b.selected) return -1;
+        return 0;
+      });
+      setRegisteredLocations(fetchLocations);
     } catch (error) {
       console.log('handleSelectLocation Failed');
     }
@@ -282,6 +297,7 @@ const UserLocation = ({ saveLocation, visible }) => {
                 {registeredLocations.map((location, index) => (
                   <div
                     key={location.location_id}
+                    onClick={() => handleSelectLocation(location.location_id)}
                     style={{
                       marginBottom: 10,
                       paddingTop: 10,
@@ -295,6 +311,7 @@ const UserLocation = ({ saveLocation, visible }) => {
                       display: 'flex',
                       justifyContent: 'space-between',
                       position: 'relative',
+                      cursor: 'pointer',
                       // alignItems: 'center',
                     }}
                   >
@@ -357,7 +374,44 @@ const UserLocation = ({ saveLocation, visible }) => {
                         >
                           {location.location_type === 'onsite' && '근무지'}
                           {location.location_type === 'offsite' && '출장지'}
-                          {location.selected && (
+                          {(location.location_type === 'onsite' || location.location_type === 'offsite') &&
+                            location.selected && (
+                              <div
+                                style={{
+                                  borderRadius: '4px',
+                                  border: '1px solid var(--0Primary-100, #F2CCC7)',
+                                  color: 'var(--0Primary-500, #CC3C28)',
+                                  backgroundColor: 'var(--0Primary-50, #FDF5F4)',
+                                  padding: '1px 8px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  marginLeft: '8px',
+                                  height: '20px',
+                                  fontSize: '12px',
+                                  fontFamily: 'Inter',
+                                  fontWeight: '500',
+                                }}
+                              >
+                                현재 설정된 위치
+                              </div>
+                            )}
+                        </div>
+                        <div
+                          style={{
+                            color:
+                              location.location_type === 'etc'
+                                ? 'var(--kakao-logo, #000)'
+                                : location.selected
+                                ? 'var(--0Gray-800, #262626)'
+                                : '#737373',
+                            fontWeight: location.selected ? 600 : 400,
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {location.location_name || location.location_building_name || location.location_road_address}
+                          {location.location_type === 'etc' && location.selected && (
                             <div
                               style={{
                                 borderRadius: '4px',
@@ -378,19 +432,6 @@ const UserLocation = ({ saveLocation, visible }) => {
                               현재 설정된 위치
                             </div>
                           )}
-                        </div>
-                        <div
-                          style={{
-                            color:
-                              location.location_type === 'etc'
-                                ? 'var(--kakao-logo, #000)'
-                                : location.selected
-                                ? 'var(--0Gray-800, #262626)'
-                                : '#737373',
-                            fontWeight: location.selected ? 600 : 400,
-                          }}
-                        >
-                          {location.location_name || location.location_building_name || location.location_road_address}
                         </div>
                         <div
                           style={{
