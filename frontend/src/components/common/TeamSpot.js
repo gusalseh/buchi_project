@@ -9,7 +9,6 @@ const TeamSpot = () => {
   const [companyId, setCompanyId] = useState(null); // 회사 ID 상태 관리
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
   const [isAlertVisible, setIsAlertVisible] = useState(false); //Alert 상태 관리
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const openAlert = () => {
     setIsAlertVisible(true);
@@ -26,7 +25,6 @@ const TeamSpot = () => {
       try {
         if (user && user.user) {
           // 로그인 상태: user 객체가 null이 아니고, 빈 객체도 아닌 경우
-          setLoggedIn(true); // loggedIn을 true로 설정
           if (user.company_id) {
             setCompanyId(user.company_id); // 사용자에 연결된 회사 ID 설정
           } else {
@@ -34,8 +32,6 @@ const TeamSpot = () => {
           }
         } else {
           // 비로그인 상태: user가 null이거나, 빈 객체인 경우
-          console.log('비로그인 상태.', user);
-          setLoggedIn(false); // loggedIn을 false로 설정
           setCompanyId(null); // 회사 ID를 null로 설정
         }
       } catch (error) {
@@ -95,7 +91,7 @@ const TeamSpot = () => {
         <div style={{ textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
           <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
           <div style={{ marginTop: '20px' }}>
-            {loggedIn ? (
+            {user.user ? (
               <Button type="primary" style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
                 내 회사 정보 입력하기
               </Button>
