@@ -32,9 +32,6 @@ app.use('/auth', authRoutes);
 const imageRoutes = require('./routes/image');
 app.use('/image', imageRoutes);
 
-const userRoutes = require('./routes/user');
-app.use('/api/company');
-
 const userLocationRoutes = require('./routes/userLocation');
 app.use('/api/userLocation', userLocationRoutes);
 
