@@ -62,8 +62,9 @@ router.put('/updateSelectedUserLocation/:id', async (req, res) => {
 });
 
 // Delete a location
-router.delete('/:id', async (req, res) => {
+router.delete('/deleteUserLocation/:id', async (req, res) => {
   const { id } = req.params;
+
   await UserLocation.destroy({ where: { location_id: id } });
 
   res.status(204).send();

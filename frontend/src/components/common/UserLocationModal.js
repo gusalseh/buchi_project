@@ -3,7 +3,12 @@ import { useSelector } from 'react-redux';
 import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin, Modal } from 'antd';
 import { EnvironmentOutlined, MoreOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
-import { createLocation, fetchUserLocations, updateSelectedLocation } from '../../features/userLocation';
+import {
+  createLocation,
+  fetchUserLocations,
+  updateSelectedLocation,
+  deleteLocation,
+} from '../../features/userLocation';
 
 //TODO: fetchUserLocations 이거 따로 함수화 시켜야 하는데... 다음에 이 주석보면 함수화해서 빼둘것!
 const UserLocation = ({ saveLocation, visible }) => {
@@ -130,6 +135,7 @@ const UserLocation = ({ saveLocation, visible }) => {
     }
   };
 
+  // TODO: 지금은 아이콘이랑 주소 정보 있는 칸만 클리해야 Trigger - 이것도 후에 더 범용성있게 수정해야할듯
   const handleSelectLocation = async (locationId) => {
     try {
       await updateSelectedLocation(locationId, { selected: true, user_id: user.user_id });
@@ -149,15 +155,18 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleLocationClick = (locationId) => {
     setSelectedLocationId(locationId);
-    setIsConfirmVisible(true);
   };
 
-  const handleDeleteLocation = (index) => {
-    // const sortedLocations = getSortedLocations();
-    // const locationToDelete = sortedLocations[index];
-    // 원래의 registeredLocations에서 해당 location을 찾아 삭제
-    // 요건 바로 삭제 요청을 백엔드로 보내야함 !! 수정요망
-    // setRegisteredLocations(registeredLocations.filter((location) => location !== locationToDelete));
+  const handleDeleteLocation = async (locationId) => {
+    await deleteLocation(locationId, { user_id: user.user_id });
+
+    const fetchLocations = await fetchUserLocations(user.user_id);
+    fetchLocations.sort((a, b) => {
+      if (b.selected && !a.selected) return 1;
+      if (a.selected && !b.selected) return -1;
+      return 0;
+    });
+    setRegisteredLocations(fetchLocations);
   };
 
   const handleIframeMessage = (event) => {
@@ -186,19 +195,9 @@ const UserLocation = ({ saveLocation, visible }) => {
     }
   };
 
-  // const getSortedLocations = () => {
-  //   const priority = {
-  //     근무지: 1,
-  //     출장지: 2,
-  //     기타: 3,
-  //   };
-
-  //   return [...registeredLocations].sort((a, b) => priority[a.locationType] - priority[b.locationType]);
-  // };
-
-  const menu = (index) => (
+  const menu = (locationId) => (
     <Menu>
-      <Menu.Item key="1" onClick={() => handleDeleteLocation(index)}>
+      <Menu.Item key="1" onClick={() => handleDeleteLocation(locationId)}>
         삭제하기
       </Menu.Item>
     </Menu>
@@ -312,7 +311,9 @@ const UserLocation = ({ saveLocation, visible }) => {
                   <div>
                     <div
                       key={location.location_id}
-                      onClick={() => handleLocationClick(location.location_id)}
+                      onClick={(e) => {
+                        if (!e.defaultPrevented) handleLocationClick(location.location_id);
+                      }}
                       style={{
                         marginBottom: 10,
                         paddingTop: 10,
@@ -330,7 +331,7 @@ const UserLocation = ({ saveLocation, visible }) => {
                         // alignItems: 'center',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => setIsConfirmVisible(true)}>
                         {React.cloneElement(getLocationIcon(location.location_type), {
                           style: { fontSize: 36, marginRight: 20, color: '#A3A3A3' },
                         })}
@@ -421,8 +422,15 @@ const UserLocation = ({ saveLocation, visible }) => {
                         </div>
                       </div>
                       {!location.selected && (
-                        <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
-                          <Button type="text" icon={<MoreOutlined />} />
+                        <Dropdown overlay={menu(location.location_id)} trigger={['click']} placement="bottomRight">
+                          <Button
+                            type="text"
+                            icon={<MoreOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation(); // 이벤트 전파 중지
+                              e.preventDefault(); // 기본 동작 중지
+                            }}
+                          />
                         </Dropdown>
                       )}
                     </div>
@@ -558,7 +566,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               height: '40px',
               fontWeight: 'bold',
             }}
-            onClick={() => handleSelectLocation(selectedLocationId)} // Handle the "네" action
+            onClick={() => handleSelectLocation(selectedLocationId)}
           >
             네
           </Button>

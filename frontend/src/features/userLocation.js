@@ -23,9 +23,13 @@ export const updateSelectedLocation = async (locationId, updatedData) => {
   }
 };
 
-export const deleteLocation = async (locationId) => {
+export const deleteLocation = async (locationId, updatedData) => {
   try {
-    await axios.delete(`http://localhost:3000/api/userLocation/${locationId}`);
+    const response = await axios.delete(
+      `http://localhost:3000/api/userLocation/deleteUserLocation/${locationId}`,
+      updatedData
+    );
+    return response.data;
   } catch (error) {
     console.error('Error deleting location:', error);
     throw error;
