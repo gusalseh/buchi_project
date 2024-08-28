@@ -1,28 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 import { Layout, Typography, DatePicker, TimePicker, InputNumber, Row, Col, Button } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import UserLocation from './UserLocationModal';
+import { fetchSelectedLocation } from '../../features/userLocation';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Filter = () => {
+  const user = useSelector((state) => state.user.user);
+  const [locationName, setLocationName] = useState('역삼역 2번 출구');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (user) {
+        const selectedLocation = await fetchSelectedLocation(user.user_id);
+        setLocationName(selectedLocation.location_road_address);
+      }
+    };
+
+    fetchLocation();
+  }, [user]);
 
   const showLocationModal = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setIsModalVisible(false);
+    if (user) {
+      const selectedLocation = await fetchSelectedLocation(user.user_id);
+      setLocationName(selectedLocation.location_road_address);
+    }
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     setIsModalVisible(false);
     setModalKey(modalKey + 1);
+    if (user) {
+      const selectedLocation = await fetchSelectedLocation(user.user_id);
+      setLocationName(selectedLocation.location_road_address);
+    }
   };
 
   return (
@@ -94,13 +117,18 @@ const Filter = () => {
               display: 'flex',
               flexDirection: 'row',
               textAlign: 'center',
-              fontSize: '32px',
+              fontSize: '24px',
               fontStyle: 'normal',
               fontWeight: 300,
+              position: 'relative',
             }}
             value="location"
           >
-            역삼역 2번 출구 <DownOutlined onClick={showLocationModal} />
+            {locationName}
+            <DownOutlined
+              onClick={showLocationModal}
+              style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+            />
           </Button>
 
           <div

@@ -10,7 +10,8 @@ import {
   deleteLocation,
 } from '../../features/userLocation';
 
-//TODO: fetchUserLocations 이거 따로 함수화 시켜야 하는데... 다음에 이 주석보면 함수화해서 빼둘것!
+// TODO: registeredLocations 우선 순위로 배열하는 로직 -> utils 모듈로 독립
+// TODO: 3개의 Modal들 -> alert(modal) 디렉토리로 독립
 const UserLocation = ({ saveLocation, visible }) => {
   const user = useSelector((state) => state.user.user);
   const [isAddressSelected, setIsAddressSelected] = useState(false);
@@ -103,7 +104,6 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleRegisterLocation = async () => {
     try {
-      // '근무지' 또는 '출장지' 중 하나가 이미 등록되어 있는지 확인
       const isOnsiteExists = registeredLocations.some((location) => location.location_type === 'onsite');
       const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
 
@@ -144,16 +144,11 @@ const UserLocation = ({ saveLocation, visible }) => {
       setIsIframeVisible(false);
       setLoading(false);
     } catch (error) {
-      // console.log('handleRegisterLocation Failed');
-      if (error.response && error.response.status === 400) {
-        alert('근무지 또는 출장지는 각각 1개만 설정 가능합니다.');
-      } else {
-        console.error('handleRegisterLocation Failed', error);
-      }
+      console.log('handleRegisterLocation Failed');
     }
   };
 
-  // TODO: 지금은 아이콘이랑 주소 정보 있는 칸만 클리해야 Trigger - 이것도 후에 더 범용성있게 수정해야할듯
+  // TODO: 지금은 아이콘이랑 주소 정보 있는 칸만 클릭해야 Trigger - 이것도 후에 더 범용성있게 수정해야할듯
   const handleSelectLocation = async (locationId) => {
     try {
       await updateSelectedLocation(locationId, { selected: true, user_id: user.user_id });
@@ -225,7 +220,6 @@ const UserLocation = ({ saveLocation, visible }) => {
     <div
       style={{
         width: 558,
-        // height: 550,
         height: 600,
         border: 'none',
         position: 'relative',
@@ -346,7 +340,6 @@ const UserLocation = ({ saveLocation, visible }) => {
                         justifyContent: 'space-between',
                         position: 'relative',
                         cursor: 'pointer',
-                        // alignItems: 'center',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => setIsConfirmVisible(true)}>
@@ -445,8 +438,8 @@ const UserLocation = ({ saveLocation, visible }) => {
                             type="text"
                             icon={<MoreOutlined />}
                             onClick={(e) => {
-                              e.stopPropagation(); // 이벤트 전파 중지
-                              e.preventDefault(); // 기본 동작 중지
+                              e.stopPropagation();
+                              e.preventDefault();
                             }}
                           />
                         </Dropdown>

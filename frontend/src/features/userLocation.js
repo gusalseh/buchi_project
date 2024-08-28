@@ -45,3 +45,13 @@ export const fetchUserLocations = async (userId) => {
     throw error;
   }
 };
+
+export const fetchSelectedLocation = async (userId) => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/userLocation/selectedLocation/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching selected location:', error);
+    return { location_road_address: '역삼역 2번 출구' };
+  }
+};

@@ -2,7 +2,6 @@ const express = require('express');
 const { UserLocation } = require('../models');
 const router = express.Router();
 
-// Create a new location
 router.post('/', async (req, res) => {
   const {
     user_id,
@@ -46,7 +45,6 @@ router.post('/', async (req, res) => {
   res.status(201).json(location);
 });
 
-// Update a location (e.g., setting it as selected)
 router.put('/updateSelectedUserLocation/:id', async (req, res) => {
   const { id } = req.params;
   const { selected } = req.body;
@@ -61,7 +59,6 @@ router.put('/updateSelectedUserLocation/:id', async (req, res) => {
   res.status(200).json(updatedLocation[1][0]); // Return the updated record
 });
 
-// Delete a location
 router.delete('/deleteUserLocation/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -70,7 +67,6 @@ router.delete('/deleteUserLocation/:id', async (req, res) => {
   res.status(204).send();
 });
 
-// Get all locations for a user
 router.get('/fetchUserLocation/:user_id', async (req, res) => {
   const { user_id } = req.params;
 
@@ -80,6 +76,25 @@ router.get('/fetchUserLocation/:user_id', async (req, res) => {
     res.status(200).json(locations);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch locations' });
+  }
+});
+
+router.get('/selectedLocation/:user_id', async (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const selectedLocation = await UserLocation.findOne({
+      where: { user_id, selected: true },
+    });
+
+    if (!selectedLocation) {
+      return res.status(200).json({ location_road_address: '역삼역 2번 출구' });
+    }
+
+    res.status(200).json(selectedLocation);
+  } catch (error) {
+    console.error('Error fetching selected location:', error);
+    res.status(500).json({ error: 'Failed to fetch selected location' });
   }
 });
 
