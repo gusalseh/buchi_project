@@ -23,6 +23,7 @@ const UserLocation = ({ saveLocation, visible }) => {
   const [loading, setLoading] = useState(false); // 카카오 지도 뜨기전 로딩바
   const [isAlertVisible, setIsAlertVisible] = useState(false); // 10개 이상 주소 등록할때 경고모달
   const [isConfirmVisible, setIsConfirmVisible] = useState(false); // 현재 설정 위치 변경 확인모달
+  const [isLimitVisible, setIsLimitVisible] = useState(false); // 근무지, 출장지는 1개씩 제한모달
   const [selectedLocationId, setSelectedLocationId] = useState(null); // 선택된 위치 ID
 
   // 모달이 열릴 때마다 상태를 초기화
@@ -92,13 +93,30 @@ const UserLocation = ({ saveLocation, visible }) => {
     setSelectedLocationId(null);
   };
 
+  const handleLimitClose = () => {
+    setIsLimitVisible(false);
+  };
+
   const handleIframeLoad = () => {
     setLoading(false);
   };
 
   const handleRegisterLocation = async () => {
     try {
-      // 새로운 주소지 등록 요청 - 백엔드로
+      // '근무지' 또는 '출장지' 중 하나가 이미 등록되어 있는지 확인
+      const isOnsiteExists = registeredLocations.some((location) => location.location_type === 'onsite');
+      const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
+
+      if (locationType === '근무지' && isOnsiteExists) {
+        setIsLimitVisible(true);
+        return;
+      }
+
+      if (locationType === '출장지' && isOffsiteExists) {
+        setIsLimitVisible(true);
+        return;
+      }
+
       await createLocation({
         user_id: user.user_id,
         location_type: locationType,
@@ -582,6 +600,34 @@ const UserLocation = ({ saveLocation, visible }) => {
             onClick={handleConfirmClose}
           >
             아니요
+          </Button>
+        </div>
+      </Modal>
+      {/* 근무지 또는 출장지가 이미 있음 */}
+      <Modal
+        visible={isLimitVisible}
+        onCancel={handleLimitClose}
+        footer={null}
+        centered
+        closable={true}
+        bodyStyle={{ textAlign: 'center' }}
+      >
+        <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '24px' }}>
+          근무지와 출장지는 1개씩만 등록 가능합니다
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+          <Button
+            style={{
+              borderRadius: 'var(--BorderRadius-borderRadiusLG, 8px)',
+              backgroundColor: 'var(--0Gray-500, #737373)',
+              color: 'var(--Background-colorBgContainer, #FFF)',
+              width: '170px',
+              height: '40px',
+            }}
+            onClick={handleLimitClose}
+          >
+            확인
           </Button>
         </div>
       </Modal>
