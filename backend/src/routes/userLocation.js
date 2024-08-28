@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
   const existingLocations = await UserLocation.findAll({ where: { user_id } });
 
   // Check if the user already has a '근무지' or '출장지'
-  if (['onsite', 'offsite'].includes(location_type)) {
-    const existingLocation = await UserLocation.findOne({ where: { user_id, location_type } });
+  if (['onsite', 'offsite'].includes(dbLocationType)) {
+    const existingLocation = await UserLocation.findOne({ where: { user_id, location_type: dbLocationType } });
     if (existingLocation) {
       return res.status(400).json({ error: 'You can only have one 근무지 or 출장지' });
     }

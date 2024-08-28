@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin } from 'antd';
-import { EnvironmentOutlined, MoreOutlined } from '@ant-design/icons';
+import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin, Modal } from 'antd';
+import { EnvironmentOutlined, MoreOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
 import { createLocation, updateLocation, fetchUserLocations } from '../../features/userLocation';
 
@@ -14,7 +14,8 @@ const UserLocation = ({ saveLocation, visible }) => {
   const [isIframeVisible, setIsIframeVisible] = useState(false);
   const [registeredLocations, setRegisteredLocations] = useState([]); // 백엔드에서 받은 주소목록
   const [addressDetail, setAddressDetail] = useState({ roadAddress: '', jibunAddress: '', buildingName: '' }); // 등록할 주소 정보
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // 카카오 지도 뜨기전 로딩바
+  const [isAlertVisible, setIsAlertVisible] = useState(false); // 10개 이상 주소 등록할때 경고모달
 
   // 모달이 열릴 때마다 상태를 초기화
   useEffect(() => {
@@ -56,13 +57,21 @@ const UserLocation = ({ saveLocation, visible }) => {
   };
 
   const handleInputClick = () => {
-    if (!isIframeVisible) {
-      setIsIframeVisible(true);
-      setLoading(true);
+    if (registeredLocations.length >= 10) {
+      setIsAlertVisible(true);
     } else {
-      setIsIframeVisible(false);
-      setLoading(false);
+      if (!isIframeVisible) {
+        setIsIframeVisible(true);
+        setLoading(true);
+      } else {
+        setIsIframeVisible(false);
+        setLoading(false);
+      }
     }
+  };
+
+  const handleAlertClose = () => {
+    setIsAlertVisible(false);
   };
 
   const handleIframeLoad = () => {
@@ -94,7 +103,12 @@ const UserLocation = ({ saveLocation, visible }) => {
       setIsIframeVisible(false);
       setLoading(false);
     } catch (error) {
-      console.log('handleRegisterLocation Failed');
+      // console.log('handleRegisterLocation Failed');
+      if (error.response && error.response.status === 400) {
+        alert('근무지 또는 출장지는 각각 1개만 설정 가능합니다.');
+      } else {
+        console.error('handleRegisterLocation Failed', error);
+      }
     }
   };
 
@@ -206,6 +220,33 @@ const UserLocation = ({ saveLocation, visible }) => {
               >
                 주소 검색하기
               </Button>
+              <Modal
+                visible={isAlertVisible}
+                onCancel={handleAlertClose}
+                footer={null}
+                centered
+                closable={true}
+                bodyStyle={{ textAlign: 'center' }}
+              >
+                <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', marginTop: '20px' }}>
+                  등록할 수 있는 위치는 최대 10개입니다
+                </div>
+                <div style={{ fontSize: '14px', color: '#737373', marginBottom: '24px' }}>
+                  추가로 등록을 원하시면 등록된 위치 중 하나를 삭제해 주세요
+                </div>
+                <Button
+                  style={{
+                    borderRadius: 'var(--BorderRadius-borderRadiusLG, 8px)',
+                    backgroundColor: 'var(--0Gray-500, #737373)',
+                    color: 'var(--Background-colorBgContainer, #FFF)',
+                    width: '170px',
+                    height: '40px',
+                  }}
+                  onClick={handleAlertClose}
+                >
+                  확인
+                </Button>
+              </Modal>
             </Col>
             <Col span={12}>
               <Button disabled style={{ width: '100%', height: '40px' }}>
@@ -214,14 +255,23 @@ const UserLocation = ({ saveLocation, visible }) => {
             </Col>
           </Row>
           {isIframeVisible && (
-            <Spin spinning={loading} tip="주소 검색 로딩 중...">
-              <iframe
-                src="/daum-postcode.html"
-                title="Daum Postcode"
-                style={{ width: '100%', height: '450px', border: 'none', marginLeft: '20px' }}
-                onLoad={handleIframeLoad}
-              />
-            </Spin>
+            <div>
+              <Spin spinning={loading} style={{ color: 'var(--0Gray-500, #737373)' }} tip="주소 검색 로딩 중...">
+                <iframe
+                  src="/daum-postcode.html"
+                  title="Daum Postcode"
+                  style={{ width: '100%', height: '450px', border: 'none', marginLeft: '20px' }}
+                  onLoad={handleIframeLoad}
+                />
+              </Spin>
+              <style>
+                {`
+              .ant-spin-dot-item {
+                background-color: var(--0Gray-500, #737373) !important;
+              }
+            `}
+              </style>
+            </div>
           )}
           {/* 등록된 주소지가 유무에 따른 UI 구분 */}
           {!isIframeVisible &&
@@ -252,8 +302,15 @@ const UserLocation = ({ saveLocation, visible }) => {
                       {React.cloneElement(getLocationIcon(location.location_type), {
                         style: { fontSize: 36, marginRight: 20, color: '#A3A3A3' },
                       })}
-                      <div style={{ textAlign: 'start' }}>
-                        <div style={{ fontWeight: 'bold', marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
+                      {/* <div style={{ textAlign: 'start' }}>
+                        <div
+                          style={{
+                            color: 'var(--0Gray-800, #262626)',
+                            marginBottom: '5px',
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
+                        >
                           {location.location_type === 'onsite' && '근무지'}
                           {location.location_type === 'offsite' && '출장지'}
                           {location.selected && (
@@ -278,14 +335,79 @@ const UserLocation = ({ saveLocation, visible }) => {
                             </div>
                           )}
                         </div>
+                        <div>
+                          {location.location_name || location.location_building_name || location.location_road_address}
+                        </div>
+                        <div style={{ color: '#737373' }}>
+                          {!location.location_name && !location.location_building_name && location.location_road_address
+                            ? location.location_jibun_address
+                            : location.location_road_address}
+                        </div>
+                      </div> */}
 
-                        <div>{location.location_name}</div>
-                        <div style={{ color: '#737373' }}>{location.location_road_address}</div>
+                      <div style={{ textAlign: 'start' }}>
+                        <div
+                          style={{
+                            color: 'var(--kakao-logo, #000)',
+                            marginBottom: '5px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontWeight: location.selected ? 600 : 400, // selected 여부에 따른 font-weight
+                          }}
+                        >
+                          {location.location_type === 'onsite' && '근무지'}
+                          {location.location_type === 'offsite' && '출장지'}
+                          {location.selected && (
+                            <div
+                              style={{
+                                borderRadius: '4px',
+                                border: '1px solid var(--0Primary-100, #F2CCC7)',
+                                color: 'var(--0Primary-500, #CC3C28)',
+                                backgroundColor: 'var(--0Primary-50, #FDF5F4)',
+                                padding: '1px 8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                marginLeft: '8px',
+                                height: '20px',
+                                fontSize: '12px',
+                                fontFamily: 'Inter',
+                                fontWeight: '500',
+                              }}
+                            >
+                              현재 설정된 위치
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            color:
+                              location.location_type === 'etc'
+                                ? 'var(--kakao-logo, #000)'
+                                : location.selected
+                                ? 'var(--0Gray-800, #262626)'
+                                : '#737373',
+                            fontWeight: location.selected ? 600 : 400,
+                          }}
+                        >
+                          {location.location_name || location.location_building_name || location.location_road_address}
+                        </div>
+                        <div
+                          style={{
+                            color: location.selected ? 'var(--0Gray-700, #404040)' : 'var(--0Gray-500, #737373)',
+                          }}
+                        >
+                          {!location.location_name && !location.location_building_name && location.location_road_address
+                            ? location.location_jibun_address
+                            : location.location_road_address}
+                        </div>
                       </div>
                     </div>
-                    <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
-                      <Button type="text" icon={<MoreOutlined />} />
-                    </Dropdown>
+                    {!location.selected && (
+                      <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
+                        <Button type="text" icon={<MoreOutlined />} />
+                      </Dropdown>
+                    )}
                   </div>
                 ))}
               </div>
