@@ -17,6 +17,8 @@ const UserLocation = ({ saveLocation, visible }) => {
   const [addressDetail, setAddressDetail] = useState({ roadAddress: '', jibunAddress: '', buildingName: '' }); // 등록할 주소 정보
   const [loading, setLoading] = useState(false); // 카카오 지도 뜨기전 로딩바
   const [isAlertVisible, setIsAlertVisible] = useState(false); // 10개 이상 주소 등록할때 경고모달
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false); // 현재 설정 위치 변경 확인모달
+  const [selectedLocationId, setSelectedLocationId] = useState(null); // 선택된 위치 ID
 
   // 모달이 열릴 때마다 상태를 초기화
   useEffect(() => {
@@ -80,6 +82,11 @@ const UserLocation = ({ saveLocation, visible }) => {
     setIsAlertVisible(false);
   };
 
+  const handleConfirmClose = () => {
+    setIsConfirmVisible(false);
+    setSelectedLocationId(null);
+  };
+
   const handleIframeLoad = () => {
     setLoading(false);
   };
@@ -134,9 +141,15 @@ const UserLocation = ({ saveLocation, visible }) => {
         return 0;
       });
       setRegisteredLocations(fetchLocations);
+      handleConfirmClose();
     } catch (error) {
       console.log('handleSelectLocation Failed');
     }
+  };
+
+  const handleLocationClick = (locationId) => {
+    setSelectedLocationId(locationId);
+    setIsConfirmVisible(true);
   };
 
   const handleDeleteLocation = (index) => {
@@ -235,6 +248,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               >
                 주소 검색하기
               </Button>
+              {/* 등록주소 10개인데 더 등록하려고 하면 뜨는 경고모달 */}
               <Modal
                 visible={isAlertVisible}
                 onCancel={handleAlertClose}
@@ -295,87 +309,83 @@ const UserLocation = ({ saveLocation, visible }) => {
             ) : (
               <div style={{ marginTop: 20, width: '100%', overflow: 'hidden' }}>
                 {registeredLocations.map((location, index) => (
-                  <div
-                    key={location.location_id}
-                    onClick={() => handleSelectLocation(location.location_id)}
-                    style={{
-                      marginBottom: 10,
-                      paddingTop: 10,
-                      paddingRight: 10,
-                      paddingBottom: 10,
-                      paddingLeft: 15,
-                      border: `1px solid ${
-                        location.selected ? 'var(--0Gray-700, #404040)' : 'var(--0Gray-200, #E5E5E5)'
-                      }`,
-                      borderRadius: 8,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      // alignItems: 'center',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      {React.cloneElement(getLocationIcon(location.location_type), {
-                        style: { fontSize: 36, marginRight: 20, color: '#A3A3A3' },
-                      })}
-                      {/* <div style={{ textAlign: 'start' }}>
-                        <div
-                          style={{
-                            color: 'var(--0Gray-800, #262626)',
-                            marginBottom: '5px',
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          {location.location_type === 'onsite' && '근무지'}
-                          {location.location_type === 'offsite' && '출장지'}
-                          {location.selected && (
-                            <div
-                              style={{
-                                borderRadius: '4px',
-                                border: '1px solid var(--0Primary-100, #F2CCC7)',
-                                color: 'var(--0Primary-500, #CC3C28)',
-                                backgroundColor: 'var(--0Primary-50, #FDF5F4)',
-                                padding: '1px 8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                marginLeft: '8px',
-                                height: '20px',
-                                fontSize: '12px',
-                                fontFamily: 'Inter',
-                                fontWeight: '500',
-                              }}
-                            >
-                              현재 설정된 위치
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          {location.location_name || location.location_building_name || location.location_road_address}
-                        </div>
-                        <div style={{ color: '#737373' }}>
-                          {!location.location_name && !location.location_building_name && location.location_road_address
-                            ? location.location_jibun_address
-                            : location.location_road_address}
-                        </div>
-                      </div> */}
-
-                      <div style={{ textAlign: 'start' }}>
-                        <div
-                          style={{
-                            color: 'var(--kakao-logo, #000)',
-                            marginBottom: '5px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            fontWeight: location.selected ? 600 : 400, // selected 여부에 따른 font-weight
-                          }}
-                        >
-                          {location.location_type === 'onsite' && '근무지'}
-                          {location.location_type === 'offsite' && '출장지'}
-                          {(location.location_type === 'onsite' || location.location_type === 'offsite') &&
-                            location.selected && (
+                  <div>
+                    <div
+                      key={location.location_id}
+                      onClick={() => handleLocationClick(location.location_id)}
+                      style={{
+                        marginBottom: 10,
+                        paddingTop: 10,
+                        paddingRight: 10,
+                        paddingBottom: 10,
+                        paddingLeft: 15,
+                        border: `1px solid ${
+                          location.selected ? 'var(--0Gray-700, #404040)' : 'var(--0Gray-200, #E5E5E5)'
+                        }`,
+                        borderRadius: 8,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        position: 'relative',
+                        cursor: 'pointer',
+                        // alignItems: 'center',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {React.cloneElement(getLocationIcon(location.location_type), {
+                          style: { fontSize: 36, marginRight: 20, color: '#A3A3A3' },
+                        })}
+                        <div style={{ textAlign: 'start' }}>
+                          <div
+                            style={{
+                              color: 'var(--kakao-logo, #000)',
+                              marginBottom: '5px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              fontWeight: location.selected ? 600 : 400,
+                            }}
+                          >
+                            {location.location_type === 'onsite' && '근무지'}
+                            {location.location_type === 'offsite' && '출장지'}
+                            {(location.location_type === 'onsite' || location.location_type === 'offsite') &&
+                              location.selected && (
+                                <div
+                                  style={{
+                                    borderRadius: '4px',
+                                    border: '1px solid var(--0Primary-100, #F2CCC7)',
+                                    color: 'var(--0Primary-500, #CC3C28)',
+                                    backgroundColor: 'var(--0Primary-50, #FDF5F4)',
+                                    padding: '1px 8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    marginLeft: '8px',
+                                    height: '20px',
+                                    fontSize: '12px',
+                                    fontFamily: 'Inter',
+                                    fontWeight: '500',
+                                  }}
+                                >
+                                  현재 설정된 위치
+                                </div>
+                              )}
+                          </div>
+                          <div
+                            style={{
+                              color:
+                                location.location_type === 'etc'
+                                  ? 'var(--kakao-logo, #000)'
+                                  : location.selected
+                                  ? 'var(--0Gray-800, #262626)'
+                                  : '#737373',
+                              fontWeight: location.selected ? 600 : 400,
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            {location.location_name ||
+                              location.location_building_name ||
+                              location.location_road_address}
+                            {location.location_type === 'etc' && location.selected && (
                               <div
                                 style={{
                                   borderRadius: '4px',
@@ -396,59 +406,26 @@ const UserLocation = ({ saveLocation, visible }) => {
                                 현재 설정된 위치
                               </div>
                             )}
-                        </div>
-                        <div
-                          style={{
-                            color:
-                              location.location_type === 'etc'
-                                ? 'var(--kakao-logo, #000)'
-                                : location.selected
-                                ? 'var(--0Gray-800, #262626)'
-                                : '#737373',
-                            fontWeight: location.selected ? 600 : 400,
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          {location.location_name || location.location_building_name || location.location_road_address}
-                          {location.location_type === 'etc' && location.selected && (
-                            <div
-                              style={{
-                                borderRadius: '4px',
-                                border: '1px solid var(--0Primary-100, #F2CCC7)',
-                                color: 'var(--0Primary-500, #CC3C28)',
-                                backgroundColor: 'var(--0Primary-50, #FDF5F4)',
-                                padding: '1px 8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                marginLeft: '8px',
-                                height: '20px',
-                                fontSize: '12px',
-                                fontFamily: 'Inter',
-                                fontWeight: '500',
-                              }}
-                            >
-                              현재 설정된 위치
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          style={{
-                            color: location.selected ? 'var(--0Gray-700, #404040)' : 'var(--0Gray-500, #737373)',
-                          }}
-                        >
-                          {!location.location_name && !location.location_building_name && location.location_road_address
-                            ? location.location_jibun_address
-                            : location.location_road_address}
+                          </div>
+                          <div
+                            style={{
+                              color: location.selected ? 'var(--0Gray-700, #404040)' : 'var(--0Gray-500, #737373)',
+                            }}
+                          >
+                            {!location.location_name &&
+                            !location.location_building_name &&
+                            location.location_road_address
+                              ? location.location_jibun_address
+                              : location.location_road_address}
+                          </div>
                         </div>
                       </div>
+                      {!location.selected && (
+                        <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
+                          <Button type="text" icon={<MoreOutlined />} />
+                        </Dropdown>
+                      )}
                     </div>
-                    {!location.selected && (
-                      <Dropdown overlay={menu(index)} trigger={['click']} placement="bottomRight">
-                        <Button type="text" icon={<MoreOutlined />} />
-                      </Dropdown>
-                    )}
                   </div>
                 ))}
               </div>
@@ -560,6 +537,46 @@ const UserLocation = ({ saveLocation, visible }) => {
           </Button>
         </div>
       )}
+      {/* 현재 위치 변경 확인모달 */}
+      <Modal
+        visible={isConfirmVisible}
+        onCancel={handleConfirmClose}
+        footer={null}
+        centered
+        closable={true}
+        bodyStyle={{ textAlign: 'center' }}
+      >
+        <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '24px' }}>위치를 변경하시겠습니까?</div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+          <Button
+            style={{
+              borderRadius: '8px',
+              backgroundColor: '#CC3C28',
+              color: '#FFF',
+              width: '120px',
+              height: '40px',
+              fontWeight: 'bold',
+            }}
+            onClick={() => handleSelectLocation(selectedLocationId)} // Handle the "네" action
+          >
+            네
+          </Button>
+          <Button
+            style={{
+              borderRadius: '8px',
+              backgroundColor: '#A3A3A3',
+              color: '#FFF',
+              width: '120px',
+              height: '40px',
+              fontWeight: 'bold',
+            }}
+            onClick={handleConfirmClose}
+          >
+            아니요
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 };
