@@ -6,6 +6,7 @@ import { Layout, Typography, DatePicker, TimePicker, InputNumber, Row, Col, Butt
 import { CalendarOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import UserLocation from './UserLocationModal';
 import { fetchSelectedLocation } from '../../features/userLocation';
+import LoginAlert from '../alert/LoginAlert';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -15,6 +16,7 @@ const Filter = () => {
   const [locationName, setLocationName] = useState('역삼역 2번 출구');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
+  const [isLoginAlertVisible, setIsLoginAlertVisible] = useState(false);
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -46,6 +48,10 @@ const Filter = () => {
       const selectedLocation = await fetchSelectedLocation(user.user_id);
       setLocationName(selectedLocation.location_road_address);
     }
+  };
+
+  const handleLoginAlertClose = () => {
+    setIsLoginAlertVisible(false); // 로그인 경고 모달 닫기
   };
 
   return (
@@ -125,10 +131,17 @@ const Filter = () => {
             value="location"
           >
             {locationName}
-            <DownOutlined
-              onClick={showLocationModal}
-              style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-            />
+            {user ? (
+              <DownOutlined
+                onClick={showLocationModal}
+                style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+              />
+            ) : (
+              <DownOutlined
+                onClick={() => setIsLoginAlertVisible(true)}
+                style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+              />
+            )}
           </Button>
 
           <div
@@ -170,6 +183,7 @@ const Filter = () => {
           </Col>
         </Row>
       </Content>
+
       <Modal
         key={modalKey}
         title=""
@@ -183,6 +197,8 @@ const Filter = () => {
       >
         <UserLocation visible={isModalVisible} />
       </Modal>
+
+      <LoginAlert visible={isLoginAlertVisible} onClose={handleLoginAlertClose} />
     </Layout>
   );
 };
