@@ -35,6 +35,9 @@ app.use('/image', imageRoutes);
 const userLocationRoutes = require('./routes/userLocation');
 app.use('/api/userLocation', userLocationRoutes);
 
+const companyRoutes = require('./routes/company');
+app.use('/api/companies', companyRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

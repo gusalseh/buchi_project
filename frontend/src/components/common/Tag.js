@@ -36,6 +36,7 @@ const Tag = () => {
       <div style={{ height: 32, fontSize: 32 }}>#태그</div>
       <div
         style={{
+          height: 570,
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
