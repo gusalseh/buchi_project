@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Daum Postcode</title>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  </head>
+  <body>
+    <div id="postcode"></div>
+    <script>
+      new daum.Postcode({
+        oncomplete: function (data) {
+          // 주소 데이터 전달
+          window.parent.postMessage(
+            {
+              type: 'address',
+              address: data,
+            },
+            '*'
+          );
+        },
+      }).embed(document.getElementById('postcode'));
+    </script>
+  </body>
+</html>
