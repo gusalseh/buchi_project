@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
 import { Modal, Select } from 'antd';
-import { Layout, Typography, DatePicker, TimePicker, InputNumber, Row, Col, Button } from 'antd';
+import { Layout, Typography, DatePicker, InputNumber, Row, Col, Button } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 import UserLocation from './UserLocationModal';
 import { fetchSelectedLocation } from '../../features/userLocation';
 import LoginAlert from '../alert/LoginAlert';
 
 const { Content } = Layout;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Option } = Select;
 
 const Filter = () => {
@@ -55,7 +55,7 @@ const Filter = () => {
   };
 
   const handleLoginAlertClose = () => {
-    setIsLoginAlertVisible(false); // 로그인 경고 모달 닫기
+    setIsLoginAlertVisible(false);
   };
 
   const getTodayFormatted = () => {
@@ -63,7 +63,7 @@ const Filter = () => {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
-    const dow = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(today);
+    // const dow = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(today); //(추후사용) 한글 요일로 바꿔주는 로직
 
     return `${year}년 ${month < 10 ? `0${month}` : month}월 ${day < 10 ? `0${day}` : day}일`;
   };
@@ -97,7 +97,6 @@ const Filter = () => {
               border: 'none',
               display: 'flex',
               flexDirection: 'row',
-              textAlign: 'center',
               fontSize: '24px',
               fontStyle: 'normal',
               fontWeight: 300,
@@ -105,7 +104,7 @@ const Filter = () => {
             }}
             value="location"
           >
-            {locationName == '역삼역 2번 출구' ? (
+            {locationName === '역삼역 2번 출구' ? (
               <span style={{ color: 'var(--0Gray-500, #737373)' }}>{locationName}</span>
             ) : (
               <span>{locationName}</span>
