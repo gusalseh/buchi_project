@@ -20,6 +20,7 @@ const Filter = () => {
   const [isLoginAlertVisible, setIsLoginAlertVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null); // TODO: 날짜, 시간, 인원의 정보를 한꺼번에 state 관리해주는게 좋아보임
   const [selectedTime, setSelectedTime] = useState(null);
+  const [isSelectOpen, setIsSelectOpen] = useState(false); // 시간 선택 filter 열릴지 말지
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -63,7 +64,6 @@ const Filter = () => {
     const month = today.getMonth() + 1;
     const day = today.getDate();
     const dow = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(today);
-    console.log(dow);
 
     return `${year}년 ${month < 10 ? `0${month}` : month}월 ${day < 10 ? `0${day}` : day}일`;
   };
@@ -77,69 +77,15 @@ const Filter = () => {
 
   const handleDateChange = (dateString) => {
     setSelectedDate(dateString);
+    setIsSelectOpen(true);
   };
 
   const handleTimeChange = (value) => {
     setSelectedTime(value);
+    setIsSelectOpen(false);
   };
 
   return (
-    // <div
-    //   style={{
-    //     width: '100%',
-    //     height: 235,
-    //     padding: '40px 0px',
-    //     backgroundColor: 'green',
-    //   }}
-    // >
-    //   <div
-    //     style={{
-    //       display: 'flex',
-    //       width: '100%',
-    //       height: 67,
-    //       backgroundColor: 'red',
-    //       justifyContent: 'center',
-    //     }}
-    //   >
-    //     <div
-    //       style={{
-    //         display: 'flex',
-    //         flexDirection: 'column',
-    //         width: '400px',
-    //         height: 67,
-    //         backgroundColor: 'blue',
-    //       }}
-    //     >
-    //       <div
-    //         style={{
-    //           display: 'flex',
-    //           justifyContent: 'center',
-    //           alignItems: 'center',
-    //           paddingTop: 0,
-    //           width: 400,
-    //           height: 40,
-    //           backgroundColor: 'purple',
-    //         }}
-    //       >
-    //         <p style={{ width: 400, fontSize: 32, height: 40, textAlign: 'center' }}>역삼역</p>
-    //         <button style={{ width: 24, height: 24 }}>
-    //           <DownOutlined style={{ width: 24, height: 24 }} />
-    //         </button>
-    //       </div>
-    //       <div
-    //         style={{
-    //           fontSize: 15,
-    //           width: '400px',
-    //           height: 15,
-    //           backgroundColor: 'yellow',
-    //           textAlign: 'center',
-    //         }}
-    //       >
-    //         근처 추천 회식 장소입니다.
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
     <Layout style={{ Height: '235px', backgroundColor: 'white' }}>
       <Content style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px', width: 400 }}>
@@ -210,6 +156,8 @@ const Filter = () => {
               placeholder="저녁회식"
               style={{ width: 240, height: 40, color: 'rgba(0, 0, 0, 0.25)' }}
               suffixIcon={<ClockCircleOutlined style={{ fontSize: 15 }} />}
+              open={isSelectOpen}
+              onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
               onChange={handleTimeChange}
               value={selectedTime}
             >
