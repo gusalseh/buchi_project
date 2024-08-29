@@ -62,6 +62,8 @@ const Filter = () => {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
+    const dow = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(today);
+    console.log(dow);
 
     return `${year}년 ${month < 10 ? `0${month}` : month}월 ${day < 10 ? `0${day}` : day}일`;
   };
@@ -77,7 +79,7 @@ const Filter = () => {
     setSelectedDate(dateString);
   };
 
-  const handleChange = (value) => {
+  const handleTimeChange = (value) => {
     setSelectedTime(value);
   };
 
@@ -157,7 +159,11 @@ const Filter = () => {
             }}
             value="location"
           >
-            {locationName}
+            {locationName == '역삼역 2번 출구' ? (
+              <span style={{ color: 'var(--0Gray-500, #737373)' }}>{locationName}</span>
+            ) : (
+              <span>{locationName}</span>
+            )}
             {user ? (
               <DownOutlined
                 onClick={showLocationModal}
@@ -204,7 +210,7 @@ const Filter = () => {
               placeholder="저녁회식"
               style={{ width: 240, height: 40, color: 'rgba(0, 0, 0, 0.25)' }}
               suffixIcon={<ClockCircleOutlined style={{ fontSize: 15 }} />}
-              onChange={handleChange}
+              onChange={handleTimeChange}
               value={selectedTime}
             >
               <Option value="점심회식" style={{ margin: '0 0 10px 0' }}>
