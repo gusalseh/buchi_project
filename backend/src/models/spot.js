@@ -26,16 +26,6 @@ class Spot extends Sequelize.Model {
           type: Sequelize.DECIMAL(11, 8),
           allowNull: true,
         },
-        // 대분류 카테고리 확정 필요
-        spot_category_1: {
-          type: Sequelize.ENUM('korean', 'chinese', 'japanese', 'western', 'asian', 'fushion'),
-          allowNull: false,
-        },
-        // 소분류 카테고리 확정 필요
-        spot_category_2: {
-          type: Sequelize.ENUM('cat1', 'cat2', 'cat3', 'cat4', 'cat5'),
-          allowNull: true,
-        },
         private_room: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
@@ -117,6 +107,30 @@ class Spot extends Sequelize.Model {
           allowNull: true,
         },
         // image url 어디에 서빙할지 (spot 테이블 or image 테이블)
+        spot_main_img: {
+          type: Sequelize.STRING(200),
+          allowNull: false,
+        },
+        spot_sub_img_1: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_2: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_3: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_4: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_5: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
       },
       {
         sequelize,
@@ -130,8 +144,6 @@ class Spot extends Sequelize.Model {
       }
     );
   }
-
-  static associate(db) {}
 }
 
 module.exports = Spot;

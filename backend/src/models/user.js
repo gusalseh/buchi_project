@@ -76,11 +76,6 @@ class User extends Sequelize.Model {
       }
     );
   }
-
-  static associate(db) {
-    // User는 여러 Tag를 가질 수 있으며, UserTag를 통해 연결
-    User.belongsToMany(db.Tag, { through: db.SpotTag, foreignKey: 'user_id' });
-  }
 }
 
 module.exports = User;

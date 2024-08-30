@@ -64,10 +64,6 @@ class UserLocation extends Sequelize.Model {
       }
     );
   }
-
-  static associate(db) {
-    // UserLocation user를 참조합니다.
-  }
 }
 
 module.exports = UserLocation;
