@@ -59,7 +59,7 @@ const Tag = () => {
             width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
           }}
         >
-          {Array.from({ length: totalCards - 1 }).map(
+          {Array.from({ length: totalCards }).map(
             (
               _,
               index // 마지막 카드는 제외하고 렌더링
@@ -76,7 +76,7 @@ const Tag = () => {
             )
           )}
         </div>
-        {currentIndex < totalCards - 2 && (
+        {currentIndex < totalCards - 3 && (
           <Button onClick={handleNext} style={{ position: 'absolute', right: 0, zIndex: 1 }}>
             &gt;
           </Button>

@@ -296,8 +296,8 @@ const CompanyModal = ({ visible, onClose }) => {
           marginTop: 16,
           width: '100%',
           height: 48,
-          backgroundColor: selectedItemId || (companyName && industryType) ? 'red' : 'lightgray', // 선택되거나 직접 입력 시 붉은색
-          borderColor: selectedItemId || (companyName && industryType) ? 'red' : 'lightgray',
+          backgroundColor: selectedItemId || (companyName && industryType) ? '#CC3C28' : '#A3A3A3', // 선택되거나 직접 입력 시 붉은색
+          borderColor: selectedItemId || (companyName && industryType) ? '#CC3C28' : '#A3A3A3',
           color: 'white',
         }}
       >
