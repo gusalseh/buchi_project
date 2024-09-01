@@ -4,6 +4,7 @@ import MainPage from '../pages/MainPage';
 import Layout from './layout';
 import ImagePage from '../pages/ImagePage';
 import ConsentPage from '../pages/ConsentPage';
+import FilterPage from '../pages/FilterPage';
 // 필요한 다른 페이지 컴포넌트도 임포트
 
 const RoutesSetup = () => {
@@ -15,6 +16,7 @@ const RoutesSetup = () => {
           <Route path="/imagetest" element={<ImagePage />} />
         </Route>
         <Route path="/consent" element={<ConsentPage />}></Route>
+        <Route path="/filterResult" element={<FilterPage />} />
       </Routes>
     </Router>
   );

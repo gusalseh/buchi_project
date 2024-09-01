@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Modal, Select } from 'antd';
 import { Layout, Typography, DatePicker, InputNumber, Row, Col, Button, Spin } from 'antd';
@@ -26,9 +27,11 @@ const Filter = () => {
   const [isLoginAlertVisible, setIsLoginAlertVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null); // TODO: 날짜, 시간, 인원의 정보를 한꺼번에 state 관리해주는게 좋아보임
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedAmount, setSelectedAmount] = useState(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false); // 시간 선택 filter 열릴지 말지
   const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
   const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -81,7 +84,6 @@ const Filter = () => {
           }
 
           const data = await response.json();
-          console.log('data:', data.results);
 
           if (data.results && data.results[0]) {
             const roadAddress = formatAddress(data.results) || '주소를 찾을 수 없습니다.';
@@ -175,6 +177,18 @@ const Filter = () => {
   const handleTimeChange = (value) => {
     setSelectedTime(value);
     setIsSelectOpen(false);
+  };
+
+  const handleSearch = () => {
+    const date = selectedDate ? selectedDate.format('YYYY년 MM월 DD일') : getTodayFormatted();
+    const time = selectedTime || '저녁회식';
+    const amount = selectedAmount || 3;
+
+    console.log(date);
+    console.log(time);
+    console.log(amount);
+
+    navigate(`/filterResult?date=${date}&time=${time}&amount=${amount}`);
   };
 
   return (
@@ -273,6 +287,7 @@ const Filter = () => {
               suffixIcon={<UserOutlined />}
               min={1}
               max={100}
+              value={selectedAmount}
               onChange={(value) => {
                 if (value < 1) {
                   return 1;
@@ -280,7 +295,7 @@ const Filter = () => {
                 if (value > 100) {
                   return 100;
                 }
-                return value;
+                setSelectedAmount(value);
               }}
             />
           </Col>
@@ -297,6 +312,7 @@ const Filter = () => {
                 alignItems: 'center',
                 padding: 0,
               }}
+              onClick={handleSearch}
             />
           </Col>
         </Row>
