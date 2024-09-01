@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
 import { Modal, Select } from 'antd';
-import { Layout, Typography, DatePicker, InputNumber, Row, Col, Button } from 'antd';
-import { CalendarOutlined, ClockCircleOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
+import { Layout, Typography, DatePicker, InputNumber, Row, Col, Button, Spin } from 'antd';
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  UserOutlined,
+  SearchOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import UserLocation from './UserLocationModal';
 import { fetchSelectedLocation } from '../../features/userLocation';
 import LoginAlert from '../alert/LoginAlert';
@@ -22,6 +28,7 @@ const Filter = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false); // 시간 선택 filter 열릴지 말지
   const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
+  const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -39,13 +46,14 @@ const Filter = () => {
 
   useEffect(() => {
     if (isLocationFetched && !locationName) {
-      // 현재 위치 가져오기
       const getCurrentLocation = () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(onSuccess, onError);
-        } else {
-          alert('Geolocation is not supported by this browser.');
-        }
+        return new Promise((resolve, reject) => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          } else {
+            reject(new Error('Geolocation is not supported by this browser.'));
+          }
+        });
       };
 
       // 현재 위치를 성공적으로 받아온 경우
@@ -63,6 +71,7 @@ const Filter = () => {
       // 좌표를 도로명 주소로 변환
       const getReverseGeocode = async (latitude, longitude) => {
         try {
+          setIsLoading(true);
           const response = await fetch(`http://localhost:3000/reverse-geocode?lat=${latitude}&lon=${longitude}`);
 
           if (!response.ok) {
@@ -72,6 +81,7 @@ const Filter = () => {
           }
 
           const data = await response.json();
+          console.log('data:', data.results);
 
           if (data.results && data.results[0]) {
             const roadAddress = formatAddress(data.results) || '주소를 찾을 수 없습니다.';
@@ -81,10 +91,21 @@ const Filter = () => {
           }
         } catch (error) {
           console.error('Reverse geocoding failed:', error);
+        } finally {
+          setIsLoading(false);
         }
       };
 
-      getCurrentLocation();
+      const getFetchedLocation = async () => {
+        try {
+          const position = await getCurrentLocation();
+          onSuccess(position);
+        } catch (error) {
+          onError(error);
+        }
+      };
+
+      getFetchedLocation();
     }
   }, [locationName, isLocationFetched]);
 
@@ -160,38 +181,38 @@ const Filter = () => {
     <Layout style={{ Height: '235px', backgroundColor: 'white' }}>
       <Content style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px', width: 400 }}>
-          <Button
-            style={{
-              minWidth: 250,
-              width: 400,
-              textAlign: 'center',
-              border: 'none',
-              display: 'flex',
-              flexDirection: 'row',
-              fontSize: '24px',
-              fontStyle: 'normal',
-              fontWeight: 300,
-              position: 'relative',
-            }}
-            value="location"
-          >
-            {locationName === '역삼역 2번 출구' ? (
-              <span style={{ color: 'var(--0Gray-500, #737373)' }}>{locationName}</span>
-            ) : (
+          {isLoading ? (
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+          ) : (
+            <Button
+              style={{
+                minWidth: 250,
+                width: 400,
+                textAlign: 'center',
+                border: 'none',
+                display: 'flex',
+                flexDirection: 'row',
+                fontSize: '24px',
+                fontStyle: 'normal',
+                fontWeight: 300,
+                position: 'relative',
+              }}
+              value="location"
+            >
               <span>{locationName}</span>
-            )}
-            {user ? (
-              <DownOutlined
-                onClick={showLocationModal}
-                style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-              />
-            ) : (
-              <DownOutlined
-                onClick={() => setIsLoginAlertVisible(true)}
-                style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-              />
-            )}
-          </Button>
+              {user ? (
+                <DownOutlined
+                  onClick={showLocationModal}
+                  style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+                />
+              ) : (
+                <DownOutlined
+                  onClick={() => setIsLoginAlertVisible(true)}
+                  style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+                />
+              )}
+            </Button>
+          )}
 
           <div
             style={{
