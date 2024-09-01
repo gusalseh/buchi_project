@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const fetch = require('node-fetch');
 const { sequelize } = require('./models');
 const { corsMiddleware } = require('./middlewares');
 const passport = require('passport');
@@ -37,6 +38,22 @@ app.use('/api/userLocation', userLocationRoutes);
 
 const companyRoutes = require('./routes/company');
 app.use('/api/companies', companyRoutes);
+
+app.get('/reverse-geocode', async (req, res) => {
+  const { lat, lon } = req.query;
+  const response = await fetch(
+    `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&orders=roadaddr&output=json`,
+    {
+      method: 'GET',
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_MAP_CLIENT_ID,
+        'X-NCP-APIGW-API-KEY': process.env.NAVER_MAP_CLIENT_SECRET,
+      },
+    }
+  );
+  const data = await response.json();
+  res.json(data);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
