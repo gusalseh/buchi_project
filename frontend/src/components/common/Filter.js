@@ -28,6 +28,8 @@ const Filter = () => {
   const [selectedDate, setSelectedDate] = useState(null); // TODO: 날짜, 시간, 인원의 정보를 한꺼번에 state 관리해주는게 좋아보임
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedAmount, setSelectedAmount] = useState(null);
+  const [selectedLatitude, setSelectedLatitude] = useState(null);
+  const [selectedLongitude, setSelectedLongitude] = useState(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false); // 시간 선택 filter 열릴지 말지
   const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
   const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
@@ -59,23 +61,22 @@ const Filter = () => {
         });
       };
 
-      // 현재 위치를 성공적으로 받아온 경우
       const onSuccess = (position) => {
         const { latitude, longitude } = position.coords;
+        setSelectedLatitude(latitude);
+        setSelectedLongitude(longitude);
         getReverseGeocode(latitude, longitude);
       };
 
-      // 위치 정보를 받아오지 못한 경우
       const onError = (error) => {
         console.error(error);
         alert('위치를 가져올 수 없습니다.');
       };
 
-      // 좌표를 도로명 주소로 변환
       const getReverseGeocode = async (latitude, longitude) => {
         try {
           setIsLoading(true);
-          const response = await fetch(`http://localhost:3000/reverse-geocode?lat=${latitude}&lon=${longitude}`);
+          const response = await fetch(`http://localhost:3000/reverse_geocode?lat=${latitude}&lon=${longitude}`);
 
           if (!response.ok) {
             const text = await response.text();
@@ -179,16 +180,44 @@ const Filter = () => {
     setIsSelectOpen(false);
   };
 
-  const handleSearch = () => {
+  const getCoordinates = async (address) => {
+    try {
+      const response = await fetch(`http://localhost:3000/geocode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch coordinates');
+      }
+
+      const data = await response.json();
+      return { latitude: data.latitude, longitude: data.longitude };
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      throw error;
+    }
+  };
+
+  const handleSearch = async () => {
     const date = selectedDate ? selectedDate.format('YYYY년 MM월 DD일') : getTodayFormatted();
     const time = selectedTime || '저녁회식';
     const amount = selectedAmount || 3;
 
+    const { latitude, longitude } = await getCoordinates(locationName);
+    setSelectedLatitude(latitude);
+    setSelectedLongitude(longitude);
+
     console.log(date);
     console.log(time);
     console.log(amount);
+    console.log(latitude);
+    console.log(longitude);
 
-    navigate(`/filterResult?date=${date}&time=${time}&amount=${amount}`);
+    navigate(`/filterResult?date=${date}&time=${time}&amount=${amount}&lat=${latitude}&lng=${longitude}`);
   };
 
   return (

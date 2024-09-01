@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('express-session');
-const fetch = require('node-fetch');
+const axios = require('axios');
 const { sequelize } = require('./models');
 const { corsMiddleware } = require('./middlewares');
 const passport = require('passport');
@@ -39,9 +39,9 @@ app.use('/api/userLocation', userLocationRoutes);
 const companyRoutes = require('./routes/company');
 app.use('/api/companies', companyRoutes);
 
-app.get('/reverse-geocode', async (req, res) => {
+app.get('/reverse_geocode', async (req, res) => {
   const { lat, lon } = req.query;
-  const response = await fetch(
+  const response = await axios.get(
     `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&orders=roadaddr&output=json`,
     {
       method: 'GET',
@@ -51,8 +51,34 @@ app.get('/reverse-geocode', async (req, res) => {
       },
     }
   );
-  const data = await response.json();
+  const data = response.data;
   res.json(data);
+});
+
+app.post('/geocode', async (req, res) => {
+  const { address } = req.body;
+
+  try {
+    const response = await axios.get(
+      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${encodeURIComponent(address)}`,
+      {
+        headers: {
+          'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_MAP_CLIENT_ID,
+          'X-NCP-APIGW-API-KEY': process.env.NAVER_MAP_CLIENT_SECRET,
+        },
+      }
+    );
+
+    if (response.data.addresses.length === 0) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+
+    const { y: latitude, x: longitude } = response.data.addresses[0];
+    res.json({ latitude, longitude });
+  } catch (error) {
+    console.error('Error fetching geocode:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 const PORT = process.env.PORT || 3000;

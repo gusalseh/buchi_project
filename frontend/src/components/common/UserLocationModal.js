@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin, Modal } from 'antd';
-import { EnvironmentOutlined, MoreOutlined, LoadingOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, MoreOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
 import {
   createLocation,
@@ -42,6 +42,7 @@ const UserLocation = ({ saveLocation, visible }) => {
       const fetchData = async () => {
         try {
           const fetchLocations = await fetchUserLocations(user.user_id);
+          console.log(fetchLocations);
           fetchLocations.sort((a, b) => {
             if (b.selected && !a.selected) return 1;
             if (a.selected && !b.selected) return -1;
@@ -139,10 +140,17 @@ const UserLocation = ({ saveLocation, visible }) => {
         return;
       }
 
+      const address = addressDetail.roadAddress || addressDetail.jibunAddress;
+
+      const { latitude, longitude } = await getCoordinates(address);
+      console.log('Latitude:', latitude, 'Longitude:', longitude);
+
       await createLocation({
         user_id: user.user_id,
         location_type: locationType,
         location_name: locationName || null,
+        location_latitude: latitude,
+        location_longitude: longitude,
         location_road_address: addressDetail.roadAddress,
         location_jibun_address: addressDetail.jibunAddress || null,
         location_building_name: addressDetail.buildingName || null,
@@ -166,7 +174,34 @@ const UserLocation = ({ saveLocation, visible }) => {
       setIsIframeVisible(false);
       setLoading(false);
     } catch (error) {
-      console.log('handleRegisterLocation Failed');
+      console.log('handleRegisterLocation Failed', error);
+      alert('Location registration failed: ' + error.message);
+    }
+  };
+
+  const getCoordinates = async (address) => {
+    try {
+      const response = await fetch(`http://localhost:3000/geocode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch coordinates');
+      }
+
+      const data = await response.json();
+
+      if (!data) {
+        throw new Error('No results found');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      throw error;
     }
   };
 
