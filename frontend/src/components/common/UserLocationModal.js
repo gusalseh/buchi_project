@@ -26,6 +26,7 @@ const UserLocation = ({ saveLocation, visible }) => {
   const [isConfirmVisible, setIsConfirmVisible] = useState(false); // 현재 설정 위치 변경 확인모달
   const [isLimitVisible, setIsLimitVisible] = useState(false); // 근무지, 출장지는 1개씩 제한모달
   const [selectedLocationId, setSelectedLocationId] = useState(null); // 선택된 위치 ID
+  const [limitMessage, setLimitMessage] = useState(''); // 근무지, 출장지 1개 제한 모달의 내용을 담는 상태
 
   // 모달이 열릴 때마다 상태를 초기화
   useEffect(() => {
@@ -69,6 +70,24 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleTypeChange = (e) => {
     setLocationType(e);
+
+    if (e === '근무지') {
+      const isOnsiteExists = registeredLocations.some((location) => location.location_type === 'onsite');
+      if (isOnsiteExists) {
+        setLimitMessage('근무지가 이미 등록되어 있습니다');
+        setIsLimitVisible(true);
+        return;
+      }
+    }
+
+    if (e === '출장지') {
+      const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
+      if (isOffsiteExists) {
+        setLimitMessage('출장지가 이미 등록되어 있습니다');
+        setIsLimitVisible(true);
+        return;
+      }
+    }
   };
 
   const handleInputClick = () => {
@@ -96,6 +115,7 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleLimitClose = () => {
     setIsLimitVisible(false);
+    setLimitMessage('');
   };
 
   const handleIframeLoad = () => {
@@ -108,11 +128,13 @@ const UserLocation = ({ saveLocation, visible }) => {
       const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
 
       if (locationType === '근무지' && isOnsiteExists) {
+        setLimitMessage('근무지와 출장지는 1개씩만 등록 가능합니다');
         setIsLimitVisible(true);
         return;
       }
 
       if (locationType === '출장지' && isOffsiteExists) {
+        setLimitMessage('근무지와 출장지는 1개씩만 등록 가능합니다');
         setIsLimitVisible(true);
         return;
       }
@@ -606,7 +628,8 @@ const UserLocation = ({ saveLocation, visible }) => {
         bodyStyle={{ textAlign: 'center' }}
       >
         <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '24px' }}>
-          근무지와 출장지는 1개씩만 등록 가능합니다
+          {/* 근무지와 출장지는 1개씩만 등록 가능합니다 */}
+          {limitMessage}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
