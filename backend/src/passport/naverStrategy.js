@@ -1,3 +1,4 @@
+require('dotenv').config();
 const passport = require('passport');
 const { Strategy: NaverStrategy, Profile: NaverProfile } = require('passport-naver-v2');
 const axios = require('axios');

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { S3Client } = require('@aws-sdk/client-s3');
 
 // AWS S3 설정 - AWS SDK for Javascript V3

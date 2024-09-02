@@ -31,4 +31,4 @@ const production = {
   dialect: 'mysql',
 };
 
-module.exports = { development, test, production };
+export default { development, test, production };
