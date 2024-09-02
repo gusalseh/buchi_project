@@ -14,7 +14,7 @@ const SpotCard = () => {
   useEffect(() => {
     // API로부터 SpotCard 데이터를 가져옴
     axios
-      .get(`http://localhost:${BACKEND_PORT}/api/spotcards`)
+      .get(`http://localhost:80/api/spotcards`)
       .then((response) => {
         setSpotCards(response.data); // 가져온 데이터를 state에 저장
       })

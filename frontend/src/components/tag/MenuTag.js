@@ -9,7 +9,7 @@ const MenuTag = () => {
   useEffect(() => {
     //sectionLabel main_section_2 ENUM 타입 불러오기
     axios
-      .get(`http://localhost:${BACKEND_PORT}/api/sectionLabels/main_section_2`)
+      .get(`http://localhost:80/api/sectionLabels/main_section_2`)
       .then((response) => {
         setMenuCards(response.data); // 가져온 데이터를 state에 저장
       })
