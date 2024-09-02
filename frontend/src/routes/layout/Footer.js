@@ -1,5 +1,6 @@
 import React from 'react';
 import { Layout, Row, Col, Typography } from 'antd';
+import logo from '../../assets/Img/buchi_logo_full.png';
 
 const { Footer: AntFooter } = Layout;
 const { Title, Paragraph, Link } = Typography;
@@ -13,7 +14,7 @@ const Footer = () => {
         <Row justify="space-between">
           <Col span={8}>
             <Link href="/" style={{ display: 'block', marginBottom: '16px' }}>
-              <img src="/path-to-your-logo.png" alt="앤픽 로고" style={{ height: '32px' }} />
+              <img src={logo} alt="부취 로고" style={{ height: '32px' }} />
             </Link>
             <Title level={5} style={{ marginBottom: '8px', color: '#595959' }}>
               {' '}

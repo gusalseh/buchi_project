@@ -1,0 +1,15 @@
+const express = require('express');
+const router = express.Router();
+const { Spot } = require('../models'); // sequelize 불러오기
+
+// 모든 spot 정보를 가져오는 엔드포인트
+router.get('/', async (req, res) => {
+  try {
+    const spots = await Spot.findAll();
+    res.json(spots);
+  } catch (error) {
+    res.status(500).json({ error: 'spot을 가져오는 중 오류가 발생했습니다.' });
+  }
+});
+
+module.exports = router;

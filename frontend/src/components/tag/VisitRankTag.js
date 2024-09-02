@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from 'antd';
-import SpotCard from './SpotCard'; // SpotCard 컴포넌트를 import합니다.
+import VisitRankCard from '../spotcard/VisitRankCard'; // SpotCard 컴포넌트를 import합니다.
 
-const Tag = () => {
+const VisitRankTag = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수
 
@@ -67,7 +67,7 @@ const Tag = () => {
                 flexShrink: 0, // 카드가 줄어들지 않도록 설정
               }}
             >
-              <SpotCard />
+              <VisitRankCard />
             </div>
           ))}
         </div>
@@ -81,4 +81,4 @@ const Tag = () => {
   );
 };
 
-export default Tag;
+export default VisitRankTag;

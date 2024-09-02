@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
-import SpotCard from './SpotCard'; // SpotCard 컴포넌트를 import합니다.
+import MenuCard from '../spotcard/MenuCard'; // SpotCard 컴포넌트를 import합니다.
+import axios from 'axios';
 
-const Tag = () => {
+const MenuTag = () => {
+  const [menuCards, setMenuCards] = useState([]);
+
+  useEffect(() => {
+    //sectionLabel main_section_2 ENUM 타입 불러오기
+    axios
+      .get('http://localhost:3000/api/sectionLabels/main_section_2')
+      .then((response) => {
+        setMenuCards(response.data); // 가져온 데이터를 state에 저장
+      })
+      .catch((error) => {
+        console.error('MenuCard에서 sectionLabel 불러오기 실패', error);
+      });
+  }, []);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수
 
@@ -33,7 +48,7 @@ const Tag = () => {
         overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
       }}
     >
-      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#짜글이</div>
+      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#{menuCards}</div>
       <div
         style={{
           height: 570,
@@ -67,7 +82,7 @@ const Tag = () => {
                 flexShrink: 0, // 카드가 줄어들지 않도록 설정
               }}
             >
-              <SpotCard />
+              <MenuCard />
             </div>
           ))}
         </div>
@@ -81,4 +96,4 @@ const Tag = () => {
   );
 };
 
-export default Tag;
+export default MenuTag;

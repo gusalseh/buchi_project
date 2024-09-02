@@ -95,6 +95,22 @@ class SectionLabel extends Sequelize.Model {
       }
     );
   }
+
+  static getMainSection2TypeMappings() {
+    return {
+      pork_belly: '삼겹살', //삼겹살
+      chicken: '치킨', //치킨
+      grilled_beef: '소고기구이', //소고기구이
+      pork_libs: '돼지갈비', //돼지갈비
+      chinese_cuisine: '중국요리', //중국요리
+      sashimi: '회', //회
+    };
+  }
+
+  static getMainSection2Types() {
+    const mappings = this.getMainSection2TypeMappings();
+    return this.rawAttributes.main_section_2.values.map((value) => mappings[value] || value);
+  }
 }
 
 module.exports = SectionLabel;
