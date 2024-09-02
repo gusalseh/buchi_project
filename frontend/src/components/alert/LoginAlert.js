@@ -6,7 +6,7 @@ const { Text } = Typography;
 
 const LoginAlert = ({ visible, onClose }) => {
   const handleNaverLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/naver';
+    window.location.href = `http://localhost:${BACKEND_PORT}/auth/naver`;
   };
 
   const [isLoginScreen, setIsLoginScreen] = useState(false); // login 화면으로 전환할 상태 관리
