@@ -37,12 +37,14 @@ const Filter = () => {
 
   useEffect(() => {
     const fetchLocation = async () => {
+      setIsLoading(true);
       if (user) {
         const selectedLocation = await fetchSelectedLocation(user.user_id);
         if (selectedLocation && selectedLocation.location_road_address) {
           setLocationName(selectedLocation.location_road_address);
         }
       }
+      setIsLoading(false);
       setIsLocationFetched(true);
     };
 
@@ -51,6 +53,7 @@ const Filter = () => {
 
   useEffect(() => {
     if (isLocationFetched && !locationName) {
+      setIsLoading(true);
       const getCurrentLocation = () => {
         return new Promise((resolve, reject) => {
           if (navigator.geolocation) {
@@ -70,7 +73,8 @@ const Filter = () => {
 
       const onError = (error) => {
         console.error(error);
-        alert('위치를 가져올 수 없습니다.');
+        // alert('위치를 가져올 수 없습니다.');
+        setLocationName('역삼역 2번 출구');
       };
 
       const getReverseGeocode = async (latitude, longitude) => {
