@@ -80,7 +80,9 @@ const Filter = () => {
       const getReverseGeocode = async (latitude, longitude) => {
         try {
           setIsLoading(true);
-          const response = await fetch(`http://localhost:3000/reverse_geocode?lat=${latitude}&lon=${longitude}`);
+          const response = await fetch(
+            `http://localhost:${BACKEND_PORT}/reverse_geocode?lat=${latitude}&lon=${longitude}`
+          );
 
           if (!response.ok) {
             const text = await response.text();
@@ -186,7 +188,7 @@ const Filter = () => {
 
   const getCoordinates = async (address) => {
     try {
-      const response = await fetch(`http://localhost:3000/geocode`, {
+      const response = await fetch(`http://localhost:${BACKEND_PORT}/geocode`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

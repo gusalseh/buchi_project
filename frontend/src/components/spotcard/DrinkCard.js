@@ -11,17 +11,17 @@ const { Text, Title } = Typography;
 const SpotCard = () => {
   const [spotCards, setSpotCards] = useState([]);
 
-  // useEffect(() => {
-  //   // API로부터 SpotCard 데이터를 가져옴
-  //   axios
-  //     .get('http://localhost:3000/api/spotcards')
-  //     .then((response) => {
-  //       setSpotCards(response.data); // 가져온 데이터를 state에 저장
-  //     })
-  //     .catch((error) => {
-  //       console.error('There was an error fetching the spot cards!', error);
-  //     });
-  // }, []);
+  useEffect(() => {
+    // API로부터 SpotCard 데이터를 가져옴
+    axios
+      .get(`http://localhost:${BACKEND_PORT}/api/spotcards`)
+      .then((response) => {
+        setSpotCards(response.data); // 가져온 데이터를 state에 저장
+      })
+      .catch((error) => {
+        console.error('There was an error fetching the spot cards!', error);
+      });
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>

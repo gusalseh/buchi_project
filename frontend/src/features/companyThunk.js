@@ -4,7 +4,7 @@ import axios from 'axios';
 // 회사 데이터를 불러오기
 export const fetchCompanies = createAsyncThunk('company/fetchCompanies', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://localhost:3000/api/companies', {
+    const response = await axios.get(`http://localhost:${BACKEND_PORT}/api/companies`, {
       withCredentials: true,
     });
     return response.data;
@@ -19,7 +19,7 @@ export const fetchCompanies = createAsyncThunk('company/fetchCompanies', async (
 // 산업군 ENUM 데이터를 불러오기
 export const fetchIndustryTypes = createAsyncThunk('company/fetchIndustryTypes', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://localhost:3000/api/companies/industry-types', {
+    const response = await axios.get(`http://localhost:${BACKEND_PORT}/api/companies/industry-types`, {
       withCredentials: true,
     });
     return response.data;
@@ -30,7 +30,7 @@ export const fetchIndustryTypes = createAsyncThunk('company/fetchIndustryTypes',
 
 // 새로운 회사를 추가하기
 export const addCompany = createAsyncThunk('company/addCompany', async (newCompany) => {
-  const response = await axios.post('http://localhost:3000/api/companies/add-company', newCompany);
+  const response = await axios.post(`http://localhost:${BACKEND_PORT}/api/companies/add-company`, newCompany);
   return response.data;
 });
 
@@ -39,7 +39,7 @@ export const checkCompanyName = createAsyncThunk(
   'company/checkCompanyName',
   async (companyName, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/companies/check-company', {
+      const response = await axios.post(`http://localhost:${BACKEND_PORT}/api/companies/check-company`, {
         company_name: companyName,
       });
       return response.data;

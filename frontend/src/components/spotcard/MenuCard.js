@@ -16,7 +16,7 @@ const MenuCard = () => {
   useEffect(() => {
     // API로부터 Spot 불러오기
     axios
-      .get('http://localhost:3000/api/spots')
+      .get(`http://localhost:${BACKEND_PORT}/api/spots`)
       .then((response) => {
         setSpots(response.data); // 가져온 데이터를 state에 저장
       })
@@ -29,7 +29,7 @@ const MenuCard = () => {
   useEffect(() => {
     //sectionLabel 불러오기
     axios
-      .get('http://localhost:3000/api/sectionLabels')
+      .get(`http://localhost:${BACKEND_PORT}/api/sectionLabels`)
       .then((response) => {
         setMenuCards(response.data); // 가져온 데이터를 state에 저장
       })
@@ -43,7 +43,7 @@ const MenuCard = () => {
     if (randomMainSection2) {
       // 랜덤으로 선택된 main_section_2 값을 이용해 Spot 데이터를 가져옴
       axios
-        .get(`http://localhost:3000/api/spots?main_section_2=${randomMainSection2}`)
+        .get(`http://localhost:${BACKEND_PORT}/api/spots?main_section_2=${randomMainSection2}`)
         .then((response) => {
           setSpots(response.data); // 가져온 데이터를 state에 저장
         })
@@ -58,7 +58,7 @@ const MenuCard = () => {
   useEffect(() => {
     //sectionLabel main_section_2 ENUM 타입 불러오기
     axios
-      .get('http://localhost:3000/api/sectionLabels/main_section_2')
+      .get(`http://localhost:${BACKEND_PORT}/api/sectionLabels/main_section_2`)
       .then((response) => {
         const mainSection2Types = response.data;
         // 랜덤으로 하나의 main_section_2 값을 선택
