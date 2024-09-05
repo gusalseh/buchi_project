@@ -53,7 +53,7 @@ const TeamSpot = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div>
       {user.user && user.user.company_id ? (
         <Row gutter={16}>
           <Col span={12}>
@@ -90,7 +90,7 @@ const TeamSpot = () => {
           </Col>
         </Row>
       ) : (
-        <div style={{ textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
+        <div style={{ width: '100%', textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
           <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
           {user.user ? (
             <div style={{ marginTop: '20px' }}>

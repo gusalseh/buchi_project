@@ -71,7 +71,7 @@ exports.getSectionLabelList = async (req, res) => {
     const mappings = reverseMainSection2TypeMappings();
     const reverseMainSection2 = mappings[mainSection2];
     console.log('reverseMainSection: ', reverseMainSection2);
-    const sectionSpot = await SectionLabel.findAll({
+    const sectionSpotList = await SectionLabel.findAll({
       include: [
         {
           model: Spot, // Spot 테이블과 연결
@@ -91,37 +91,60 @@ exports.getSectionLabelList = async (req, res) => {
       limit: 10,
     });
     // 데이터가 없으면 'no data' 메시지 반환
-    console.log('check sectionSpot', sectionSpot);
+    console.log('check sectionSpotList', sectionSpotList);
+    console.log('check sectionSpot', sectionSpotList[0]);
+    console.log('check sectionSpot.Spot', sectionSpotList[0].Spot);
+    console.log('check sectionSpot.Spot.TagLabel', sectionSpotList[0].Spot.TagLabel);
+    console.log('check sectionSpot.Spot.TagLabel.tag_1', sectionSpotList[0].Spot.TagLabel.tag_1);
+    console.log('check sectionSpot.Spot.TagLabel.tag_2', sectionSpotList[0].Spot.TagLabel.tag_2);
+    console.log('check sectionSpot.Spot.TagLabel.tag_3', sectionSpotList[0].Spot.TagLabel.tag_3);
 
     // 영어-한글 맵핑 함수
-    function SpotJoinDBMappings() {
-      return {
-        friendly: '친한사람과 함께',
-        partner: '동료와 함께',
-        executive: '임원과 함께',
-        vendor: '거래처와 함께',
-        foreigner: '외국인과 함께',
-        quiet: '조용한담소',
-        chatter: '활발한수다',
-        noisy: '시끌벅적한',
-        casual: '캐주얼한',
-        modern: '모던한',
-        formal: '격식있는',
-        traditional: '전통적인',
-        exotic: '이국적/이색적',
-      };
-    }
+    const mappings_2 = {
+      friendly: '친한사람과 함께',
+      partner: '동료와 함께',
+      executive: '임원과 함께',
+      vendor: '거래처와 함께',
+      foreigner: '외국인과 함께',
+      quiet: '조용한담소',
+      chatter: '활발한수다',
+      noisy: '시끌벅적한',
+      casual: '캐주얼한',
+      modern: '모던한',
+      formal: '격식있는',
+      traditional: '전통적인',
+      exotic: '이국적/이색적',
+    };
 
-    const mappings_2 = SpotJoinDBMappings();
-    const translatedSpotJoinDB = mappings_2[sectionSpot];
+    const mappings_3 = {
+      korean: '한식',
+      chinese: '양식',
+      japanese: '일식',
+      western: '양식',
+      asian: '아시안',
+      fusion: '퓨전',
+      pork_belly: '삼겹살',
+      chicken: '치킨',
+      grilled_beef: '소고기구이',
+      pork_libs: '돼지갈비',
+      chinese_cuisine: '중국요리',
+      sashimi: '회',
+    };
 
-    console.log('test translatedSpotJoinDB', [translatedSpotJoinDB]);
-
-    if (sectionSpot === 0) {
+    if (sectionSpotList === 0) {
       return res.status(404).json({ message: 'No data available' });
     }
+
+    for (i = 0; i < sectionSpotList.length; i++) {
+      sectionSpotList[i].main_section_1 = mappings_3[sectionSpotList[i].main_section_1];
+      sectionSpotList[i].main_section_2 = mappings_3[sectionSpotList[i].main_section_2];
+      sectionSpotList[i].Spot.TagLabel.tag_1 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_1];
+      sectionSpotList[i].Spot.TagLabel.tag_2 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_2];
+      sectionSpotList[i].Spot.TagLabel.tag_3 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_3];
+    }
+
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(sectionSpot);
+    res.json(sectionSpotList);
   } catch (error) {
     res.status(500).json({ error: 'sectionSpot 데이터를 불러 올 수 없습니다.' });
   }

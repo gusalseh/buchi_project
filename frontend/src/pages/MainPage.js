@@ -16,7 +16,7 @@ const MainPage = () => {
       <Filter />
       <MenuTag /> {/* 메뉴 종류 */}
       <TeamSpot />
-      {/* <VisitRankTag /> {/* 월별 방문 순위 */}
+      <VisitRankTag />
       {/* <Promotion /> */}
       {/* <PeopleCountTag /> 4인 이하 추천 */}
       {/* <FoodQuatityTag /> 음식 양 가성비 */}
