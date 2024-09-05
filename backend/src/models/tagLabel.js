@@ -57,6 +57,13 @@ class TagLabel extends Sequelize.Model {
       }
     );
   }
+  static associate(models) {
+    // TagLabel은 Spot에 속한다
+    TagLabel.belongsTo(models.Spot, {
+      foreignKey: 'spot_id',
+      targetKey: 'spot_id',
+    });
+  }
 }
 
 module.exports = TagLabel;

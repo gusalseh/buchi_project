@@ -48,6 +48,12 @@ class Menu extends Sequelize.Model {
       }
     );
   }
+  static associate(models) {
+    Menu.belongsTo(models.Spot, {
+      foreignKey: 'spot_id',
+      targetKey: 'spot_id',
+    });
+  }
 }
 
 module.exports = Menu;

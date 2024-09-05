@@ -1,4 +1,4 @@
-const { sequelize, SectionLabel, Spot } = require('../models'); // sequelize 불러오기
+const { sequelize, SectionLabel, Spot, TagLabel, Menu } = require('../models'); // sequelize 불러오기
 const { OP } = require('sequelize');
 
 exports.getSectionLabel = async (req, res) => {
@@ -47,15 +47,6 @@ exports.getRandomSectionType = async (req, res) => {
   }
 };
 
-exports.getMainSectionType = async (req, res) => {
-  try {
-    const enumValues = SectionLabel.getMainSection2Types(); // 모델에서 직접 ENUM 값을 가져옴
-    res.json(enumValues);
-  } catch (error) {
-    res.status(500).json({ error: 'getMainSectionType에서 정보를 가져오는 중 오류가 발생했습니다.' });
-  }
-};
-
 //spot_id로 spot 테이블 join
 exports.getSectionLabelList = async (req, res) => {
   try {
@@ -83,7 +74,15 @@ exports.getSectionLabelList = async (req, res) => {
     const sectionSpot = await SectionLabel.findAll({
       include: [
         {
-          model: Spot,
+          model: Spot, // Spot 테이블과 연결
+          include: [
+            {
+              model: TagLabel,
+            },
+            {
+              model: Menu,
+            },
+          ],
         },
       ],
       where: {

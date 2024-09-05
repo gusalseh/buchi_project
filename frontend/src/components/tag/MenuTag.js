@@ -4,7 +4,7 @@ import MenuCard from '../spotcard/MenuCard'; // SpotCard 컴포넌트를 import�
 import axios from 'axios';
 
 const MenuTag = () => {
-  const [sectionLabelSpot, setSectionLabelSpot] = useState([]);
+  const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
   const [randomMainSection2, setRandomMainSection2] = useState('');
 
   useEffect(() => {
@@ -17,11 +17,11 @@ const MenuTag = () => {
         console.log('check randomMainSection2', randomMainSection2);
 
         //mainSection2 값을 사용해 데이터 조회
-        const { sectionLabelResponse } = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
+        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
           params: { mainSection2: randomMainSection2 },
         });
-        setSectionLabelSpot(sectionLabelResponse);
-        console.log('sectionLabelSpot Test', { sectionLabelSpot });
+        const sectionLabelSpotList = sectionLabelResponse.data;
+        setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {
         console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
       }
@@ -86,7 +86,7 @@ const MenuTag = () => {
             width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
           }}
         >
-          {Array.from({ length: totalCards }).map((_, index) => (
+          {Array.from({ length: sectionLabelSpotList.length }).map((_, index) => (
             <div
               key={index}
               style={{
@@ -94,7 +94,7 @@ const MenuTag = () => {
                 flexShrink: 0, // 카드가 줄어들지 않도록 설정
               }}
             >
-              <MenuCard sectionLabelSpot={{ sectionLabelSpot }} />
+              <MenuCard sectionLabelSpot={sectionLabelSpotList[index]} />
             </div>
           ))}
         </div>

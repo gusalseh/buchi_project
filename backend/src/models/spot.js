@@ -145,7 +145,20 @@ class Spot extends Sequelize.Model {
     );
   }
   static associate(models) {
-    Spot.hasMany(models.SectionLabel, {
+    // Spot은 여러 SectionLabel을 가질 수 있다 (1:N 관계)
+    Spot.hasOne(models.SectionLabel, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
+
+    // Spot은 여러 TagLabel을 가질 수 있다 (1:N 관계)
+    Spot.hasOne(models.TagLabel, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
+
+    // Spot은 여러 Menu를 가질 수 있다 (1:N 관계)
+    Spot.hasOne(models.Menu, {
       foreignKey: 'spot_id',
       sourceKey: 'spot_id',
     });
