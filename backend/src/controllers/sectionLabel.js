@@ -92,6 +92,31 @@ exports.getSectionLabelList = async (req, res) => {
     });
     // 데이터가 없으면 'no data' 메시지 반환
     console.log('check sectionSpot', sectionSpot);
+
+    // 영어-한글 맵핑 함수
+    function SpotJoinDBMappings() {
+      return {
+        friendly: '친한사람과 함께',
+        partner: '동료와 함께',
+        executive: '임원과 함께',
+        vendor: '거래처와 함께',
+        foreigner: '외국인과 함께',
+        quiet: '조용한담소',
+        chatter: '활발한수다',
+        noisy: '시끌벅적한',
+        casual: '캐주얼한',
+        modern: '모던한',
+        formal: '격식있는',
+        traditional: '전통적인',
+        exotic: '이국적/이색적',
+      };
+    }
+
+    const mappings_2 = SpotJoinDBMappings();
+    const translatedSpotJoinDB = mappings_2[sectionSpot];
+
+    console.log('test translatedSpotJoinDB', [translatedSpotJoinDB]);
+
     if (sectionSpot === 0) {
       return res.status(404).json({ message: 'No data available' });
     }

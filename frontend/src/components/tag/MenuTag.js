@@ -60,7 +60,19 @@ const MenuTag = () => {
         overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
       }}
     >
-      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#{randomMainSection2}</div>
+      <div
+        style={{
+          color: 'black',
+          height: 32,
+          fontSize: 32,
+          display: 'inline-block', // 텍스트 길이에 맞춰 선을 그리기 위해 inline-block 사용
+          borderBottom: '8px solid #e5989b', // 텍스트 아래 선을 추가
+          paddingBottom: '32px', // 텍스트와 선 사이의 간격 조정
+          alignSelf: 'flex-start',
+        }}
+      >
+        {randomMainSection2}
+      </div>
       <div
         style={{
           height: 570,
