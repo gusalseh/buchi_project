@@ -4,19 +4,31 @@ import MenuCard from '../spotcard/MenuCard'; // SpotCard 컴포넌트를 import�
 import axios from 'axios';
 
 const MenuTag = () => {
-  const [menuCards, setMenuCards] = useState([]);
+  const [sectionLabelSpot, setSectionLabelSpot] = useState([]);
+  const [randomMainSection2, setRandomMainSection2] = useState('');
 
   useEffect(() => {
-    //sectionLabel main_section_2 ENUM 타입 불러오기
-    axios
-      .get(`http://localhost:80/api/sectionLabels/main_section_2`)
-      .then((response) => {
-        setMenuCards(response.data); // 가져온 데이터를 state에 저장
-      })
-      .catch((error) => {
-        console.error('MenuCard에서 sectionLabel 불러오기 실패', error);
-      });
-  }, []);
+    const fetchRandomMainSection2 = async () => {
+      try {
+        //main_section_2의 랜덤 값을 받아옴
+        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
+        const randomMainSection2 = randomResponse.data;
+        setRandomMainSection2(randomMainSection2);
+        console.log('check randomMainSection2', randomMainSection2);
+
+        //mainSection2 값을 사용해 데이터 조회
+        const { sectionLabelResponse } = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
+          params: { mainSection2: randomMainSection2 },
+        });
+        setSectionLabelSpot(sectionLabelResponse);
+        console.log('sectionLabelSpot Test', { sectionLabelSpot });
+      } catch (error) {
+        console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
+      }
+    };
+
+    fetchRandomMainSection2();
+  }, []); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수
@@ -48,7 +60,7 @@ const MenuTag = () => {
         overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
       }}
     >
-      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#{menuCards}</div>
+      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#{randomMainSection2}</div>
       <div
         style={{
           height: 570,
@@ -82,7 +94,7 @@ const MenuTag = () => {
                 flexShrink: 0, // 카드가 줄어들지 않도록 설정
               }}
             >
-              <MenuCard />
+              <MenuCard sectionLabelSpot={{ sectionLabelSpot }} />
             </div>
           ))}
         </div>

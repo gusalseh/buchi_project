@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const axios = require('axios');
 const { sequelize } = require('./models');
 const { corsMiddleware } = require('./middlewares');
@@ -12,6 +13,8 @@ const app = express();
 // 미들웨어 설정
 app.use(corsMiddleware);
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // 세션 설정
 app.use(
@@ -39,6 +42,12 @@ app.use('/api/userLocation', userLocationRoutes);
 
 const companyRoutes = require('./routes/company');
 app.use('/api/companies', companyRoutes);
+
+const sectionLabelRoutes = require('./routes/sectionLabel');
+app.use('/api/sectionLabels', sectionLabelRoutes);
+
+const spotRoutes = require('./routes/spot');
+app.use('/api/spots', spotRoutes);
 
 app.get('/reverse_geocode', async (req, res) => {
   const { lat, lon } = req.query;

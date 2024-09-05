@@ -144,6 +144,12 @@ class Spot extends Sequelize.Model {
       }
     );
   }
+  static associate(models) {
+    Spot.hasMany(models.SectionLabel, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
+  }
 }
 
 module.exports = Spot;
