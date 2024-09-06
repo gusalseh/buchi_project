@@ -49,7 +49,6 @@ const PeopleCountTag = () => {
   return (
     <div
       style={{
-        padding: '0px 20px',
         marginTop: 20,
         marginLeft: 340,
         display: 'flex',

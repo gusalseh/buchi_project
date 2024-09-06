@@ -56,10 +56,10 @@ const TeamSpot = () => {
   return (
     <div>
       {user.user && user.user.company_id ? (
-        <div style={{ height: 536, padding: '20px' }}>
+        <div style={{ marginBottom: 80, height: 620, padding: '20px' }}>
           <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
             {/* 왼쪽 박스 */}
-            <Col style={{ width: 620 }}>
+            <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
               <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
                 TMD 교육그룹
               </Text>
@@ -67,22 +67,58 @@ const TeamSpot = () => {
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
               >
                 <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
-                <Button type="link">지도로 보기</Button>
+                <Button
+                  type="default"
+                  shape="round"
+                  style={{
+                    borderColor: '#d9d9d9',
+                    borderWidth: '1px',
+                    color: '#000',
+                  }}
+                >
+                  지도로 보기
+                </Button>
               </div>
-
+              <CompanySpotCard />
+              <CompanySpotCard />
               <CompanySpotCard />
             </Col>
 
             {/* 오른쪽 박스 */}
-            <Col style={{ width: 620 }}>
+            <Col
+              style={{
+                width: 620,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+                borderLeft: 'solid',
+                borderLeftWidth: 1,
+                paddingLeft: 20,
+              }}
+            >
+              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+                교육
+              </Text>
               <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
               >
-                <Text strong style={{ fontSize: '16px' }}>
-                  교육
+                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+                  비슷한 업종 사람들의 회식 장소
                 </Text>
-                <Button type="link">지도로 보기</Button>
+                <Button
+                  type="default"
+                  shape="round"
+                  style={{
+                    borderColor: '#d9d9d9',
+                    borderWidth: '1px',
+                    color: '#000',
+                  }}
+                >
+                  지도로 보기
+                </Button>
               </div>
+              <CompanySpotCard />
+              <CompanySpotCard />
               <CompanySpotCard />
             </Col>
           </Row>
