@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
-import MenuCard from '../spotcard/MenuCard'; // SpotCard 컴포넌트를 import합니다.
+import SpotCard from '../common/SpotCard'; // SpotCard 컴포넌트를 import합니다.
 import axios from 'axios';
 
 const MenuTag = () => {
@@ -53,7 +53,7 @@ const MenuTag = () => {
         marginTop: 20,
         display: 'flex',
         flexDirection: 'column',
-        height: 570,
+        height: 592,
         gap: 20,
         backgroundColor: 'white',
         position: 'relative',
@@ -106,7 +106,7 @@ const MenuTag = () => {
                 flexShrink: 0, // 카드가 줄어들지 않도록 설정
               }}
             >
-              <MenuCard sectionLabelSpot={sectionLabelSpotList[index]} />
+              <SpotCard sectionLabelSpot={sectionLabelSpotList[index]} />
             </div>
           ))}
         </div>

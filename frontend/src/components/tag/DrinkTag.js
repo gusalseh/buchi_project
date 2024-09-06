@@ -1,8 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
-import DrinkCard from '../spotcard/DrinkCard'; // SpotCard 컴포넌트를 import합니다.
+import SpotCard from '../common/SpotCard'; // SpotCard 컴포넌트를 import합니다.
+import axios from 'axios';
 
 const DrinkTag = () => {
+  const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
+  const [randomSubSection3, setRandomSubSection3] = useState('');
+
+  useEffect(() => {
+    const fetchRandomSubSection3 = async () => {
+      try {
+        //sub_section_1의 랜덤 값을 받아옴
+        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_3_random`);
+        const randomSubSection3 = randomResponse.data;
+        setRandomSubSection3(randomSubSection3);
+        console.log('check randomMainSection3', randomSubSection3);
+
+        //subSection3 값을 사용해 데이터 조회
+        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_3_list', {
+          params: { subSection3: randomSubSection3 },
+        });
+        const sectionLabelSpotList = sectionLabelResponse.data;
+        setSectionLabelSpotList(sectionLabelSpotList);
+      } catch (error) {
+        console.error('랜덤 subsection3 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
+      }
+    };
+
+    fetchRandomSubSection3();
+  }, []); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수
 
@@ -26,14 +53,26 @@ const DrinkTag = () => {
         marginTop: 20,
         display: 'flex',
         flexDirection: 'column',
-        height: 570,
+        height: 592,
         gap: 20,
         backgroundColor: 'white',
         position: 'relative',
         overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
       }}
     >
-      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#짜글이</div>
+      <div
+        style={{
+          color: 'black',
+          height: 32,
+          fontSize: 32,
+          display: 'inline-block', // 텍스트 길이에 맞춰 선을 그리기 위해 inline-block 사용
+          borderBottom: '8px solid #e5989b', // 텍스트 아래 선을 추가
+          paddingBottom: '32px', // 텍스트와 선 사이의 간격 조정
+          alignSelf: 'flex-start',
+        }}
+      >
+        {randomSubSection3}
+      </div>
       <div
         style={{
           height: 570,
@@ -59,7 +98,7 @@ const DrinkTag = () => {
             width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
           }}
         >
-          {Array.from({ length: totalCards }).map((_, index) => (
+          {Array.from({ length: sectionLabelSpotList.length }).map((_, index) => (
             <div
               key={index}
               style={{
@@ -67,7 +106,7 @@ const DrinkTag = () => {
                 flexShrink: 0, // 카드가 줄어들지 않도록 설정
               }}
             >
-              <DrinkCard />
+              <SpotCard sectionLabelSpot={sectionLabelSpotList[index]} />
             </div>
           ))}
         </div>
