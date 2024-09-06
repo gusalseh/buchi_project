@@ -91,7 +91,7 @@ const TeamSpot = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 12,
-                borderLeft: 'solid',
+                borderLeft: 'solid, #E5E5E5',
                 borderLeftWidth: 1,
                 paddingLeft: 20,
               }}

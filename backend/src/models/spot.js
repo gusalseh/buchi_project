@@ -155,6 +155,11 @@ class Spot extends Sequelize.Model {
       foreignKey: 'spot_id',
       sourceKey: 'spot_id',
     });
+
+    Spot.hasOne(models.Visit, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
   }
 }
 
