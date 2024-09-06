@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
-import SpotCard from '../common/SpotCard'; // SpotCard 컴포넌트를 import합니다.
+import SpotCard from '../card/SpotCard'; // SpotCard 컴포넌트를 import합니다.
 import axios from 'axios';
 
 const VisitRankTag = () => {
@@ -51,6 +51,7 @@ const VisitRankTag = () => {
       style={{
         padding: '0px 20px',
         marginTop: 20,
+        marginLeft: 340,
         display: 'flex',
         flexDirection: 'column',
         height: 570,
@@ -83,7 +84,10 @@ const VisitRankTag = () => {
         }}
       >
         {currentIndex > 0 && (
-          <Button onClick={handlePrev} style={{ position: 'absolute', left: 0, zIndex: 1 }}>
+          <Button
+            onClick={handlePrev}
+            style={{ borderRadius: '50%', width: 32, height: 32, position: 'absolute', left: 0, zIndex: 1 }}
+          >
             &lt;
           </Button>
         )}
@@ -111,7 +115,10 @@ const VisitRankTag = () => {
           ))}
         </div>
         {currentIndex < totalCards - 4 && (
-          <Button onClick={handleNext} style={{ position: 'absolute', right: 0, zIndex: 1 }}>
+          <Button
+            onClick={handleNext}
+            style={{ borderRadius: '50%', width: 32, height: 32, position: 'absolute', right: 0, zIndex: 1 }}
+          >
             &gt;
           </Button>
         )}

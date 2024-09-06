@@ -3,6 +3,7 @@ import { Card, Button, Row, Col, Typography } from 'antd';
 import { useSelector } from 'react-redux';
 import CompanyModal from './CompanyModal';
 import LoginAlert from '../alert/LoginAlert';
+import CompanySpotCard from '../card/CompanySpotCard';
 
 const { Text } = Typography;
 
@@ -55,40 +56,37 @@ const TeamSpot = () => {
   return (
     <div>
       {user.user && user.user.company_id ? (
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card title="우리 회사 사원들의 회식 장소" bordered>
-              <Card type="inner" title="역삼동1" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동2" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동3" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card title="비슷한 업종 사람들의 회식 장소" bordered>
-              <Card type="inner" title="역삼동1" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동2" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동3" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-            </Card>
-          </Col>
-        </Row>
+        <div style={{ height: 536, padding: '20px' }}>
+          <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
+            {/* 왼쪽 박스 */}
+            <Col style={{ width: 620 }}>
+              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+                TMD 교육그룹
+              </Text>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+              >
+                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
+                <Button type="link">지도로 보기</Button>
+              </div>
+
+              <CompanySpotCard />
+            </Col>
+
+            {/* 오른쪽 박스 */}
+            <Col style={{ width: 620 }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+              >
+                <Text strong style={{ fontSize: '16px' }}>
+                  교육
+                </Text>
+                <Button type="link">지도로 보기</Button>
+              </div>
+              <CompanySpotCard />
+            </Col>
+          </Row>
+        </div>
       ) : (
         <div style={{ width: '100%', textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
           <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
