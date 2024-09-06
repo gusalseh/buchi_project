@@ -28,8 +28,7 @@ class Spot extends Sequelize.Model {
         },
         private_room: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         parking_lot: {
           type: Sequelize.INTEGER,
@@ -37,25 +36,23 @@ class Spot extends Sequelize.Model {
         },
         valet: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         corkage: {
           type: Sequelize.ENUM('no', 'free', 'charge'),
-          allowNull: false,
-          defaultValue: 'no',
+          allowNull: true,
         },
         max_group_seats: {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: true,
         },
         start_time: {
           type: Sequelize.TIME,
-          allowNull: false,
+          allowNull: true,
         },
         end_time: {
           type: Sequelize.TIME,
-          allowNull: false,
+          allowNull: true,
         },
         break_start_time: {
           type: Sequelize.TIME,
@@ -80,23 +77,19 @@ class Spot extends Sequelize.Model {
         },
         rental: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         placard: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         indoor_toilet: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         wheelchair: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         promotion: {
           type: Sequelize.STRING(200),
@@ -109,7 +102,7 @@ class Spot extends Sequelize.Model {
         // image url 어디에 서빙할지 (spot 테이블 or image 테이블)
         spot_main_img: {
           type: Sequelize.STRING(200),
-          allowNull: false,
+          allowNull: true,
         },
         spot_sub_img_1: {
           type: Sequelize.STRING(200),
