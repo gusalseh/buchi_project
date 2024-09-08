@@ -211,7 +211,21 @@ const Filter = () => {
     const time = selectedTime || '저녁회식';
     const amount = selectedAmount || 3;
 
-    const { latitude, longitude } = await getCoordinates(locationName);
+    let latitude, longitude;
+
+    if (locationName === '역삼역 2번 출구') {
+      latitude = '37.5000263';
+      longitude = '127.0365456';
+    } else {
+      try {
+        const coordinates = await getCoordinates(locationName);
+        latitude = coordinates.latitude;
+        longitude = coordinates.longitude;
+      } catch (error) {
+        console.error('Failed to fetch coordinates:', error);
+        return;
+      }
+    }
     setSelectedLatitude(latitude);
     setSelectedLongitude(longitude);
 
@@ -220,8 +234,11 @@ const Filter = () => {
     console.log(amount);
     console.log(latitude);
     console.log(longitude);
+    console.log(locationName);
 
-    navigate(`/filterResult?date=${date}&time=${time}&amount=${amount}&lat=${latitude}&lng=${longitude}`);
+    navigate(
+      `/filterResult?date=${date}&time=${time}&amount=${amount}&lat=${latitude}&lng=${longitude}&address=${locationName}`
+    );
   };
 
   return (

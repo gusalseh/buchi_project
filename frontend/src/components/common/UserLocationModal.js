@@ -361,10 +361,10 @@ const UserLocation = ({ saveLocation, visible }) => {
                 bodyStyle={{ textAlign: 'center' }}
               >
                 <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', marginTop: '20px' }}>
-                  주소는 최대 10개까지 저장 가능합니다.
+                  주소는 최대 10개까지 저장 가능합니다
                 </div>
                 <div style={{ fontSize: '14px', color: '#737373', marginBottom: '24px' }}>
-                  가장 오래된 주소를 삭제 후 저장하시겠습니까?
+                  추가로 등록을 원하시면 등록된 위치 중 하나를 삭제해 주세요
                 </div>
                 <Button
                   style={{
