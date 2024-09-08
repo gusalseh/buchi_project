@@ -55,3 +55,13 @@ export const fetchSelectedLocation = async (userId) => {
     return { location_road_address: '역삼역 2번 출구' };
   }
 };
+
+export const updateLocationByType = async (locationData) => {
+  try {
+    const response = await axios.put(`http://localhost:80/api/userLocation/updateLocationByType`, locationData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating location:', error);
+    throw error;
+  }
+};

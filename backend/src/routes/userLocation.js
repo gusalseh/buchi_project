@@ -1,6 +1,8 @@
 const express = require('express');
 const { UserLocation } = require('../models');
 const router = express.Router();
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 router.post('/', async (req, res) => {
   const {
@@ -14,7 +16,6 @@ router.post('/', async (req, res) => {
     location_jibun_address,
   } = req.body;
 
-  // 프론트엔드에서 전송된 location_type 값을 ENUM 값으로 변환
   const enumLocationTypeMap = {
     근무지: 'onsite',
     출장지: 'offsite',
@@ -102,6 +103,66 @@ router.get('/selectedLocation/:user_id', async (req, res) => {
   } catch (error) {
     console.error('Error fetching selected location:', error);
     res.status(500).json({ error: 'Failed to fetch selected location' });
+  }
+});
+
+// 새롭게 "출장지" 또는 "근무지"를 업데이트하는 라우터
+router.put('/updateLocationByType', async (req, res) => {
+  const {
+    user_id,
+    location_type,
+    location_name,
+    location_latitude,
+    location_longitude,
+    location_building_name,
+    location_road_address,
+    location_jibun_address,
+  } = req.body;
+
+  const enumLocationTypeMap = {
+    근무지: 'onsite',
+    출장지: 'offsite',
+    기타: 'etc',
+  };
+
+  const dbLocationType = enumLocationTypeMap[location_type];
+
+  if (!['onsite', 'offsite'].includes(dbLocationType)) {
+    return res.status(400).json({ error: 'Only 근무지 and 출장지 types can be updated.' });
+  }
+
+  try {
+    const existingLocation = await UserLocation.findOne({
+      where: { user_id, location_type: dbLocationType },
+    });
+
+    if (!existingLocation) {
+      return res.status(404).json({ error: 'Location not found for this user.' });
+    }
+
+    await UserLocation.update(
+      {
+        location_name,
+        location_lat: location_latitude,
+        location_lng: location_longitude,
+        location_building_name,
+        location_road_address,
+        location_jibun_address,
+        selected: true,
+      },
+      { where: { user_id, location_type: dbLocationType } }
+    );
+
+    await UserLocation.update({ selected: false }, { where: { user_id, location_type: { [Op.not]: dbLocationType } } });
+
+    const updatedLocation = await UserLocation.findOne({
+      where: { user_id, location_type: dbLocationType },
+    });
+
+    res.status(200).json(updatedLocation);
+  } catch (error) {
+    console.error('Error updating location:', error);
+    res.status(500).json({ error: 'Failed to update location' });
   }
 });
 

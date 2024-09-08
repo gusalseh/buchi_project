@@ -8,6 +8,7 @@ import {
   fetchUserLocations,
   updateSelectedLocation,
   deleteLocation,
+  updateLocationByType,
 } from '../../features/userLocation';
 
 // TODO: registeredLocations 우선 순위로 배열하는 로직 -> utils 모듈로 독립
@@ -72,20 +73,14 @@ const UserLocation = ({ saveLocation, visible }) => {
   const handleTypeChange = (e) => {
     setLocationType(e);
 
-    if (e === '근무지') {
-      const isOnsiteExists = registeredLocations.some((location) => location.location_type === 'onsite');
-      if (isOnsiteExists) {
-        setLimitMessage('근무지가 이미 등록되어 있습니다');
-        setIsLimitVisible(true);
-        return;
-      }
-    }
+    const locationTypeMap = {
+      근무지: 'onsite',
+      출장지: 'offsite',
+    };
 
-    if (e === '출장지') {
-      const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
-      if (isOffsiteExists) {
-        setLimitMessage('출장지가 이미 등록되어 있습니다');
-        setIsLimitVisible(true);
+    if (locationTypeMap[e]) {
+      const isLocationExists = registeredLocations.some((location) => location.location_type === locationTypeMap[e]);
+      if (isLocationExists) {
         return;
       }
     }
@@ -129,13 +124,13 @@ const UserLocation = ({ saveLocation, visible }) => {
       const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
 
       if (locationType === '근무지' && isOnsiteExists) {
-        setLimitMessage('근무지와 출장지는 1개씩만 등록 가능합니다');
+        setLimitMessage('근무지로 저장된 주소가 있습니다. 이 주소로 변경하시겠습니까?');
         setIsLimitVisible(true);
         return;
       }
 
       if (locationType === '출장지' && isOffsiteExists) {
-        setLimitMessage('근무지와 출장지는 1개씩만 등록 가능합니다');
+        setLimitMessage('출장지로 저장된 주소가 있습니다. 이 주소로 변경하시겠습니까?');
         setIsLimitVisible(true);
         return;
       }
@@ -176,6 +171,46 @@ const UserLocation = ({ saveLocation, visible }) => {
     } catch (error) {
       console.log('handleRegisterLocation Failed', error);
       alert('Location registration failed: ' + error.message);
+    }
+  };
+
+  const handleUpdateLocation = async () => {
+    try {
+      const address = addressDetail.roadAddress || addressDetail.jibunAddress;
+      const { latitude, longitude } = await getCoordinates(address);
+      console.log('Latitude:', latitude, 'Longitude:', longitude);
+
+      await updateLocationByType({
+        user_id: user.user_id,
+        location_type: locationType,
+        location_name: locationName || null,
+        location_latitude: latitude,
+        location_longitude: longitude,
+        location_road_address: addressDetail.roadAddress,
+        location_jibun_address: addressDetail.jibunAddress || null,
+        location_building_name: addressDetail.buildingName || null,
+      });
+
+      // 주소 목록을 다시 가져와 상태 업데이트
+      const fetchLocations = await fetchUserLocations(user.user_id);
+      fetchLocations.sort((a, b) => {
+        if (b.selected && !a.selected) return 1;
+        if (a.selected && !b.selected) return -1;
+        return 0;
+      });
+      setRegisteredLocations(fetchLocations);
+
+      setIsLimitVisible(false);
+      setIsAddressSelected(false);
+      setLocationType(null);
+      setLocationName('');
+      setAddress('');
+      setAddressDetail({ roadAddress: '', jibunAddress: '', buildingName: '' });
+      setIsIframeVisible(false);
+      setLoading(false);
+    } catch (error) {
+      console.log('Location update failed', error);
+      alert('Location update failed: ' + error.message);
     }
   };
 
@@ -316,7 +351,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               >
                 주소 검색하기
               </Button>
-              {/* 등록주소 10개인데 더 등록하려고 하면 뜨는 경고모달 */}
+              {/* 등록주소 10개일 경우, 등록하기 시 오래된 주소 삭제 후 설정 */}
               <Modal
                 visible={isAlertVisible}
                 onCancel={handleAlertClose}
@@ -326,10 +361,10 @@ const UserLocation = ({ saveLocation, visible }) => {
                 bodyStyle={{ textAlign: 'center' }}
               >
                 <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', marginTop: '20px' }}>
-                  등록할 수 있는 위치는 최대 10개입니다
+                  주소는 최대 10개까지 저장 가능합니다.
                 </div>
                 <div style={{ fontSize: '14px', color: '#737373', marginBottom: '24px' }}>
-                  추가로 등록을 원하시면 등록된 위치 중 하나를 삭제해 주세요
+                  가장 오래된 주소를 삭제 후 저장하시겠습니까?
                 </div>
                 <Button
                   style={{
@@ -636,7 +671,7 @@ const UserLocation = ({ saveLocation, visible }) => {
             }}
             onClick={() => handleSelectLocation(selectedLocationId)}
           >
-            네
+            예
           </Button>
           <Button
             style={{
@@ -653,7 +688,8 @@ const UserLocation = ({ saveLocation, visible }) => {
           </Button>
         </div>
       </Modal>
-      {/* 근무지 또는 출장지가 이미 있음 */}
+
+      {/* 근무지 또는 출장지가 이미 있는데 덮어쓰기 저장할때 */}
       <Modal
         visible={isLimitVisible}
         onCancel={handleLimitClose}
@@ -670,15 +706,29 @@ const UserLocation = ({ saveLocation, visible }) => {
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
           <Button
             style={{
-              borderRadius: 'var(--BorderRadius-borderRadiusLG, 8px)',
-              backgroundColor: 'var(--0Gray-500, #737373)',
-              color: 'var(--Background-colorBgContainer, #FFF)',
-              width: '170px',
+              borderRadius: '8px',
+              backgroundColor: '#CC3C28',
+              color: '#FFF',
+              width: '120px',
               height: '40px',
+              fontWeight: 'bold',
+            }}
+            onClick={handleUpdateLocation}
+          >
+            변경
+          </Button>
+          <Button
+            style={{
+              borderRadius: '8px',
+              backgroundColor: '#A3A3A3',
+              color: '#FFF',
+              width: '120px',
+              height: '40px',
+              fontWeight: 'bold',
             }}
             onClick={handleLimitClose}
           >
-            확인
+            취소
           </Button>
         </div>
       </Modal>
