@@ -34,6 +34,9 @@ router.post('/', async (req, res) => {
     }
   }
 
+  // 기존 유저의 모든 주소의 selected 값을 false로 설정
+  await UserLocation.update({ selected: false }, { where: { user_id } });
+
   const location = await UserLocation.create({
     user_id,
     location_type: dbLocationType,
@@ -43,7 +46,7 @@ router.post('/', async (req, res) => {
     location_building_name,
     location_road_address,
     location_jibun_address,
-    selected: existingLocations.length === 0 ? true : false,
+    selected: true,
   });
 
   res.status(201).json(location);
