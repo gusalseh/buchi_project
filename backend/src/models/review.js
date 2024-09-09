@@ -45,6 +45,7 @@ class Review extends Sequelize.Model {
     );
   }
   static associate(models) {
+    // Review는 하나의 Visit에 속한다 (1:1 관계)
     Review.belongsTo(models.Visit, {
       foreignKey: 'visit_id',
       targetKey: 'visit_id',

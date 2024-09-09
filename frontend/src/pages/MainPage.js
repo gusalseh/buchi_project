@@ -14,15 +14,15 @@ const MainPage = () => {
   return (
     <div style={{ width: '100%' }}>
       <Filter />
-      <MenuTag /> {/* 메뉴 종류 */}
-      <TeamSpot />
+      <MenuTag />
+      {/* <TeamSpot />
       <VisitRankTag />
       <Promotion />
-      <PeopleCountTag /> {/*4인 이하 추천*/}
-      <FoodQuatityTag /> {/*음식 양 가성비*/}
-      <DrinkTag /> {/*주류 별*/}
-      <GenderTag /> {/*성별 별*/}
-      <WeatherTag /> {/*날씨 별*/}
+      <PeopleCountTag />
+      <FoodQuatityTag />
+      <DrinkTag />
+      <GenderTag />
+      <WeatherTag /> */}
     </div>
   );
 };

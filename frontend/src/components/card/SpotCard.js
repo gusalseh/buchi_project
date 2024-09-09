@@ -7,11 +7,23 @@ import axios from 'axios';
 const { Text, Title } = Typography;
 
 const SpotCard = (sectionLabelSpot) => {
-  console.log('MenuCard sectionLabelSpot Test', sectionLabelSpot);
-  const sectionLabel = sectionLabelSpot.sectionLabelSpot;
+  console.log('sectionLabelSpot from SpotCard', sectionLabelSpot);
+  console.log('sectionLabelSpot.sectionLabelSpot from SpotCard', sectionLabelSpot.sectionLabelSpot);
+
+  // console.log(
+  //   'sectionLabel.sectionLabelSpot.visitReviewData Spot from SpotCard',
+  //   sectionLabelSpot.sectionLabelSpot.visitReviewData
+  // );
+  const sectionLabel = sectionLabelSpot.sectionLabelSpot.sectionSpot;
+  const sectionLabelrating = sectionLabelSpot.sectionLabelSpot.visitReviewData;
   const spot = sectionLabel.Spot;
   const tagLabel = spot.TagLabel;
   const menu = spot.Menu;
+
+  const averageRating = sectionLabelrating.averageRating;
+  const review = sectionLabelrating.reviews[0].Review.review_text;
+
+  // return;
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
@@ -68,10 +80,10 @@ const SpotCard = (sectionLabelSpot) => {
         </div>
 
         <div style={{ marginTop: 16, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <StarFilled style={{ color: '#DB5744' }} /> {/* 별 색상 변경 */}
-          <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: 'bold' }}>{sectionLabelSpot.rating || 0}</Text>
+          <StarFilled style={{ color: '#DB5744' }} />
+          <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: 'bold' }}>{averageRating || 0}</Text>
           <Text type="secondary" style={{ marginLeft: 8 }}>
-            리뷰 {sectionLabelSpot.reviews || 0}
+            리뷰: {review}
           </Text>
         </div>
       </Card>

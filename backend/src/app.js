@@ -49,6 +49,9 @@ app.use('/api/sectionLabels', sectionLabelRoutes);
 const spotRoutes = require('./routes/spot');
 app.use('/api/spots', spotRoutes);
 
+const visitRoutes = require('./routes/visit');
+app.use('/api/visits', visitRoutes);
+
 app.get('/reverse_geocode', async (req, res) => {
   const { lat, lon } = req.query;
   const response = await axios.get(

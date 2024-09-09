@@ -42,12 +42,19 @@ class Visit extends Sequelize.Model {
     );
   }
   static associate(models) {
+    // Visit은 한 개의 Review를 가질 수 있다 (1:1 관계)
+    Visit.hasOne(models.Review, {
+      foreignKey: 'visit_id',
+      sourceKey: 'visit_id',
+    });
+
+    // Visit은 하나의 Spot에 속한다 (N:1 관계)
     Visit.belongsTo(models.Spot, {
       foreignKey: 'spot_id',
       targetKey: 'spot_id',
     });
-  }
-  static associate(models) {
+
+    // Visit은 하나의 User에 속한다 (N:1 관계)
     Visit.belongsTo(models.User, {
       foreignKey: 'user_id',
       targetKey: 'user_id',

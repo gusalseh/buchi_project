@@ -1,5 +1,6 @@
 const { sequelize, SectionLabel, Spot, TagLabel, Menu } = require('../models'); // sequelize 불러오기
 const { OP } = require('sequelize');
+const { getVisitReviewJoinDB } = require('./visit');
 
 exports.getSectionLabel = async (req, res) => {
   try {
@@ -90,6 +91,7 @@ exports.getSectionLabelList = async (req, res) => {
       },
       limit: 10,
     });
+
     // 데이터가 없으면 'no data' 메시지 반환
     console.log('check sectionSpotList', sectionSpotList);
     console.log('check sectionSpot', sectionSpotList[0]);
@@ -144,10 +146,27 @@ exports.getSectionLabelList = async (req, res) => {
       sectionSpotList[i].Spot.TagLabel.tag_3 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_3];
     }
 
+    // Visit 및 Review 데이터 불러오기
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    // 두 데이터를 spot_id 기준으로 병합
+    const mergedData = sectionSpotList.map((sectionSpot) => {
+      const spotId = sectionSpot.spot_id;
+
+      // visit + review 데이터를 해당 spot_id와 매칭
+      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+
+      return {
+        sectionSpot,
+        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+      };
+    });
+
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(sectionSpotList);
+    console.log('test mergedData', mergedData);
+    res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'sectionSpot 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
 
@@ -186,11 +205,6 @@ exports.getRandomSubSection1Type = async (req, res) => {
 exports.getSubSection1LabelList = async (req, res) => {
   try {
     const { subSection1 } = req.query;
-
-    console.log('check subSection1', subSection1); // PeopleCountTag에서 전달된 sub_section_1 값
-    console.log('check subSection1', subSection1);
-    console.log('check subSection1', subSection1);
-    console.log('check subSection1', subSection1);
 
     // 영어-한글 맵핑 함수
     const mappings = {
@@ -273,11 +287,27 @@ exports.getSubSection1LabelList = async (req, res) => {
       subSection1SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection1SpotList[i].Spot.TagLabel.tag_2];
       subSection1SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection1SpotList[i].Spot.TagLabel.tag_3];
     }
+    // Visit 및 Review 데이터 불러오기
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    // 두 데이터를 spot_id 기준으로 병합
+    const mergedData = subSection1SpotList.map((sectionSpot) => {
+      const spotId = sectionSpot.spot_id;
+
+      // visit + review 데이터를 해당 spot_id와 매칭
+      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+
+      return {
+        sectionSpot,
+        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+      };
+    });
 
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(subSection1SpotList);
+    console.log('test mergedData', mergedData);
+    res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'sectionSpot 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
 
@@ -348,6 +378,14 @@ exports.getSubSection2LabelList = async (req, res) => {
       limit: 10,
     });
 
+    console.log('check subSection2SpotList', subSection2SpotList);
+    console.log('check subSection2SpotList', subSection2SpotList[0]);
+    console.log('check subSection2SpotList.Spot', subSection2SpotList[0].Spot);
+    console.log('check subSection2SpotList.Spot.TagLabel', subSection2SpotList[0].Spot.TagLabel);
+    console.log('check subSection2SpotList.Spot.TagLabel.tag_1', subSection2SpotList[0].Spot.TagLabel.tag_1);
+    console.log('check subSection2SpotList.Spot.TagLabel.tag_2', subSection2SpotList[0].Spot.TagLabel.tag_2);
+    console.log('check subSection2SpotList.Spot.TagLabel.tag_3', subSection2SpotList[0].Spot.TagLabel.tag_3);
+
     // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
@@ -392,11 +430,27 @@ exports.getSubSection2LabelList = async (req, res) => {
       subSection2SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection2SpotList[i].Spot.TagLabel.tag_2];
       subSection2SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection2SpotList[i].Spot.TagLabel.tag_3];
     }
+    // Visit 및 Review 데이터 불러오기
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    // 두 데이터를 spot_id 기준으로 병합
+    const mergedData = subSection2SpotList.map((sectionSpot) => {
+      const spotId = sectionSpot.spot_id;
+
+      // visit + review 데이터를 해당 spot_id와 매칭
+      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+
+      return {
+        sectionSpot,
+        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+      };
+    });
 
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(subSection2SpotList);
+    console.log('test mergedData', mergedData);
+    res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'sectionSpot 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
 
@@ -513,11 +567,27 @@ exports.getSubSection3LabelList = async (req, res) => {
       subSection3SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection3SpotList[i].Spot.TagLabel.tag_2];
       subSection3SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection3SpotList[i].Spot.TagLabel.tag_3];
     }
+    // Visit 및 Review 데이터 불러오기
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    // 두 데이터를 spot_id 기준으로 병합
+    const mergedData = subSection3SpotList.map((sectionSpot) => {
+      const spotId = sectionSpot.spot_id;
+
+      // visit + review 데이터를 해당 spot_id와 매칭
+      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+
+      return {
+        sectionSpot,
+        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+      };
+    });
 
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(subSection3SpotList);
+    console.log('test mergedData', mergedData);
+    res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'subSection3SpotList 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
 
@@ -632,11 +702,27 @@ exports.getSubSection4LabelList = async (req, res) => {
       subSection4SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection4SpotList[i].Spot.TagLabel.tag_2];
       subSection4SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection4SpotList[i].Spot.TagLabel.tag_3];
     }
+    // Visit 및 Review 데이터 불러오기
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    // 두 데이터를 spot_id 기준으로 병합
+    const mergedData = subSection4SpotList.map((sectionSpot) => {
+      const spotId = sectionSpot.spot_id;
+
+      // visit + review 데이터를 해당 spot_id와 매칭
+      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+
+      return {
+        sectionSpot,
+        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+      };
+    });
 
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(subSection4SpotList);
+    console.log('test mergedData', mergedData);
+    res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'subSection4SpotList 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
 
@@ -754,9 +840,26 @@ exports.getSubSection5LabelList = async (req, res) => {
       subSection5SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection5SpotList[i].Spot.TagLabel.tag_3];
     }
 
+    // Visit 및 Review 데이터 불러오기
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    // 두 데이터를 spot_id 기준으로 병합
+    const mergedData = subSection5SpotList.map((sectionSpot) => {
+      const spotId = sectionSpot.spot_id;
+
+      // visit + review 데이터를 해당 spot_id와 매칭
+      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+
+      return {
+        sectionSpot,
+        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+      };
+    });
+
     // 데이터가 있으면 해당 데이터를 반환
-    res.json(subSection5SpotList);
+    console.log('test mergedData', mergedData);
+    res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'subSection5SpotList 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
