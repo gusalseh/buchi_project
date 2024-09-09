@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { useSelector } from 'react-redux';
 import { fetchSelectedLocation } from '../../features/userLocation';
-import { getDistance } from '../../utils/distance';
 import SpotCard from '../card/SpotCard'; // SpotCard 컴포넌트를 import합니다.
 import axios from 'axios';
 
@@ -156,6 +155,29 @@ const MenuTag = () => {
     }
   };
 
+  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // 지구의 반지름 (단위: km)
+    const dLat = deg2rad(lat2 - lat1); // 위도 차이 (라디안)
+    const dLon = deg2rad(lon2 - lon1); // 경도 차이 (라디안)
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // 두 지점 간의 거리 (단위: km)
+    return distance;
+  }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+
+  useEffect(() => {
+    if (sectionLabelSpotList && sectionLabelSpotList.length > 0) {
+      console.log('sectionLabelSpotList Test', sectionLabelSpotList[0].sectionSpot.Spot.spot_lat);
+      console.log('sectionLabelSpotList Test', sectionLabelSpotList[0].sectionSpot.Spot.spot_lng);
+    }
+  }, [sectionLabelSpotList]);
+
   return (
     <div
       style={{
@@ -216,13 +238,20 @@ const MenuTag = () => {
             sectionLabelSpotList
               .slice() // 원본 배열을 변경하지 않기 위해 복사본을 생성
               .filter((spot) => {
-                const distance = getDistance(
-                  selectedLatitude,
-                  selectedLongitude,
-                  spot.sectionSpot.Spot.spot_lat,
-                  spot.sectionSpot.Spot.spot_lng
-                );
-                console.log('util distance', distance);
+                const R = 6371; // 지구의 반지름 (단위: km)
+
+                // 각 spot에 대한 거리 계산
+                const dLat = deg2rad(selectedLatitude - spot.sectionSpot.Spot.spot_lat); // 위도 차이
+                const dLon = deg2rad(selectedLongitude - spot.sectionSpot.Spot.spot_lng); // 경도 차이
+                const a =
+                  Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(deg2rad(selectedLatitude)) *
+                    Math.cos(deg2rad(spot.sectionSpot.Spot.spot_lat)) *
+                    Math.sin(dLon / 2) *
+                    Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                const distance = R * c; // 두 지점 간의 거리 (단위: km)
+
                 return distance <= 1; // 거리가 1km 이내인 경우에만 true 반환
               })
               .sort((a, b) => {

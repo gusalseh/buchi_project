@@ -2,18 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Card, Tag, Typography, Rate } from 'antd';
 import { Image } from 'antd';
 import { StarFilled } from '@ant-design/icons';
+import { getDistance } from '../../utils/distance';
 import axios from 'axios';
 
 const { Text, Title } = Typography;
 
-const SpotCard = (sectionLabelSpot) => {
+const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
   console.log('sectionLabelSpot from SpotCard', sectionLabelSpot);
   console.log('sectionLabelSpot.sectionLabelSpot from SpotCard', sectionLabelSpot.sectionLabelSpot);
 
-  // console.log(
-  //   'sectionLabel.sectionLabelSpot.visitReviewData Spot from SpotCard',
-  //   sectionLabelSpot.sectionLabelSpot.visitReviewData
-  // );
   const sectionLabel = sectionLabelSpot.sectionLabelSpot.sectionSpot;
   const sectionLabelrating = sectionLabelSpot.sectionLabelSpot.visitReviewData;
   const spot = sectionLabel.Spot;
@@ -23,7 +20,13 @@ const SpotCard = (sectionLabelSpot) => {
   const averageRating = sectionLabelrating.averageRating;
   const review = sectionLabelrating.reviews[0].Review.review_text;
 
-  // return;
+  const distance = getDistance(
+    sectionLabelSpot.selectedLatitude,
+    sectionLabelSpot.selectedLongitude,
+    spot.spot_lat,
+    spot.spot_lng
+  );
+  console.log(`두 지점 간의 거리: `, distance);
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
@@ -57,7 +60,7 @@ const SpotCard = (sectionLabelSpot) => {
           <div style={{ display: 'flex', marginTop: 8, alignItems: 'center' }}>
             {' '}
             {/* 텍스트 정렬 맞춤 */}
-            <Text>도보 5분</Text> {/* 텍스트 수정 */}
+            <Text>도보 {distance}km</Text> {/* 텍스트 수정 */}
             <Text style={{ margin: '0 8px' }}>|</Text>
             <Text>최대 {spot.max_group_seats}인</Text>
             <Text style={{ margin: '0 8px' }}>|</Text>
@@ -83,7 +86,7 @@ const SpotCard = (sectionLabelSpot) => {
           <StarFilled style={{ color: '#DB5744' }} />
           <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: 'bold' }}>{averageRating || 0}</Text>
           <Text type="secondary" style={{ marginLeft: 8 }}>
-            리뷰: {review}
+            리뷰: {review.length > 10 ? `${review.slice(0, 10)}...` : review}
           </Text>
         </div>
       </Card>

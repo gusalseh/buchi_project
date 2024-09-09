@@ -9,20 +9,21 @@ import GenderTag from '../components/tag/GenderTag';
 import WeatherTag from '../components/tag/WeatherTag';
 import TeamSpot from '../components/common/TeamSpot';
 import Promotion from '../components/common/Promotion';
+import MenuTagTest from '../components/tag/MenuTagTest';
 
 const MainPage = () => {
   return (
     <div style={{ width: '100%' }}>
       <Filter />
       <MenuTag />
-      {/* <TeamSpot />
+      <TeamSpot />
       <VisitRankTag />
       <Promotion />
       <PeopleCountTag />
       <FoodQuatityTag />
       <DrinkTag />
       <GenderTag />
-      <WeatherTag /> */}
+      <WeatherTag />
     </div>
   );
 };
