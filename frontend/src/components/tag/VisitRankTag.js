@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'antd';
+import { Button, Spin } from 'antd';
 import { useSelector } from 'react-redux';
 import { fetchSelectedLocation } from '../../features/userLocation';
 import { getDistance } from '../../utils/distance';
-import SpotCard from '../card/SpotCard'; // SpotCard 컴포넌트를 import합니다.
+import VisitRankSpotCard from '../card/VisitRankSpotCard';
 import axios from 'axios';
 
 const VisitRankTag = () => {
@@ -116,26 +116,17 @@ const VisitRankTag = () => {
   }, [locationName, isLocationFetched]);
 
   useEffect(() => {
-    const fetchRandomMainSection2 = async () => {
+    const fetchSpotList = async () => {
       try {
-        //main_section_2의 랜덤 값을 받아옴
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
-        const randomMainSection2 = randomResponse.data;
-        setRandomMainSection2(randomMainSection2);
-        console.log('check randomMainSection2', randomMainSection2);
-
-        //mainSection2 값을 사용해 데이터 조회
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
-          params: { mainSection2: randomMainSection2 },
-        });
+        const sectionLabelResponse = await axios.get('http://localhost:80/api/spots/spotlist');
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {
-        console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
+        console.error('spotlist:', error);
       }
     };
 
-    fetchRandomMainSection2();
+    fetchSpotList();
   }, []); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -224,7 +215,7 @@ const VisitRankTag = () => {
                 return distance <= 1; // 거리가 1km 이내인 경우에만 true 반환
               })
               .sort((a, b) => {
-                return b.visitReviewData.reviewCount - a.visitReviewData.reviewCount; // 반환값을 명시적으로 지정
+                return b.visitReviewData.reviewCount - a.visitReviewData.reviewCount;
               })
               .map((spot, index) => (
                 <div
@@ -234,15 +225,17 @@ const VisitRankTag = () => {
                     flexShrink: 0, // 카드가 줄어들지 않도록 설정
                   }}
                 >
-                  <SpotCard
+                  <VisitRankSpotCard
+                    key={index}
                     sectionLabelSpot={spot}
                     selectedLatitude={selectedLatitude}
                     selectedLongitude={selectedLongitude}
+                    index={index}
                   />
                 </div>
               ))
           ) : (
-            <div>데이터를 불러오는 중입니다...</div> // 데이터를 불러오기 전 로딩 상태 표시
+            <div>데이터를 불러오는 중입니다...</div>
           )}
         </div>
         {currentIndex < totalCards - 4 && (
