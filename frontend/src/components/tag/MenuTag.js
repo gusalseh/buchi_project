@@ -9,6 +9,7 @@ import axios from 'axios';
 const MenuTag = () => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
   const [randomMainSection2, setRandomMainSection2] = useState('');
+
   const user = useSelector((state) => state.user.user);
 
   const [locationName, setLocationName] = useState(null);

@@ -1,11 +1,119 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
+import { useSelector } from 'react-redux';
+import { fetchSelectedLocation } from '../../features/userLocation';
+import { getDistance } from '../../utils/distance';
 import SpotCard from '../card/SpotCard';
 import axios from 'axios';
 
 const DrinkTag = () => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
   const [randomSubSection3, setRandomSubSection3] = useState('');
+
+  const user = useSelector((state) => state.user.user);
+
+  const [locationName, setLocationName] = useState(null);
+  const [selectedLatitude, setSelectedLatitude] = useState(null);
+  const [selectedLongitude, setSelectedLongitude] = useState(null);
+  const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
+  const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
+
+  const formatAddress = (data) => {
+    const item = data[0];
+    const region = item.region;
+    const land = item.land;
+
+    const city = (region.area1?.name).slice(0, 2);
+    const district = region.area2?.name;
+
+    const roadName = land.name;
+    const buildingNumber = land.number1;
+
+    const address = `${city} ${district} ${roadName} ${buildingNumber}`;
+
+    return address;
+  };
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      setIsLoading(true);
+      if (user) {
+        const selectedLocation = await fetchSelectedLocation(user.user_id);
+        if (selectedLocation && selectedLocation.location_road_address) {
+          setLocationName(selectedLocation.location_road_address);
+        }
+      }
+      setIsLoading(false);
+      setIsLocationFetched(true);
+    };
+
+    fetchLocation();
+  }, [user, locationName, isLocationFetched]);
+
+  useEffect(() => {
+    if (isLocationFetched && !locationName) {
+      setIsLoading(true);
+      const getCurrentLocation = () => {
+        return new Promise((resolve, reject) => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          } else {
+            reject(new Error('Geolocation is not supported by this browser.'));
+          }
+        });
+      };
+
+      const onSuccess = (position) => {
+        const { latitude, longitude } = position.coords;
+        setSelectedLatitude(latitude);
+        setSelectedLongitude(longitude);
+        getReverseGeocode(latitude, longitude);
+      };
+
+      const onError = (error) => {
+        console.error(error);
+        // alert('위치를 가져올 수 없습니다.');
+        setLocationName('역삼역 2번 출구');
+      };
+
+      const getReverseGeocode = async (latitude, longitude) => {
+        try {
+          setIsLoading(true);
+          const response = await fetch(`http://localhost:80/reverse_geocode?lat=${latitude}&lon=${longitude}`);
+
+          if (!response.ok) {
+            const text = await response.text();
+            console.error(`Error response: ${text}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (data.results && data.results[0]) {
+            const roadAddress = formatAddress(data.results) || '주소를 찾을 수 없습니다.';
+            setLocationName(roadAddress);
+          } else {
+            setLocationName('주소를 찾을 수 없습니다.');
+          }
+        } catch (error) {
+          console.error('Reverse geocoding failed:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      const getFetchedLocation = async () => {
+        try {
+          const position = await getCurrentLocation();
+          onSuccess(position);
+        } catch (error) {
+          onError(error);
+        }
+      };
+
+      getFetchedLocation();
+    }
+  }, [locationName, isLocationFetched]);
 
   useEffect(() => {
     const fetchRandomSubSection3 = async () => {
@@ -102,17 +210,40 @@ const DrinkTag = () => {
             width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
           }}
         >
-          {Array.from({ length: sectionLabelSpotList.length }).map((_, index) => (
-            <div
-              key={index}
-              style={{
-                minWidth: 340, // SpotCard의 너비를 고정
-                flexShrink: 0, // 카드가 줄어들지 않도록 설정
-              }}
-            >
-              <SpotCard sectionLabelSpot={sectionLabelSpotList[index]} />
-            </div>
-          ))}
+          {sectionLabelSpotList && sectionLabelSpotList.length > 0 ? (
+            sectionLabelSpotList
+              .slice() // 원본 배열을 변경하지 않기 위해 복사본을 생성
+              .filter((spot) => {
+                const distance = getDistance(
+                  selectedLatitude,
+                  selectedLongitude,
+                  spot.sectionSpot.Spot.spot_lat,
+                  spot.sectionSpot.Spot.spot_lng
+                );
+                console.log('util distance', distance);
+                return distance <= 1; // 거리가 1km 이내인 경우에만 true 반환
+              })
+              .sort((a, b) => {
+                return b.visitReviewData.averageRating - a.visitReviewData.averageRating; // 반환값을 명시적으로 지정
+              })
+              .map((spot, index) => (
+                <div
+                  key={index}
+                  style={{
+                    minWidth: 340, // SpotCard의 너비를 고정
+                    flexShrink: 0, // 카드가 줄어들지 않도록 설정
+                  }}
+                >
+                  <SpotCard
+                    sectionLabelSpot={spot}
+                    selectedLatitude={selectedLatitude}
+                    selectedLongitude={selectedLongitude}
+                  />
+                </div>
+              ))
+          ) : (
+            <div>데이터를 불러오는 중입니다...</div> // 데이터를 불러오기 전 로딩 상태 표시
+          )}
         </div>
         {currentIndex < totalCards - 4 && (
           <Button

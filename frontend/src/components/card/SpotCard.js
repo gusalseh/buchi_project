@@ -86,7 +86,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           <StarFilled style={{ color: '#DB5744' }} />
           <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: 'bold' }}>{averageRating || 0}</Text>
           <Text type="secondary" style={{ marginLeft: 8 }}>
-            리뷰: {review.length > 10 ? `${review.slice(0, 10)}...` : review}
+            리뷰: {sectionLabelrating.reviewCount}개
           </Text>
         </div>
       </Card>
