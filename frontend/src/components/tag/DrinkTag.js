@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
-import { useSelector } from 'react-redux';
-import { fetchSelectedLocation } from '../../features/userLocation';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchSelectedLocation, getCurrentLocation } from '../../features/userLocationThunk';
 import { getDistance } from '../../utils/distance';
 import SpotCard from '../card/SpotCard';
 import axios from 'axios';
@@ -10,110 +10,29 @@ const DrinkTag = () => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
   const [randomSubSection3, setRandomSubSection3] = useState('');
 
-  const user = useSelector((state) => state.user.user);
-
-  const [locationName, setLocationName] = useState(null);
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
-  const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
-  const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
 
-  const formatAddress = (data) => {
-    const item = data[0];
-    const region = item.region;
-    const land = item.land;
+  const dispatch = useDispatch();
 
-    const city = (region.area1?.name).slice(0, 2);
-    const district = region.area2?.name;
-
-    const roadName = land.name;
-    const buildingNumber = land.number1;
-
-    const address = `${city} ${district} ${roadName} ${buildingNumber}`;
-
-    return address;
-  };
+  // Redux 상태에서 선택된 위치와 로딩 상태, 에러를 가져옴
+  const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
+  const loading = useSelector((state) => state.userLocation.loading);
+  const error = useSelector((state) => state.userLocation.error);
+  const user = useSelector((state) => state.user.user); // user 정보
 
   useEffect(() => {
-    const fetchLocation = async () => {
-      setIsLoading(true);
-      if (user) {
-        const selectedLocation = await fetchSelectedLocation(user.user_id);
-        if (selectedLocation && selectedLocation.location_road_address) {
-          setLocationName(selectedLocation.location_road_address);
-        }
-      }
-      setIsLoading(false);
-      setIsLocationFetched(true);
-    };
-
-    fetchLocation();
-  }, [user, locationName, isLocationFetched]);
-
-  useEffect(() => {
-    if (isLocationFetched && !locationName) {
-      setIsLoading(true);
-      const getCurrentLocation = () => {
-        return new Promise((resolve, reject) => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
-          } else {
-            reject(new Error('Geolocation is not supported by this browser.'));
-          }
-        });
-      };
-
-      const onSuccess = (position) => {
-        const { latitude, longitude } = position.coords;
-        setSelectedLatitude(latitude);
-        setSelectedLongitude(longitude);
-        getReverseGeocode(latitude, longitude);
-      };
-
-      const onError = (error) => {
-        console.error(error);
-        // alert('위치를 가져올 수 없습니다.');
-        setLocationName('역삼역 2번 출구');
-      };
-
-      const getReverseGeocode = async (latitude, longitude) => {
-        try {
-          setIsLoading(true);
-          const response = await fetch(`http://localhost:80/reverse_geocode?lat=${latitude}&lon=${longitude}`);
-
-          if (!response.ok) {
-            const text = await response.text();
-            console.error(`Error response: ${text}`);
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const data = await response.json();
-
-          if (data.results && data.results[0]) {
-            const roadAddress = formatAddress(data.results) || '주소를 찾을 수 없습니다.';
-            setLocationName(roadAddress);
-          } else {
-            setLocationName('주소를 찾을 수 없습니다.');
-          }
-        } catch (error) {
-          console.error('Reverse geocoding failed:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      const getFetchedLocation = async () => {
-        try {
-          const position = await getCurrentLocation();
-          onSuccess(position);
-        } catch (error) {
-          onError(error);
-        }
-      };
-
-      getFetchedLocation();
+    // user 정보가 없고 selectedLocation이 null일 때 현재 위치를 불러옴
+    if (!user) {
+      dispatch(getCurrentLocation());
     }
-  }, [locationName, isLocationFetched]);
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchSelectedLocation(user.user_id));
+    }
+  }, [dispatch, user]);
 
   useEffect(() => {
     const fetchRandomSubSection3 = async () => {
@@ -134,9 +53,14 @@ const DrinkTag = () => {
         console.error('랜덤 subsection3 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
       }
     };
+    if (selectedLocation) {
+      // selectedLocation이 있을 때만 실행
+      setSelectedLatitude(user ? selectedLocation?.location_lat : selectedLocation.latitude);
+      setSelectedLongitude(user ? selectedLocation?.location_lng : selectedLocation.longitude);
 
-    fetchRandomSubSection3();
-  }, []); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
+      fetchRandomSubSection3();
+    }
+  }, [selectedLocation]); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수

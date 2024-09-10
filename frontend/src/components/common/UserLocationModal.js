@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin, Modal } from 'antd';
 import { EnvironmentOutlined, MoreOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
@@ -11,9 +11,12 @@ import {
   updateLocationByType,
 } from '../../features/userLocation';
 
+import { fetchSelectedLocation } from '../../features/userLocationThunk';
+
 // TODO: registeredLocations 우선 순위로 배열하는 로직 -> utils 모듈로 독립
 // TODO: 3개의 Modal들 -> alert(modal) 디렉토리로 독립
 const UserLocation = ({ saveLocation, visible }) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [address, setAddress] = useState('');
@@ -251,6 +254,8 @@ const UserLocation = ({ saveLocation, visible }) => {
         if (a.selected && !b.selected) return -1;
         return 0;
       });
+      dispatch(fetchSelectedLocation(user.user_id));
+      console.log('fetchSelectedLocation(user.user_id) Test: ', fetchSelectedLocation(user.user_id));
       setRegisteredLocations(fetchLocations);
       handleConfirmClose();
     } catch (error) {

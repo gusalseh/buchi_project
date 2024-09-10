@@ -3,7 +3,7 @@ import Filter from '../components/common/Filter';
 import MenuTag from '../components/tag/MenuTag';
 import VisitRankTag from '../components/tag/VisitRankTag';
 import PeopleCountTag from '../components/tag/PeopleCountTag';
-import FoodQuatityTag from '../components/tag/FoodQuantityTag';
+import FoodQuantityTag from '../components/tag/FoodQuantityTag';
 import DrinkTag from '../components/tag/DrinkTag';
 import GenderTag from '../components/tag/GenderTag';
 import WeatherTag from '../components/tag/WeatherTag';
@@ -15,12 +15,13 @@ const MainPage = () => {
   return (
     <div style={{ width: '100%' }}>
       <Filter />
+      {/* <MenuTagTest /> */}
       <MenuTag />
       <TeamSpot />
       <VisitRankTag />
       <Promotion />
       <PeopleCountTag />
-      <FoodQuatityTag />
+      <FoodQuantityTag />
       <DrinkTag />
       <GenderTag />
       <WeatherTag />

@@ -60,7 +60,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           <div style={{ display: 'flex', marginTop: 8, alignItems: 'center' }}>
             {' '}
             {/* 텍스트 정렬 맞춤 */}
-            <Text>도보 {distance}km</Text> {/* 텍스트 수정 */}
+            <Text>도보 {Math.round((distance * 1000) / (1.29 * 60))}분</Text> {/* 텍스트 수정 */}
             <Text style={{ margin: '0 8px' }}>|</Text>
             <Text>최대 {spot.max_group_seats}인</Text>
             <Text style={{ margin: '0 8px' }}>|</Text>

@@ -11,6 +11,7 @@ import logo from '../../assets/Img/buchi_logo_full.png';
 export default function Header() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const user = useSelector((state) => state.user.user);
+  console.log('Test Header useSelector User: ', user);
   const dispatch = useDispatch();
 
   useEffect(() => {

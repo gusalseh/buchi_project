@@ -49,6 +49,23 @@ const TeamSpot = () => {
     fetchUserData();
   }, [user]);
 
+  useEffect(() => {
+    const fetchRandomMainSection2 = async () => {
+      try {
+        //user.company_id를 사용해 정보 가져오기.
+        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
+          params: { mainSection2: randomMainSection2 },
+        });
+        const sectionLabelSpotList = sectionLabelResponse.data;
+        setSectionLabelSpotList(sectionLabelSpotList);
+      } catch (error) {
+        console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
+      }
+    };
+
+    fetchRandomMainSection2();
+  }, []); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
