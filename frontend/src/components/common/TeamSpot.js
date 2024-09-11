@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import CompanyModal from './CompanyModal';
 import LoginAlert from '../alert/LoginAlert';
 import CompanySpotCard from '../card/CompanySpotCard';
+import axios from 'axios';
 
 const { Text } = Typography;
 
@@ -12,6 +13,7 @@ const TeamSpot = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [companyVisitSpotList, setCompanyVisitSpotList] = useState({});
 
   const openAlert = () => {
     setIsAlertVisible(true);
@@ -49,119 +51,123 @@ const TeamSpot = () => {
     fetchUserData();
   }, [user]);
 
-  useEffect(() => {
-    const fetchRandomMainSection2 = async () => {
-      try {
-        //user.company_id를 사용해 정보 가져오기.
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
-          params: { mainSection2: randomMainSection2 },
-        });
-        const sectionLabelSpotList = sectionLabelResponse.data;
-        setSectionLabelSpotList(sectionLabelSpotList);
-      } catch (error) {
-        console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
-      }
-    };
+  // useEffect(() => {
+  //   if (user.user && user.user.company_id) {
+  //     // user.user와 user.user.company_id가 존재할 때만 실행
+  //     const fetchUserCompanyVisitSpot = async () => {
+  //       try {
+  //         // user_id를 사용해 정보 가져오기
+  //         const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
+  //           params: { userId: user.user.user_id },
+  //         });
+  //         const companyVisitList = companyVisitResponse.data;
+  //         setCompanyVisitSpotList(companyVisitList);
+  //       } catch (error) {
+  //         console.error('fetchUserCompanyVisitSpot 에서 error 발생: ', error);
+  //       }
+  //     };
 
-    fetchRandomMainSection2();
-  }, []); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
+  //     fetchUserCompanyVisitSpot();
+  //   }
+  // }, [user.user, user.user?.company_id]); // user.user와 user.user.company_id가 바뀔 때마다 실행
+
+  // console.log('companyVisitSpotList Test: ', companyVisitSpotList);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return (
-    <div>
-      {user.user && user.user.company_id ? (
-        <div style={{ marginBottom: 80, height: 620, padding: '20px' }}>
-          <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
-            {/* 왼쪽 박스 */}
-            <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
-              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
-                TMD 교육그룹
-              </Text>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
-              >
-                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
-                <Button
-                  type="default"
-                  shape="round"
-                  style={{
-                    borderColor: '#d9d9d9',
-                    borderWidth: '1px',
-                    color: '#000',
-                  }}
-                >
-                  지도로 보기
-                </Button>
-              </div>
-              <CompanySpotCard />
-              <CompanySpotCard />
-              <CompanySpotCard />
-            </Col>
+  return;
+  // return (
+  //   <div>
+  //     {user.user && user.user.company_id ? (
+  //       <div style={{ marginBottom: 80, height: 620, padding: '20px' }}>
+  //         <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
+  //           {/* 왼쪽 박스 */}
+  //           <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
+  //             <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+  //               TMD 교육그룹
+  //             </Text>
+  //             <div
+  //               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+  //             >
+  //               <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
+  //               <Button
+  //                 type="default"
+  //                 shape="round"
+  //                 style={{
+  //                   borderColor: '#d9d9d9',
+  //                   borderWidth: '1px',
+  //                   color: '#000',
+  //                 }}
+  //               >
+  //                 지도로 보기
+  //               </Button>
+  //             </div>
+  //             <CompanySpotCard />
+  //           </Col>
 
-            {/* 오른쪽 박스 */}
-            <Col
-              style={{
-                width: 620,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 12,
-                borderLeft: 'solid, #E5E5E5',
-                borderLeftWidth: 1,
-                paddingLeft: 20,
-              }}
-            >
-              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
-                교육
-              </Text>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
-              >
-                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
-                  비슷한 업종 사람들의 회식 장소
-                </Text>
-                <Button
-                  type="default"
-                  shape="round"
-                  style={{
-                    borderColor: '#d9d9d9',
-                    borderWidth: '1px',
-                    color: '#000',
-                  }}
-                >
-                  지도로 보기
-                </Button>
-              </div>
-              <CompanySpotCard />
-              <CompanySpotCard />
-              <CompanySpotCard />
-            </Col>
-          </Row>
-        </div>
-      ) : (
-        <div style={{ width: '100%', textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
-          <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
-          {user.user ? (
-            <div style={{ marginTop: '20px' }}>
-              <Button type="primary" onClick={openModal} style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
-                내 회사 정보 입력하기
-              </Button>
-              <CompanyModal visible={isModalVisible} onClose={closeModal} />
-            </div>
-          ) : (
-            <div style={{ marginTop: '20px' }}>
-              <Button type="primary" onClick={openAlert} style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
-                내 회사 정보 입력하기
-              </Button>
-              <LoginAlert visible={isAlertVisible} onClose={closeAlert} />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
+  //           {/* 오른쪽 박스 */}
+  //           <Col
+  //             style={{
+  //               width: 620,
+  //               display: 'flex',
+  //               flexDirection: 'column',
+  //               gap: 12,
+  //               borderLeft: 'solid, #E5E5E5',
+  //               borderLeftWidth: 1,
+  //               paddingLeft: 20,
+  //             }}
+  //           >
+  //             <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+  //               교육
+  //             </Text>
+  //             <div
+  //               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+  //             >
+  //               <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+  //                 비슷한 업종 사람들의 회식 장소
+  //               </Text>
+  //               <Button
+  //                 type="default"
+  //                 shape="round"
+  //                 style={{
+  //                   borderColor: '#d9d9d9',
+  //                   borderWidth: '1px',
+  //                   color: '#000',
+  //                 }}
+  //               >
+  //                 지도로 보기
+  //               </Button>
+  //             </div>
+  //             <CompanySpotCard />
+  //             <CompanySpotCard />
+  //             <CompanySpotCard />
+  //           </Col>
+  //         </Row>
+  //       </div>
+  //     ) : (
+  //       <div style={{ width: '100%', textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
+  //         <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
+  //         {user.user ? (
+  //           <div style={{ marginTop: '20px' }}>
+  //             <Button type="primary" onClick={openModal} style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
+  //               내 회사 정보 입력하기
+  //             </Button>
+  //             <CompanyModal visible={isModalVisible} onClose={closeModal} />
+  //           </div>
+  //         ) : (
+  //           <div style={{ marginTop: '20px' }}>
+  //             <Button type="primary" onClick={openAlert} style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
+  //               내 회사 정보 입력하기
+  //             </Button>
+  //             <LoginAlert visible={isAlertVisible} onClose={closeAlert} />
+  //           </div>
+  //         )}
+  //       </div>
+  //     )}
+  //   </div>
+  // );
 };
 
 export default TeamSpot;

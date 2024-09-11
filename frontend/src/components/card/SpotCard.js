@@ -15,7 +15,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
   const sectionLabelrating = sectionLabelSpot.sectionLabelSpot.visitReviewData;
   const spot = sectionLabel.Spot;
   const tagLabel = spot.TagLabel;
-  const menu = spot.Menu;
+  const menu = spot.Menus;
 
   const averageRating = sectionLabelrating.averageRating;
   const review = sectionLabelrating.reviews[0].Review.review_text;
@@ -64,7 +64,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
             <Text style={{ margin: '0 8px' }}>|</Text>
             <Text>최대 {spot.max_group_seats}인</Text>
             <Text style={{ margin: '0 8px' }}>|</Text>
-            <Text>평균 {menu.price}원</Text>
+            <Text>평균 {menu[0].price}원</Text>
           </div>
 
           <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
