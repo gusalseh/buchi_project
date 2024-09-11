@@ -69,7 +69,8 @@ const VisitRankSpotCard = (sectionLabelSpot) => {
             {spot.spot_name}
           </Title>
           <Text type="secondary" style={{ marginTop: 5 }}>
-            {sectionLabel.main_section_1} · {sectionLabel.main_section_2}
+            {sectionLabel.main_section_1}{' '}
+            {sectionLabel.main_section_2 != null ? `· ${sectionLabel.main_section_2}` : ' '}
           </Text>
         </div>
 

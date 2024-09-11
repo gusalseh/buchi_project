@@ -41,7 +41,6 @@ const MenuTag = () => {
         const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
         const randomMainSection2 = randomResponse.data;
         setRandomMainSection2(randomMainSection2);
-        console.log('check randomMainSection2', randomMainSection2);
 
         //mainSection2 값을 사용해 데이터 조회
         const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
@@ -135,7 +134,7 @@ const MenuTag = () => {
             width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
           }}
         >
-          {sectionLabelSpotList && sectionLabelSpotList.length > 0 ? (
+          {sectionLabelSpotList && sectionLabelSpotList.length > 3 ? (
             sectionLabelSpotList
               .slice() // 원본 배열을 변경하지 않기 위해 복사본을 생성
               .filter((spot) => {

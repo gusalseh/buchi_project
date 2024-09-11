@@ -8,9 +8,6 @@ import axios from 'axios';
 const { Text, Title } = Typography;
 
 const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
-  console.log('sectionLabelSpot from SpotCard', sectionLabelSpot);
-  console.log('sectionLabelSpot.sectionLabelSpot from SpotCard', sectionLabelSpot.sectionLabelSpot);
-
   const sectionLabel = sectionLabelSpot.sectionLabelSpot.sectionSpot;
   const sectionLabelrating = sectionLabelSpot.sectionLabelSpot.visitReviewData;
   const spot = sectionLabel.Spot;
@@ -52,7 +49,8 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
             {spot.spot_name}
           </Title>
           <Text type="secondary" style={{ marginTop: 5 }}>
-            {sectionLabel.main_section_1} · {sectionLabel.main_section_2}
+            {sectionLabel.main_section_1}
+            {sectionLabel.main_section_2 != null ? `· ${sectionLabel.main_section_2}` : ' '}
           </Text>
         </div>
 
