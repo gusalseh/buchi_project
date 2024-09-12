@@ -90,3 +90,47 @@ exports.getSpotList = async (req, res) => {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
   }
 };
+
+exports.getSpotByDist = async (req, res) => {
+  const { latitude, longitude } = req.body;
+
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: '위도와 경도를 제공해야 합니다.' });
+  }
+
+  try {
+    // const query = `
+    //   SELECT
+    //     spot_name,
+    //     ST_Distance_Sphere(location, ST_SRID(POINT(:longitude, :latitude), 4326)) AS distance,
+    //     max_group_seats,
+    //     spot_lat AS lat,
+    //     spot_lng AS lng
+    //   FROM spot
+    //   WHERE ST_Distance_Sphere(location, ST_SRID(POINT(:longitude, :latitude), 4326)) <= 700
+    //   ORDER BY distance ASC
+    // `;
+
+    const query = `
+    SELECT 
+      *
+    FROM spot
+    WHERE ST_Distance_Sphere(
+      point(spot_lng, spot_lat),
+      point(:longitude, :latitude)
+    ) <= 700;
+  `;
+
+    const spots = await sequelize.query(query, {
+      replacements: { latitude, longitude },
+      type: sequelize.QueryTypes.SELECT,
+    });
+
+    console.log(spots);
+
+    return res.json(spots);
+  } catch (error) {
+    console.error('쿼리 실행 중 오류:', error);
+    return res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+  }
+};
