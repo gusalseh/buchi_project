@@ -4,7 +4,8 @@ import { StarFilled, PictureOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
-const CompanySpotCard = () => {
+const CompanySpotCard = (spotList) => {
+  console.log('companyspotcard에서 spotList test: ', spotList.spotList);
   return (
     <Card
       bordered
@@ -36,35 +37,40 @@ const CompanySpotCard = () => {
           }}
         >
           <div>
-            <Text strong style={{ fontSize: '24px', color: '#d4380d', marginRight: '8px' }}>
-              1
-            </Text>
+            <Text strong style={{ fontSize: '24px', color: '#d4380d', marginRight: '8px' }}></Text>
             <Text strong style={{ fontSize: 24, fontStyle: 'normal', fontWeight: 600 }}>
-              Spot1
+              {spotList.spotList.spot_name}
             </Text>
             <Text style={{ marginLeft: 18, fontSize: 16, fontStyle: 'normal', fontWeight: 500 }} type="secondary">
-              음식종류
+              {spotList.spotList.main_section_1}
+              {spotList.spotList.main_section_2 != null ? `· ${spotList.spotList.main_section_2}` : ' '}
             </Text>
           </div>
 
-          <div style={{ marginLeft: 18, marginTop: '8px' }}>
-            <Tag style={{ width: 38, height: 24, marginRight: 6 }}>Tag</Tag>
-            <Tag style={{ width: 38, height: 24, marginRight: 6 }}>Tag</Tag>
-            <Tag style={{ width: 38, height: 24 }}>Tag</Tag>
+          <div style={{ display: 'flex', marginLeft: 18, marginTop: '8px' }}>
+            <Tag color="#FAE7E5" style={{ height: 24, marginRight: 6, color: 'black' }}>
+              {spotList.spotList.tag_1}
+            </Tag>
+            <Tag color="#E5F3FA" style={{ height: 24, marginRight: 6, color: 'black' }}>
+              {spotList.spotList.tag_2}
+            </Tag>
+            <Tag color="#F1E5FA" style={{ height: 24, color: 'black' }}>
+              {spotList.spotList.tag_3}
+            </Tag>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', marginLeft: 18, marginTop: '8px' }}>
             <StarFilled style={{ color: '#DB5744', marginRight: '4px', width: 20, height: 20 }} />
             <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-              4.2
+              {spotList.spotList.rating}
             </Text>
-            <Text>리뷰 개수</Text>
+            <Text></Text>
           </div>
         </div>
         <div style={{ marginLeft: 'auto', height: 100 }}>
           <Image
-            alt="CompanySpot"
-            src={'/default-image.jpg'}
+            alt={spotList.spotList.spot_name}
+            src={spotList.spotList.spot_main_img || '/default-image.jpg'}
             fallback="/default.png"
             preview={false}
             style={{ width: 100, height: 100, objectFit: 'cover' }} // 이미지 크기는 유지하고 모서리만 둥글게

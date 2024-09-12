@@ -1,44 +1,97 @@
-const { sequelize, User, Visit, Company, Spot } = require('../models');
+const { sequelize } = require('../models');
 
 // 유저의 company_id로 방문 수 많은 Spot 데이터 불러오기.
 exports.getUserCompanyVisitData = async (req, res) => {
-  // SELECT COUNT(b.spot_id) AS visit_count,
-  // b.spot_id,
-  // c.spot_name,
-  // d.company_name,
-  // d.industry_type
-  // FROM user
-  // INNER JOIN visit b ON user.user_id = b.user_id
-  // INNER JOIN spot c ON b.spot_id = c.spot_id
-  // INNER JOIN company d ON user.company_id = d.company_id
-  // WHERE user.user_id = @USERID
-  // GROUP BY b.spot_id, c.spot_name, d.company_name, d.industry_type
-  // ORDER BY visit_count DESC
-  // LIMIT 3;
-
-  var query = `
+  const { userId } = req.query;
+  console.log('userId Test: ', userId);
+  if (userId) {
+    const query = `
     SELECT COUNT(b.spot_id) AS visit_count,
-    b.spot_id,
-    c.spot_name,
-    d.company_name,
-    d.industry_type
-    FROM user
-    INNER JOIN visit b ON user.user_id = b.user_id
-    INNER JOIN spot c ON b.spot_id = c.spot_id
-    INNER JOIN company d ON user.company_id = d.company_id
-    WHERE user.user_id = @USERID
-    GROUP BY b.spot_id, c.spot_name, d.company_name, d.industry_type
-    ORDER BY visit_count DESC
-    LIMIT 3;
-    `;
-  sequelize.query(query).spread(
-    function (results, metadata) {
-      // 쿼리 실행 성공
-      console.log('results : ', results);
-    },
-    function (err) {
-      // 쿼리 실행 에러
-      console.log('err : ', err);
+       b.spot_id,
+       c.spot_name,
+       c.spot_main_img,
+       d.company_name,
+       d.industry_type,
+       e.tag_1,
+       e.tag_2,
+       e.tag_3,
+       f.main_section_1,
+       f.main_section_2, 
+       g.review_text,
+       g.rating       
+       FROM user
+       INNER JOIN visit b ON user.user_id = b.user_id
+       INNER JOIN spot c ON b.spot_id = c.spot_id
+       INNER JOIN company d ON user.company_id = d.company_id
+       LEFT JOIN card_label e ON c.spot_id = e.spot_id
+       LEFT JOIN section_label f ON c.spot_id = f.spot_id 
+       LEFT JOIN review g ON b.visit_id = g.visit_id   
+       WHERE user.user_id = :userId
+       GROUP BY b.spot_id, c.spot_name, c.spot_main_img, d.company_name, d.industry_type, e.tag_1, e.tag_2, e.tag_3, f.main_section_1, f.main_section_2, g.review_text, g.rating
+       ORDER BY visit_count DESC
+      LIMIT 3;
+      `;
+
+    const results = await sequelize.query(query, {
+      replacements: { userId: userId },
+      type: sequelize.QueryTypes.SELECT,
+    });
+
+    const mappings_1 = {
+      service: '서비스',
+      finance_banking: '금융·은행',
+      IT_telecommunications: 'IT·정보통신',
+      sales_distribution: '판매·유통',
+      manufacturing_production_chemicals: '제조·생산·화학',
+      education: '교육',
+      construction: '건설',
+      medical_pharmaceutical: '의료·제약',
+      media_advertisement: '미디어·광고',
+      cultural_art_design: '문화·예술·디자인',
+      institution_association: '기관·협회',
+    };
+
+    const mappings_2 = {
+      friendly: '친한사람과 함께',
+      partner: '동료와 함께',
+      boss: '상사와 함께',
+      executive: '임원과 함께',
+      vendor: '거래처와 함께',
+      foreigner: '외국인과 함께',
+      quiet: '조용한담소',
+      chatter: '활발한수다',
+      noisy: '시끌벅적한',
+      casual: '캐주얼한',
+      modern: '모던한',
+      formal: '격식있는',
+      traditional: '전통적인',
+      exotic: '이국적/이색적',
+    };
+
+    const mappings_3 = {
+      korean: '한식',
+      chinese: '양식',
+      japanese: '일식',
+      western: '양식',
+      asian: '아시안',
+      fusion: '퓨전',
+      pork_belly: '삼겹살',
+      chicken: '치킨',
+      grilled_beef: '소고기구이',
+      pork_libs: '돼지갈비',
+      chinese_cuisine: '중국요리',
+      sashimi: '회',
+    };
+
+    for (i = 0; i < results.length; i++) {
+      results[i].main_section_1 = mappings_3[results[i].main_section_1];
+      results[i].main_section_2 = mappings_3[results[i].main_section_2];
+      results[i].tag_1 = mappings_2[results[i].tag_1];
+      results[i].tag_2 = mappings_2[results[i].tag_2];
+      results[i].tag_3 = mappings_2[results[i].tag_3];
+      results[i].industry_type = mappings_1[results[i].industry_type];
     }
-  );
+
+    res.json(results);
+  }
 };

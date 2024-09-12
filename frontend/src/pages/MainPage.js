@@ -17,7 +17,7 @@ const MainPage = () => {
       <Filter />
       {/* <MenuTagTest /> */}
       <MenuTag />
-      {/* <TeamSpot /> */}
+      <TeamSpot />
       <VisitRankTag />
       <Promotion />
       <PeopleCountTag />
