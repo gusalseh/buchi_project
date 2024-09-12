@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Button, Card, List, DatePicker, InputNumber, Row, Col, Select, Typography, Image, Tag, Slider } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -19,6 +20,7 @@ const FilterResultPage = () => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [selectedRange, setSelectedRange] = useState([10000, 400000]);
   const [selectedDetailFilter, setSelectedDetailFilter] = useState(null);
+  const [places, setPlaces] = useState([]);
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -27,87 +29,57 @@ const FilterResultPage = () => {
   const longitude = parseFloat(queryParams.get('lng')) || 126.978;
   const address = queryParams.get('address');
 
-  const [places, setPlaces] = useState([
-    {
-      title: '역삼농원',
-      main_section_1: '한식',
-      main_section_2: '삼겹살',
-      distance: '5',
-      max_group_seats: '10',
-      rating: 4.2,
-      reviews: 123,
-      price: '17,000',
-      lat: 37.501306,
-      lng: 127.039668,
-    },
-    {
-      title: '역삼농원',
-      main_section_1: '한식',
-      main_section_2: '삼겹살',
-      distance: '5',
-      max_group_seats: '10',
-      rating: 4.2,
-      reviews: 123,
-      price: '17,000',
-      lat: 37.509123,
-      lng: 127.045123,
-    },
-    {
-      title: '역삼농원',
-      main_section_1: '한식',
-      main_section_2: '삼겹살',
-      distance: '5',
-      max_group_seats: '10',
-      rating: 4.2,
-      reviews: 123,
-      price: '17,000',
-      lat: 37.515789,
-      lng: 127.051789,
-    },
-    {
-      title: '역삼농원',
-      main_section_1: '한식',
-      main_section_2: '삼겹살',
-      distance: '5',
-      max_group_seats: '10',
-      rating: 4.2,
-      reviews: 123,
-      price: '17,000',
-      lat: 37.507777,
-      lng: 127.043777,
-    },
-    {
-      title: '역삼농원',
-      main_section_1: '한식',
-      main_section_2: '삼겹살',
-      distance: '5',
-      max_group_seats: '10',
-      rating: 4.2,
-      reviews: 123,
-      price: '17,000',
-      lat: 37.504789,
-      lng: 127.038789,
-    },
-    // 추가 장소 데이터를 여기에 포함
-  ]);
+  useEffect(() => {
+    const fetchPlacesByDistance = async () => {
+      try {
+        const currentPosition = {
+          latitude: latitude,
+          longitude: longitude,
+        };
+        const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
+
+        const updatedPlaces = response.data.map((place) => ({
+          title: place.spot_name,
+          main_section_1: '한식',
+          main_section_2: '삼겹살',
+          distance: '5',
+          max_group_seats: '10',
+          rating: 4.2,
+          reviews: 93,
+          price: '17,000',
+          lat: place.spot_lat,
+          lng: place.spot_lng,
+        }));
+
+        setPlaces(updatedPlaces);
+
+        console.log('places:', updatedPlaces);
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
+    if (latitude && longitude) {
+      fetchPlacesByDistance();
+    }
+  }, [latitude, longitude]);
 
   useEffect(() => {
     // Date는 변수 핸들링 잘해서 다시 적용해보기
     // setSelectedDate(date);
     setSelectedTime(time);
     setSelectedAmount(amount);
+    if (places.length > 0) {
+      const map = new window.naver.maps.Map('map', {
+        center: new window.naver.maps.LatLng(latitude, longitude),
+        zoom: 16,
+      });
 
-    const map = new window.naver.maps.Map('map', {
-      center: new window.naver.maps.LatLng(latitude, longitude),
-      zoom: 16,
-    });
-
-    // 설정위치 빨간 원
-    new window.naver.maps.Marker({
-      position: new window.naver.maps.LatLng(latitude, longitude),
-      map: map,
-      icon: {
-        content: `
+      // 설정위치 빨간 원
+      new window.naver.maps.Marker({
+        position: new window.naver.maps.LatLng(latitude, longitude),
+        map: map,
+        icon: {
+          content: `
       <div style="
         width: 15px;
         height: 15px;
@@ -117,31 +89,32 @@ const FilterResultPage = () => {
         box-shadow: 0 0 20px 0 rgba(204, 60, 40, 0.80);
       "></div>
     `,
-        anchor: new window.naver.maps.Point(6, 6),
-      },
-    });
-
-    // 주변 반경 원
-    new window.naver.maps.Circle({
-      map: map,
-      center: new window.naver.maps.LatLng(latitude, longitude),
-      radius: 550,
-      fillColor: '#CC3C28',
-      fillOpacity: 0.05,
-      strokeColor: 'transparent',
-      strokeOpacity: 0,
-      strokeWeight: 0,
-    });
-
-    // 장소마다 마커 추가
-    places.forEach((place) => {
-      new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(place.lat, place.lng),
-        map: map,
-        title: place.title,
+          anchor: new window.naver.maps.Point(6, 6),
+        },
       });
-    });
-  }, [latitude, longitude, places]);
+
+      // 주변 반경 원
+      new window.naver.maps.Circle({
+        map: map,
+        center: new window.naver.maps.LatLng(latitude, longitude),
+        radius: 700,
+        fillColor: '#CC3C28',
+        fillOpacity: 0.05,
+        strokeColor: 'transparent',
+        strokeOpacity: 0,
+        strokeWeight: 0,
+      });
+      console.log('marker:', places);
+      // 장소마다 마커 추가
+      places.forEach((place) => {
+        new window.naver.maps.Marker({
+          position: new window.naver.maps.LatLng(place.lat, place.lng),
+          map: map,
+          title: place.title,
+        });
+      });
+    }
+  }, [places]);
 
   useEffect(() => {
     if (isFilterVisible) {
