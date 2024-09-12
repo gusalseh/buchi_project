@@ -229,13 +229,6 @@ const Filter = () => {
     setSelectedLatitude(latitude);
     setSelectedLongitude(longitude);
 
-    console.log(date);
-    console.log(time);
-    console.log(amount);
-    console.log(latitude);
-    console.log(longitude);
-    console.log(locationName);
-
     navigate(
       `/filterResult?date=${date}&time=${time}&amount=${amount}&lat=${latitude}&lng=${longitude}&address=${locationName}`
     );

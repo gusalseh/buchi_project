@@ -18,8 +18,14 @@ exports.getRandomSectionType = async (req, res) => {
     const [enumValuesQuery] = await sequelize.query(`
         SHOW COLUMNS FROM section_label WHERE Field = 'main_section_2';
       `);
-
-    const enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
+    let enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
+    // 따옴표를 기준으로 나누고 pork_libs 제외
+    let enumValuesArray = enumValuesString
+      .split(',')
+      .map((val) => val.trim().replace(/'/g, ''))
+      .filter((val) => val !== 'pork_libs');
+    // 배열을 다시 문자열로 변환
+    enumValuesString = enumValuesArray.join(',');
     const mainSection2Types = enumValuesString.replace(/'/g, '').split(',');
 
     // 랜덤으로 하나의 main_section_2 값을 선택
@@ -32,7 +38,6 @@ exports.getRandomSectionType = async (req, res) => {
         pork_belly: '삼겹살',
         chicken: '치킨',
         grilled_beef: '소고기구이',
-        pork_libs: '돼지갈비',
         chinese_cuisine: '중국요리',
         sashimi: '회',
       };
@@ -44,7 +49,6 @@ exports.getRandomSectionType = async (req, res) => {
     res.json(translatedRandomMainSection2);
   } catch (error) {
     console.error('Error fetching random SectionLabel:', error);
-    res.status(500).json({ error: 'getRandomSectionLabel에서 랜덤 ENUM값을 가져오는 데 실패했습니다.' });
   }
 };
 
@@ -60,7 +64,6 @@ exports.getSectionLabelList = async (req, res) => {
         삼겹살: 'pork_belly',
         치킨: 'chicken',
         소고기구이: 'grilled_beef',
-        돼지갈비: 'pork_libs',
         중국요리: 'chinese_cuisine',
         회: 'sashimi',
       };

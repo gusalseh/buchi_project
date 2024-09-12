@@ -5,11 +5,7 @@ const { Title, Paragraph } = Typography;
 const { Content } = Layout;
 
 const ConsentPage = () => {
-  const handleConfirm = () => {
-    // 확인 버튼 클릭 시 동작
-    console.log('확인 버튼 클릭됨');
-    // 추가적인 동작을 여기에 추가할 수 있음
-  };
+  const handleConfirm = () => {};
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: 'white' }}>

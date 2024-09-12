@@ -46,7 +46,7 @@ const UserLocation = ({ saveLocation, visible }) => {
       const fetchData = async () => {
         try {
           const fetchLocations = await fetchUserLocations(user.user_id);
-          console.log(fetchLocations);
+
           fetchLocations.sort((a, b) => {
             if (b.selected && !a.selected) return 1;
             if (a.selected && !b.selected) return -1;
@@ -141,7 +141,6 @@ const UserLocation = ({ saveLocation, visible }) => {
       const address = addressDetail.roadAddress || addressDetail.jibunAddress;
 
       const { latitude, longitude } = await getCoordinates(address);
-      console.log('Latitude:', latitude, 'Longitude:', longitude);
 
       await createLocation({
         user_id: user.user_id,
@@ -172,7 +171,6 @@ const UserLocation = ({ saveLocation, visible }) => {
       setIsIframeVisible(false);
       setLoading(false);
     } catch (error) {
-      console.log('handleRegisterLocation Failed', error);
       alert('Location registration failed: ' + error.message);
     }
   };
@@ -181,7 +179,6 @@ const UserLocation = ({ saveLocation, visible }) => {
     try {
       const address = addressDetail.roadAddress || addressDetail.jibunAddress;
       const { latitude, longitude } = await getCoordinates(address);
-      console.log('Latitude:', latitude, 'Longitude:', longitude);
 
       await updateLocationByType({
         user_id: user.user_id,
@@ -212,7 +209,6 @@ const UserLocation = ({ saveLocation, visible }) => {
       setIsIframeVisible(false);
       setLoading(false);
     } catch (error) {
-      console.log('Location update failed', error);
       alert('Location update failed: ' + error.message);
     }
   };
@@ -255,11 +251,10 @@ const UserLocation = ({ saveLocation, visible }) => {
         return 0;
       });
       dispatch(fetchSelectedLocation(user.user_id));
-      console.log('fetchSelectedLocation(user.user_id) Test: ', fetchSelectedLocation(user.user_id));
       setRegisteredLocations(fetchLocations);
       handleConfirmClose();
     } catch (error) {
-      console.log('handleSelectLocation Failed');
+      console.error('handleSelectLocation Failed: ', error);
     }
   };
 

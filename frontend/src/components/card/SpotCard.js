@@ -23,7 +23,6 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
     spot.spot_lat,
     spot.spot_lng
   );
-  console.log(`두 지점 간의 거리: `, distance);
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>

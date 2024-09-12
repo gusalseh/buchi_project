@@ -52,11 +52,8 @@ const CompanyModal = ({ visible, onClose }) => {
 
     try {
       const response = await dispatch(updateUserCompany({ companyId: selectedItemId })).unwrap();
-      console.log('API Response:', response);
 
       if (response.message === 'Company ID updated successfully') {
-        console.log('Company ID updated successfully');
-
         onClose(); // 모달 닫기
         window.location.reload();
       } else {

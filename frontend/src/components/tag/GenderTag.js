@@ -144,7 +144,6 @@ const GenderTag = () => {
                   spot.sectionSpot.Spot.spot_lat,
                   spot.sectionSpot.Spot.spot_lng
                 );
-                console.log('util distance', distance);
                 return distance <= 1; // 거리가 1km 이내인 경우에만 true 반환
               })
               .sort((a, b) => {
