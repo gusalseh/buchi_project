@@ -1,6 +1,6 @@
-const { sequelize, SectionLabel, Spot, TagLabel, Menu } = require('../models'); // sequelize 불러오기
-const { OP } = require('sequelize');
-const { getVisitReviewJoinDB } = require('./visit');
+const { sequelize, SectionLabel, Spot, TagLabel, Menu } = require("../models"); // sequelize 불러오기
+const { OP } = require("sequelize");
+const { getVisitReviewJoinDB } = require("./visit");
 
 //spot_id로 spot 테이블 join
 exports.getSpotList = async (req, res) => {
@@ -24,47 +24,52 @@ exports.getSpotList = async (req, res) => {
 
     // 영어-한글 맵핑 함수
     const mappings_2 = {
-      friendly: '친한사람과 함께',
-      partner: '동료와 함께',
-      boss: '상사와 함께',
-      executive: '임원과 함께',
-      vendor: '거래처와 함께',
-      foreigner: '외국인과 함께',
-      quiet: '조용한담소',
-      chatter: '활발한수다',
-      noisy: '시끌벅적한',
-      casual: '캐주얼한',
-      modern: '모던한',
-      formal: '격식있는',
-      traditional: '전통적인',
-      exotic: '이국적/이색적',
+      friendly: "친한사람과 함께",
+      partner: "동료와 함께",
+      boss: "상사와 함께",
+      executive: "임원과 함께",
+      vendor: "거래처와 함께",
+      foreigner: "외국인과 함께",
+      quiet: "조용한담소",
+      chatter: "활발한수다",
+      noisy: "시끌벅적한",
+      casual: "캐주얼한",
+      modern: "모던한",
+      formal: "격식있는",
+      traditional: "전통적인",
+      exotic: "이국적/이색적",
     };
 
     const mappings_3 = {
-      korean: '한식',
-      chinese: '양식',
-      japanese: '일식',
-      western: '양식',
-      asian: '아시안',
-      fusion: '퓨전',
-      pork_belly: '삼겹살',
-      chicken: '치킨',
-      grilled_beef: '소고기구이',
-      pork_libs: '돼지갈비',
-      chinese_cuisine: '중국요리',
-      sashimi: '회',
+      korean: "한식",
+      chinese: "양식",
+      japanese: "일식",
+      western: "양식",
+      asian: "아시안",
+      fusion: "퓨전",
+      pork_belly: "삼겹살",
+      chicken: "치킨",
+      grilled_beef: "소고기구이",
+      pork_libs: "돼지갈비",
+      chinese_cuisine: "중국요리",
+      sashimi: "회",
     };
 
     if (sectionSpotList === 0) {
-      return res.status(404).json({ message: 'No data available' });
+      return res.status(404).json({ message: "No data available" });
     }
 
     for (i = 0; i < sectionSpotList.length; i++) {
-      sectionSpotList[i].main_section_1 = mappings_3[sectionSpotList[i].main_section_1];
-      sectionSpotList[i].main_section_2 = mappings_3[sectionSpotList[i].main_section_2];
-      sectionSpotList[i].Spot.TagLabel.tag_1 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_1];
-      sectionSpotList[i].Spot.TagLabel.tag_2 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_2];
-      sectionSpotList[i].Spot.TagLabel.tag_3 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_3];
+      sectionSpotList[i].main_section_1 =
+        mappings_3[sectionSpotList[i].main_section_1];
+      sectionSpotList[i].main_section_2 =
+        mappings_3[sectionSpotList[i].main_section_2];
+      sectionSpotList[i].Spot.TagLabel.tag_1 =
+        mappings_2[sectionSpotList[i].Spot.TagLabel.tag_1];
+      sectionSpotList[i].Spot.TagLabel.tag_2 =
+        mappings_2[sectionSpotList[i].Spot.TagLabel.tag_2];
+      sectionSpotList[i].Spot.TagLabel.tag_3 =
+        mappings_2[sectionSpotList[i].Spot.TagLabel.tag_3];
     }
 
     // Visit 및 Review 데이터 불러오기
@@ -75,7 +80,9 @@ exports.getSpotList = async (req, res) => {
       const spotId = sectionSpot.spot_id;
 
       // visit + review 데이터를 해당 spot_id와 매칭
-      const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
+      const visitReviewData = visitsWithReviews.find(
+        (visitReview) => visitReview.spot_id === spotId
+      );
 
       return {
         sectionSpot,
@@ -84,10 +91,10 @@ exports.getSpotList = async (req, res) => {
     });
 
     // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
+    console.log("test mergedData", mergedData);
     res.json(mergedData);
   } catch (error) {
-    res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
+    res.status(500).json({ error: "mergedData 데이터를 불러 올 수 없습니다." });
   }
 };
 
@@ -95,31 +102,42 @@ exports.getSpotByDist = async (req, res) => {
   const { latitude, longitude } = req.body;
 
   if (!latitude || !longitude) {
-    return res.status(400).json({ error: '위도와 경도를 제공해야 합니다.' });
+    return res.status(400).json({ error: "위도와 경도를 제공해야 합니다." });
   }
 
   try {
     // const query = `
     //   SELECT
-    //     spot_name,
-    //     ST_Distance_Sphere(location, ST_SRID(POINT(:longitude, :latitude), 4326)) AS distance,
-    //     max_group_seats,
-    //     spot_lat AS lat,
-    //     spot_lng AS lng
+    //     *,
+    //     ST_Distance_Sphere(
+    //         point(spot_lng, spot_lat),
+    //         point(:longitude, :latitude)
+    //     ) AS distance
     //   FROM spot
-    //   WHERE ST_Distance_Sphere(location, ST_SRID(POINT(:longitude, :latitude), 4326)) <= 700
+    //   WHERE ST_Distance_Sphere(
+    //       point(spot_lng, spot_lat),
+    //       point(:longitude, :latitude)
+    //   ) <= 700
     //   ORDER BY distance ASC
+    //   LIMIT 10;
     // `;
 
     const query = `
-    SELECT 
-      *
-    FROM spot
-    WHERE ST_Distance_Sphere(
-      point(spot_lng, spot_lat),
-      point(:longitude, :latitude)
-    ) <= 700;
-  `;
+      SELECT
+        *,
+        ST_Distance_Sphere(
+            point(spot_lng, spot_lat),
+            point(:longitude, :latitude)
+        ) AS distance
+      FROM spot
+      INNER JOIN 
+      WHERE ST_Distance_Sphere(
+          point(spot_lng, spot_lat),
+          point(:longitude, :latitude)
+      ) <= 700
+      ORDER BY distance ASC
+      LIMIT 10;
+    `;
 
     const spots = await sequelize.query(query, {
       replacements: { latitude, longitude },
@@ -130,7 +148,7 @@ exports.getSpotByDist = async (req, res) => {
 
     return res.json(spots);
   } catch (error) {
-    console.error('쿼리 실행 중 오류:', error);
-    return res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+    console.error("쿼리 실행 중 오류:", error);
+    return res.status(500).json({ error: "서버 오류가 발생했습니다." });
   }
 };
