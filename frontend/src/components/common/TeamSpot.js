@@ -99,8 +99,8 @@ const TeamSpot = () => {
                   지도로 보기
                 </Button>
               </div>
-              {companyVisitSpotList.map((spot, index) => (
-                <CompanySpotCard key={index} spotList={spot} />
+              {companyVisitSpotList.slice(0, 3).map((spot, index) => (
+                <CompanySpotCard key={index} spotList={spot} index={index} />
               ))}
             </Col>
 
@@ -137,7 +137,9 @@ const TeamSpot = () => {
                   지도로 보기
                 </Button>
               </div>
-              {/* <CompanySpotCard1 /> */}
+              {companyVisitSpotList.slice(3, 6).map((spot, index) => (
+                <CompanySpotCard key={index} spotList={spot} index={index} />
+              ))}
             </Col>
           </Row>
         </div>

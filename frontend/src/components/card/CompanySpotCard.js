@@ -5,7 +5,7 @@ import { StarFilled, PictureOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
 const CompanySpotCard = (spotList) => {
-  console.log('companyspotcard에서 spotList test: ', spotList.spotList);
+  const index = spotList.index;
   return (
     <Card
       bordered
@@ -37,7 +37,9 @@ const CompanySpotCard = (spotList) => {
           }}
         >
           <div>
-            <Text strong style={{ fontSize: '24px', color: '#d4380d', marginRight: '8px' }}></Text>
+            <Text strong style={{ fontSize: '24px', color: '#d4380d', marginRight: '8px' }}>
+              {index + 1}
+            </Text>
             <Text strong style={{ fontSize: 24, fontStyle: 'normal', fontWeight: 600 }}>
               {spotList.spotList.spot_name}
             </Text>

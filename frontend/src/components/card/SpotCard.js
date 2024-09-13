@@ -45,7 +45,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           {' '}
           {/* 제목과 텍스트 간 간격 조정 */}
           <Title level={4} style={{ margin: 0 }}>
-            {spot.spot_name}
+            {spot.spot_name.length > 7 ? `${spot.spot_name.slice(0, 7)}...` : spot.spot_name}
           </Title>
           <Text type="secondary" style={{ marginTop: 5 }}>
             {sectionLabel.main_section_1}
