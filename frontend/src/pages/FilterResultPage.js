@@ -21,6 +21,7 @@ const FilterResultPage = () => {
   const [selectedRange, setSelectedRange] = useState([10000, 400000]);
   const [selectedDetailFilter, setSelectedDetailFilter] = useState(null);
   const [places, setPlaces] = useState([]);
+  const [hoveredPlace, setHoveredPlace] = useState(null);
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -38,7 +39,7 @@ const FilterResultPage = () => {
         };
         const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
 
-        const updatedPlaces = response.data.map((place) => ({
+        const updatedPlaces = response.data.slice(0, 20).map((place) => ({
           title: place.spot_name,
           main_section_1: '한식',
           main_section_2: '삼겹살',
@@ -49,6 +50,7 @@ const FilterResultPage = () => {
           price: '17,000',
           lat: place.spot_lat,
           lng: place.spot_lng,
+          img: place.spot_main_img,
         }));
 
         setPlaces(updatedPlaces);
@@ -64,22 +66,17 @@ const FilterResultPage = () => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    // Date는 변수 핸들링 잘해서 다시 적용해보기
-    // setSelectedDate(date);
-    setSelectedTime(time);
-    setSelectedAmount(amount);
-    if (places.length > 0) {
-      const map = new window.naver.maps.Map('map', {
-        center: new window.naver.maps.LatLng(latitude, longitude),
-        zoom: 16,
-      });
+    const map = new window.naver.maps.Map('map', {
+      center: new window.naver.maps.LatLng(latitude, longitude),
+      zoom: 16,
+    });
 
-      // 설정위치 빨간 원
-      new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(latitude, longitude),
-        map: map,
-        icon: {
-          content: `
+    // 설정위치 빨간 원
+    new window.naver.maps.Marker({
+      position: new window.naver.maps.LatLng(latitude, longitude),
+      map: map,
+      icon: {
+        content: `
       <div style="
         width: 15px;
         height: 15px;
@@ -89,32 +86,53 @@ const FilterResultPage = () => {
         box-shadow: 0 0 20px 0 rgba(204, 60, 40, 0.80);
       "></div>
     `,
-          anchor: new window.naver.maps.Point(6, 6),
-        },
-      });
+        anchor: new window.naver.maps.Point(6, 6),
+      },
+    });
 
-      // 주변 반경 원
-      new window.naver.maps.Circle({
-        map: map,
-        center: new window.naver.maps.LatLng(latitude, longitude),
-        radius: 700,
-        fillColor: '#CC3C28',
-        fillOpacity: 0.05,
-        strokeColor: 'transparent',
-        strokeOpacity: 0,
-        strokeWeight: 0,
-      });
+    // 주변 반경 원
+    new window.naver.maps.Circle({
+      map: map,
+      center: new window.naver.maps.LatLng(latitude, longitude),
+      radius: 700,
+      fillColor: '#CC3C28',
+      fillOpacity: 0.05,
+      strokeColor: 'transparent',
+      strokeOpacity: 0,
+      strokeWeight: 0,
+    });
+
+    window.naverMap = map;
+  }, [latitude, longitude]);
+
+  // 호버 액션을 처리하는 useEffect
+  useEffect(() => {
+    if (places.length > 0) {
       console.log('marker:', places);
+
       // 장소마다 마커 추가
       places.forEach((place) => {
-        new window.naver.maps.Marker({
+        const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(place.lat, place.lng),
-          map: map,
+          map: window.naverMap,
           title: place.title,
         });
+
+        if (hoveredPlace === place) {
+          const infoWindow = new window.naver.maps.InfoWindow({
+            content: `<div style="padding: 5px;">${place.title}</div>`,
+            position: new window.naver.maps.LatLng(place.lat, place.lng),
+            map: window.naverMap,
+            borderColor: '#2DB400',
+            borderWidth: '2',
+            anchorSkew: true,
+          });
+          infoWindow.open(window.naverMap, marker);
+        }
+        return marker;
       });
     }
-  }, [places]);
+  }, [places, hoveredPlace]);
 
   useEffect(() => {
     if (isFilterVisible) {
@@ -241,6 +259,14 @@ const FilterResultPage = () => {
     '휠체어 이용가능',
     '플랜카드 부착 가능',
   ];
+
+  const handleCardMouseEnter = (place) => {
+    setHoveredPlace(place);
+  };
+
+  const handleCardMouseLeave = () => {
+    setHoveredPlace(null);
+  };
 
   return (
     <Col style={{ width: '100%', height: '100vh', backgroundColor: 'white' }}>
@@ -606,7 +632,7 @@ const FilterResultPage = () => {
           <List
             itemLayout="vertical"
             size="large"
-            dataSource={places}
+            dataSource={places.slice(0, 20)}
             renderItem={(place) => (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
                 <Card
@@ -614,9 +640,15 @@ const FilterResultPage = () => {
                   style={{
                     borderRadius: '8px',
                     border: '1px solid var(--0Gray-300, #D4D4D4)',
-                    boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.12)',
+                    // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.12)',
+                    boxShadow:
+                      hoveredPlace === place ? '0px 0px 12px rgba(0, 0, 0, 0.3)' : '0px 0px 4px rgba(0, 0, 0, 0.12)',
+                    transform: hoveredPlace === place ? 'scale(1.05)' : 'scale(1)',
+                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                     marginBottom: 24,
                   }}
+                  onMouseEnter={() => handleCardMouseEnter(place)}
+                  onMouseLeave={handleCardMouseLeave}
                   bordered={false}
                   bodyStyle={{ padding: 12 }}
                 >
@@ -625,7 +657,16 @@ const FilterResultPage = () => {
                     <Col span={16}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                          <Title level={4} style={{ margin: 0 }}>
+                          <Title
+                            level={4}
+                            style={{
+                              margin: 0,
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '190px',
+                            }}
+                          >
                             {place.title}
                           </Title>
                           <Text type="secondary">
@@ -668,13 +709,13 @@ const FilterResultPage = () => {
                     {/* 오른쪽 이미지 */}
                     <Col span={8}>
                       <Image
-                        src={'/default-image.jpg'}
+                        src={place.img || '/default-image.jpg'}
                         fallback="/default.png"
                         preview={false}
                         bordered={false}
                         style={{
-                          width: '100%',
-                          height: 'auto',
+                          width: '130px',
+                          height: '130px',
                           objectFit: 'cover',
                           borderRadius: '8px',
                         }}
