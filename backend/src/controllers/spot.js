@@ -99,18 +99,47 @@ exports.getSpotByDist = async (req, res) => {
   }
 
   try {
+    // const query = `
+    //   SELECT
+    //     *,
+    //     ST_Distance_Sphere(
+    //         point(spot_lng, spot_lat),
+    //         point(:longitude, :latitude)
+    //     ) AS distance
+    //   FROM spot
+    //   WHERE ST_Distance_Sphere(
+    //       point(spot_lng, spot_lat),
+    //       point(:longitude, :latitude)
+    //   ) <= 700
+    //   ORDER BY distance ASC
+    // `;
+
     const query = `
       SELECT
-        *,
-        ST_Distance_Sphere(
-            point(spot_lng, spot_lat),
-            point(:longitude, :latitude)
-        ) AS distance
-      FROM spot
+          s.*,
+          ST_Distance_Sphere(
+              POINT(s.spot_lng, s.spot_lat),
+              POINT(:longitude, :latitude)
+          ) AS distance,
+          ANY_VALUE(cl.tag_1) AS tag_1,
+          ANY_VALUE(cl.tag_2) AS tag_2,
+          ANY_VALUE(cl.tag_3) AS tag_3,
+          ANY_VALUE(sl.main_section_1) AS sec_1,
+          ANY_VALUE(sl.main_section_2) AS sec_2,
+          AVG(m.price) AS avg_price,
+          AVG(r.rating) AS avg_rating,
+          COUNT(r.review_id) AS review_count
+      FROM spot s
+      LEFT JOIN card_label cl ON s.spot_id = cl.spot_id
+      LEFT JOIN section_label sl ON s.spot_id = sl.spot_id
+      LEFT JOIN menu m ON s.spot_id = m.spot_id AND m.menu_type = 'maindish'
+      LEFT JOIN visit v ON s.spot_id = v.spot_id
+      LEFT JOIN review r ON v.visit_id = r.visit_id
       WHERE ST_Distance_Sphere(
-          point(spot_lng, spot_lat),
-          point(:longitude, :latitude)
+          POINT(s.spot_lng, s.spot_lat),
+          POINT(:longitude, :latitude)
       ) <= 700
+      GROUP BY s.spot_id
       ORDER BY distance ASC
     `;
 
@@ -119,9 +148,17 @@ exports.getSpotByDist = async (req, res) => {
       type: sequelize.QueryTypes.SELECT,
     });
 
-    console.log(spots);
+    const updatedSpots = spots.map((spot) => {
+      const walkingTime = Math.round(spot.distance / 60);
+      return {
+        ...spot,
+        walking_time: walkingTime,
+      };
+    });
 
-    return res.json(spots);
+    console.log(updatedSpots);
+
+    return res.json(updatedSpots);
   } catch (error) {
     console.error('쿼리 실행 중 오류:', error);
     return res.status(500).json({ error: '서버 오류가 발생했습니다.' });

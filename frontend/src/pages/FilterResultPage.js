@@ -4,6 +4,7 @@ import { Button, Card, List, DatePicker, InputNumber, Row, Col, Select, Typograp
 import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { getTag1, getTag2, getTag3, getMainsection1, getMainsection2 } from '../enums/Enum';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -39,18 +40,22 @@ const FilterResultPage = () => {
         };
         const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
 
-        const updatedPlaces = response.data.slice(0, 20).map((place) => ({
+        const updatedPlaces = response.data.slice(0, 10).map((place) => ({
           title: place.spot_name,
-          main_section_1: '한식',
-          main_section_2: '삼겹살',
-          distance: '5',
-          max_group_seats: '10',
-          rating: 4.2,
-          reviews: 93,
-          price: '17,000',
+          main_section_1: place.sec_1,
+          main_section_2: place.sec_2,
+          tag_1: place.tag_1,
+          tag_2: place.tag_2,
+          tag_3: place.tag_3,
+          distance: place.walking_time,
+          max_group_seats: place.max_group_seats,
+          rating: parseInt(place.avg_rating),
+          reviews: place.review_count,
+          price: parseInt(place.avg_price),
           lat: place.spot_lat,
           lng: place.spot_lng,
           img: place.spot_main_img,
+          walking_time: place.walking_time,
         }));
 
         setPlaces(updatedPlaces);
@@ -632,15 +637,15 @@ const FilterResultPage = () => {
           <List
             itemLayout="vertical"
             size="large"
-            dataSource={places.slice(0, 20)}
+            dataSource={places}
             renderItem={(place) => (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
                 <Card
                   hoverable
                   style={{
+                    width: '420px',
                     borderRadius: '8px',
                     border: '1px solid var(--0Gray-300, #D4D4D4)',
-                    // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.12)',
                     boxShadow:
                       hoveredPlace === place ? '0px 0px 12px rgba(0, 0, 0, 0.3)' : '0px 0px 4px rgba(0, 0, 0, 0.12)',
                     transform: hoveredPlace === place ? 'scale(1.05)' : 'scale(1)',
@@ -670,11 +675,12 @@ const FilterResultPage = () => {
                             {place.title}
                           </Title>
                           <Text type="secondary">
-                            {place.main_section_1} · {place.main_section_2}
+                            {getMainsection1(place.main_section_1)}
+                            {place.main_section_2 ? ` · ${getMainsection2(place.main_section_2)}` : ''}
                           </Text>
                         </div>
                         <div style={{ marginTop: 8 }}>
-                          <Text strong>도보 {place.distance}분</Text>
+                          <Text strong>도보 {place.walking_time}분</Text>
                           <Text style={{ margin: '0 8px' }}>|</Text>
                           <Text>
                             최대 <Text strong>{place.max_group_seats}인</Text>
@@ -687,13 +693,13 @@ const FilterResultPage = () => {
 
                         <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
                           <Tag color="#FAE7E5" style={{ color: 'black' }}>
-                            {'외국인과 함께'}
+                            {getTag1(place.tag_1)}
                           </Tag>
                           <Tag color="#E5F3FA" style={{ color: 'black' }}>
-                            {'조용한담소'}
+                            {getTag2(place.tag_2)}
                           </Tag>
                           <Tag color="#F1E5FA" style={{ color: 'black' }}>
-                            {'이국적/이색적'}
+                            {getTag3(place.tag_3)}
                           </Tag>
                         </div>
 
@@ -719,6 +725,7 @@ const FilterResultPage = () => {
                           objectFit: 'cover',
                           borderRadius: '8px',
                         }}
+                        loading="lazy"
                       />
                     </Col>
                   </Row>
