@@ -22,7 +22,9 @@ const FilterResultPage = () => {
   const [selectedRange, setSelectedRange] = useState([10000, 400000]);
   const [selectedDetailFilter, setSelectedDetailFilter] = useState(null);
   const [places, setPlaces] = useState([]);
+  const [originalPlaces, setOriginalPlaces] = useState([]);
   const [hoveredPlace, setHoveredPlace] = useState(null);
+  const [isSortedStandard, setIsSortedStandard] = useState('distance');
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -59,6 +61,7 @@ const FilterResultPage = () => {
         }));
 
         setPlaces(updatedPlaces);
+        setOriginalPlaces(updatedPlaces);
 
         console.log('places:', updatedPlaces);
       } catch (error) {
@@ -271,6 +274,17 @@ const FilterResultPage = () => {
 
   const handleCardMouseLeave = () => {
     setHoveredPlace(null);
+  };
+
+  const sortByRating = () => {
+    const sortedPlaces = [...places].sort((a, b) => b.rating - a.rating);
+    setPlaces(sortedPlaces);
+    setIsSortedStandard('rating');
+  };
+
+  const sortByDistance = () => {
+    setPlaces(originalPlaces);
+    setIsSortedStandard('distance');
   };
 
   return (
@@ -618,14 +632,25 @@ const FilterResultPage = () => {
                 <Col>
                   <Row gutter={8}>
                     <Col>
-                      <Button style={{ border: 'none', boxShadow: 'none', background: 'none' }}>
-                        <Text style={{ color: '#000000', fontSize: '17px' }}>거리순</Text>
+                      <Button
+                        style={{ border: 'none', boxShadow: 'none', background: 'none' }}
+                        onClick={sortByDistance}
+                      >
+                        <Text
+                          style={{ color: isSortedStandard === 'distance' ? '#000000' : '#B3B3B3', fontSize: '17px' }}
+                        >
+                          거리순
+                        </Text>
                       </Button>
                     </Col>
                     <Text style={{ marginTop: '4px' }}>|</Text>
                     <Col>
-                      <Button style={{ border: 'none', boxShadow: 'none', background: 'none' }}>
-                        <Text style={{ color: '#B3B3B3', fontSize: '17px' }}>리뷰순</Text>
+                      <Button style={{ border: 'none', boxShadow: 'none', background: 'none' }} onClick={sortByRating}>
+                        <Text
+                          style={{ color: isSortedStandard === 'rating' ? '#000000' : '#B3B3B3', fontSize: '17px' }}
+                        >
+                          별점순
+                        </Text>
                       </Button>
                     </Col>
                   </Row>
