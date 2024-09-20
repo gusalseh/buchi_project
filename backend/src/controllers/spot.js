@@ -92,7 +92,7 @@ exports.getSpotList = async (req, res) => {
 };
 
 exports.getSpotByDist = async (req, res) => {
-  const { latitude, longitude } = req.body;
+  const { latitude, longitude, amount } = req.body;
 
   if (!latitude || !longitude) {
     return res.status(400).json({ error: '위도와 경도를 제공해야 합니다.' });
@@ -148,13 +148,15 @@ exports.getSpotByDist = async (req, res) => {
       type: sequelize.QueryTypes.SELECT,
     });
 
-    const updatedSpots = spots.map((spot) => {
-      const walkingTime = Math.round(spot.distance / 70);
-      return {
-        ...spot,
-        walking_time: walkingTime,
-      };
-    });
+    const updatedSpots = spots
+      .filter((spot) => spot.max_group_seats >= amount)
+      .map((spot) => {
+        const walkingTime = Math.round(spot.distance / 70);
+        return {
+          ...spot,
+          walking_time: walkingTime,
+        };
+      });
 
     console.log(updatedSpots);
 

@@ -73,6 +73,7 @@ const FilterResultPage = () => {
         const currentPosition = {
           latitude: latitude,
           longitude: longitude,
+          amount: amount,
         };
         const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
 
@@ -105,7 +106,7 @@ const FilterResultPage = () => {
     if (latitude && longitude) {
       fetchPlacesByDistance();
     }
-  }, [latitude, longitude]);
+  }, [latitude, longitude, location.search]);
 
   useEffect(() => {
     const map = new window.naver.maps.Map('map', {
