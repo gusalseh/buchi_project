@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'antd';
+import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSelectedLocation, getCurrentLocation } from '../../features/userLocationThunk';
 import { getDistance } from '../../utils/distance';
+import { Button } from 'antd';
+import Vector from '../../assets/Img/Vector.svg';
+import LeftVector from '../../assets/Img/LeftVector.png';
 import SpotCard from '../card/SpotCard';
-import axios from 'axios';
 
 const MenuTag = () => {
-  const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
+  const [sectionLabelSpotList, setSectionLabelSpotList] = useState([]);
+  const [filterSpot, setFilterSpot] = useState([]);
   const [randomMainSection2, setRandomMainSection2] = useState('');
-
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
 
@@ -19,28 +21,24 @@ const MenuTag = () => {
   const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
-    // user 정보가 없고 selectedLocation이 null일 때 현재 위치를 불러옴
     if (!user) {
       dispatch(getCurrentLocation());
-    } else if (user) {
+    } else {
       dispatch(fetchSelectedLocation(user.user_id));
     }
-  }, [user]);
+  }, [dispatch, user]);
 
   useEffect(() => {
-    // 랜덤 mainSection2 값을 가져오고 데이터를 조회하는 함수
     const fetchRandomMainSection2 = async () => {
       try {
         const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
         const randomMainSection2 = randomResponse.data;
         setRandomMainSection2(randomMainSection2);
 
-        // mainSection2 값을 사용해 데이터 조회
         const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
           params: { mainSection2: randomMainSection2 },
         });
-        const sectionLabelSpotList = sectionLabelResponse.data;
-        setSectionLabelSpotList(sectionLabelSpotList);
+        setSectionLabelSpotList(sectionLabelResponse.data);
       } catch (error) {
         console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
       }
@@ -57,11 +55,27 @@ const MenuTag = () => {
   }, [selectedLocation, user]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const totalCards = 10; // SpotCard의 총 개수
+
+  useEffect(() => {
+    const filteredSpots = sectionLabelSpotList
+      .slice()
+      .filter((spot) => {
+        const distance = getDistance(
+          selectedLatitude,
+          selectedLongitude,
+          spot.sectionSpot.Spot.spot_lat,
+          spot.sectionSpot.Spot.spot_lng
+        );
+        return distance <= 1;
+      })
+      .sort((a, b) => b.visitReviewData.averageRating - a.visitReviewData.averageRating);
+    setFilterSpot(filteredSpots);
+  }, [sectionLabelSpotList, selectedLatitude, selectedLongitude]);
+
+  const totalCards = filterSpot.length;
 
   const handleNext = () => {
     if (currentIndex < totalCards - 2) {
-      // 마지막 카드 전까지만 이동 가능하도록 수정
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -77,14 +91,14 @@ const MenuTag = () => {
       style={{
         padding: '0px 20px',
         marginTop: 20,
-        marginLeft: 340,
+        marginLeft: '20rem',
         display: 'flex',
         flexDirection: 'column',
         height: 592,
         gap: 20,
         backgroundColor: 'white',
         position: 'relative',
-        overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
+        overflow: 'hidden',
       }}
     >
       <div
@@ -92,9 +106,9 @@ const MenuTag = () => {
           color: 'black',
           height: 32,
           fontSize: 32,
-          display: 'inline-block', // 텍스트 길이에 맞춰 선을 그리기 위해 inline-block 사용
-          borderBottom: '8px solid #e5989b', // 텍스트 아래 선을 추가
-          paddingBottom: '32px', // 텍스트와 선 사이의 간격 조정
+          display: 'inline-block',
+          borderBottom: '8px solid #e5989b',
+          paddingBottom: '32px',
           alignSelf: 'flex-start',
         }}
       >
@@ -106,15 +120,39 @@ const MenuTag = () => {
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
-          overflow: 'hidden', // 슬라이드 컨테이너에 overflow hidden 설정
+          overflow: 'visible',
+          width: '100%',
         }}
       >
         {currentIndex > 0 && (
           <Button
             onClick={handlePrev}
-            style={{ borderRadius: '50%', width: 32, height: 32, position: 'absolute', left: 0, zIndex: 1 }}
+            style={{
+              borderRadius: '50%',
+              width: 48,
+              height: 48,
+              position: 'absolute',
+              left: -20,
+              zIndex: 10,
+              background: '#FFF',
+              boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.12)',
+              overflow: 'visible',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.3')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
-            &lt;
+            <img
+              src={LeftVector}
+              alt="previous button"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+            />
           </Button>
         )}
         <div
@@ -123,32 +161,21 @@ const MenuTag = () => {
             flexDirection: 'row',
             height: '100%',
             gap: 20,
-            transform: `translateX(-${currentIndex * 340}px)`,
+            transform: `translateX(-${currentIndex * 360}px)`,
             transition: 'transform 0.3s ease',
-            width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
+            width: `${filterSpot.length * 360}px`,
+            position: 'relative',
+            overflow: 'visible',
           }}
         >
-          {sectionLabelSpotList && sectionLabelSpotList.length > 3 ? (
-            sectionLabelSpotList
-              .slice() // 원본 배열을 변경하지 않기 위해 복사본을 생성
-              .filter((spot) => {
-                const distance = getDistance(
-                  selectedLatitude,
-                  selectedLongitude,
-                  spot.sectionSpot.Spot.spot_lat,
-                  spot.sectionSpot.Spot.spot_lng
-                );
-                return distance <= 1; // 거리가 1km 이내인 경우에만 true 반환
-              })
-              .sort((a, b) => {
-                return b.visitReviewData.averageRating - a.visitReviewData.averageRating; // 반환값을 명시적으로 지정
-              })
-              .map((spot, index) => (
+          {totalCards ? (
+            totalCards > 3 ? (
+              filterSpot.map((spot, index) => (
                 <div
                   key={index}
                   style={{
-                    minWidth: 340, // SpotCard의 너비를 고정
-                    flexShrink: 0, // 카드가 줄어들지 않도록 설정
+                    minWidth: 340,
+                    flexShrink: 0,
                   }}
                 >
                   <SpotCard
@@ -158,16 +185,56 @@ const MenuTag = () => {
                   />
                 </div>
               ))
+            ) : (
+              <div
+                style={{
+                  writingMode: 'horizontal-tb',
+                  transform: 'none',
+                }}
+              >
+                데이터를 불러오는 중입니다...
+              </div>
+            )
           ) : (
-            <div>데이터를 불러오는 중입니다...</div> // 데이터를 불러오기 전 로딩 상태 표시
+            <div
+              style={{
+                writingMode: 'horizontal-tb',
+                transform: 'none',
+              }}
+            >
+              데이터를 불러오는 중입니다...
+            </div>
           )}
         </div>
-        {currentIndex < totalCards - 4 && (
+        {totalCards > 3 && currentIndex < totalCards - 3 && (
           <Button
             onClick={handleNext}
-            style={{ borderRadius: '50%', width: 32, height: 32, position: 'absolute', right: 0, zIndex: 1 }}
+            style={{
+              borderRadius: '50%',
+              width: 48,
+              height: 48,
+              position: 'absolute',
+              right: 0,
+              zIndex: 1,
+              background: '#FFF',
+              boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.12)',
+              overflow: 'visible',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.3')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
-            &gt;
+            <img
+              src={Vector}
+              alt="next button"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+            />
           </Button>
         )}
       </div>
@@ -175,4 +242,4 @@ const MenuTag = () => {
   );
 };
 
-export default React.memo(MenuTag);
+export default MenuTag;

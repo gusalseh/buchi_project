@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 body {
+  writing-mode: horizontal-tb;
+  transform: none;
+  overflow-x: hidden;
   background-color: #fff;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',

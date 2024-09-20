@@ -45,19 +45,22 @@ export default function Header() {
       style={{
         width: '100%',
         height: 112,
+        marginBottom: 40,
         display: 'flex',
         paddingTop: 24,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
         backgroundColor: '#FFF',
+        border: 'none',
+        borderBottom: '0.5px solid #A3A3A3',
       }}
     >
       <div
         style={{
           display: 'flex',
           width: '100%',
-          padding: '19.11px 340px 18.11px 340px',
+          padding: '20px 340px 20px 340px',
           justifyContent: 'center',
           alignItems: 'center',
           flexShrink: 0,

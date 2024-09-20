@@ -13,7 +13,7 @@ import MenuTagTest from '../components/tag/MenuTagTest';
 
 const MainPage = () => {
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '99%' }}>
       <Filter />
       {/* <MenuTagTest /> */}
       <MenuTag />
