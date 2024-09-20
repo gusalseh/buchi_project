@@ -38,6 +38,38 @@ export const main_section_2 = Object.freeze({
   SASHIMI: '회',
 });
 
+export const sub_section_1 = Object.freeze({
+  SMALL: '4인 이하 추천',
+  MEDIUM: '12인 이하 추천',
+  LARGE: '13인 이상 추천',
+});
+
+export const sub_section_2 = Object.freeze({
+  LIGHT: '가볍게 먹기 좋은',
+  EFFECTIVE: '가성비 좋은',
+  HEAVY: '푸짐한',
+});
+
+export const sub_section_3 = Object.freeze({
+  KOREAN_LIQUAR: '전통주',
+  WHISKY: '위스키',
+  COCKTAIL: '칵테일',
+  WINE: '와인',
+});
+
+export const sub_section_4 = Object.freeze({
+  FEMALE_PREFER: '여성이 좋아하는',
+  MALE_PREFER: '남성이 좋아하는',
+  BOTH_PREFER: '남녀 모두 좋아하는',
+});
+
+export const sub_section_5 = Object.freeze({
+  COLD: '추운날',
+  SNOW: '눈오는날',
+  HOT: '더운날',
+  RAIN: '비오는날',
+});
+
 export const industry_type = Object.freeze({
   SERVICE: '서비스',
   FINANCE_BANKING: '금융·은행',
@@ -84,6 +116,23 @@ export const getMainsection1 = (value) => {
 
 export const getMainsection2 = (value) => {
   return main_section_2[value.toUpperCase()] || value;
+};
+
+export const getSubsection1 = (value) => {
+  return sub_section_1[value.toUpperCase()] || value;
+};
+
+export const getSubsection2 = (value) => {
+  return sub_section_2[value.toUpperCase()] || value;
+};
+export const getSubsection3 = (value) => {
+  return sub_section_3[value.toUpperCase()] || value;
+};
+export const getSubsection4 = (value) => {
+  return sub_section_4[value.toUpperCase()] || value;
+};
+export const getSubsection5 = (value) => {
+  return sub_section_5[value.toUpperCase()] || value;
 };
 
 export const getIndustryType = (value) => {
