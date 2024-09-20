@@ -45,7 +45,6 @@ export default function Header() {
       style={{
         width: '100%',
         height: 112,
-        marginBottom: 40,
         display: 'flex',
         paddingTop: 24,
         alignItems: 'center',
