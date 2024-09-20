@@ -1,7 +1,8 @@
 import React from 'react';
 import Login from '../components/auth/Login';
+import Register from '../components/auth/Register';
 
-const LoginPage = () => {
+export const LoginPage = () => {
   const handleNaverLogin = () => {
     window.location.href = `http://localhost:80/auth/naver`;
   };
@@ -9,4 +10,10 @@ const LoginPage = () => {
   return <Login onNaverLogin={handleNaverLogin} />;
 };
 
-export default LoginPage;
+export const RegisterPage = () => {
+  const handleNaverLogin = () => {
+    window.location.href = `http://localhost:80/auth/naver`;
+  };
+
+  return <Register onNaverLogin={handleNaverLogin} />;
+};
