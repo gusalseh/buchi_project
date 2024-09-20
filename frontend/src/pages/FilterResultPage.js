@@ -129,12 +129,17 @@ const FilterResultPage = () => {
 
         if (hoveredPlace === place) {
           const infoWindow = new window.naver.maps.InfoWindow({
-            content: `<div style="padding: 5px;">${place.title}</div>`,
+            content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
+          <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #333;">${place.title}</h3>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <p style="font-size: 13px; color: #666;">${getMainsection1(place.main_section_1)}
+                            ${place.main_section_2 ? ` · ${getMainsection2(place.main_section_2)}` : ''}</p>
+            <a href="#" style="color: #CC3C28; text-decoration: none;">상세보기</a>
+          </div>
+        </div>`,
             position: new window.naver.maps.LatLng(place.lat, place.lng),
             map: window.naverMap,
-            borderColor: '#2DB400',
-            borderWidth: '2',
-            anchorSkew: true,
+            borderColor: '#CC3C28',
           });
           infoWindow.open(window.naverMap, marker);
         }
@@ -672,7 +677,7 @@ const FilterResultPage = () => {
                 <Card
                   hoverable
                   style={{
-                    width: '420px',
+                    width: '450px',
                     borderRadius: '8px',
                     border: '1px solid var(--0Gray-300, #D4D4D4)',
                     boxShadow:
@@ -762,7 +767,6 @@ const FilterResultPage = () => {
               </div>
             )}
           />
-
           {/* 더보기 버튼 */}
           {visibleSpotCount < places.length && (
             <div

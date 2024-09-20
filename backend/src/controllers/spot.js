@@ -149,7 +149,7 @@ exports.getSpotByDist = async (req, res) => {
     });
 
     const updatedSpots = spots.map((spot) => {
-      const walkingTime = Math.round(spot.distance / 60);
+      const walkingTime = Math.round(spot.distance / 70);
       return {
         ...spot,
         walking_time: walkingTime,
