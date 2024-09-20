@@ -38,6 +38,34 @@ export const main_section_2 = Object.freeze({
   SASHIMI: '회',
 });
 
+export const industry_type = Object.freeze({
+  SERVICE: '서비스',
+  FINANCE_BANKING: '금융·은행',
+  IT_TELECOMMUNICATIONS: 'IT·정보통신',
+  SALES_DISTRIBUTION: '판매·유통',
+  MANUFACTURING_PRODUCTION_CHEMICALS: '제조·생산·화학',
+  EDUCATION: '교육',
+  CONSTRUCTION: '건설',
+  MEDICAL_PHARMACEUTICAL: '의료·제약',
+  MEDIA_ADVERTISEMENT: '미디어·광고',
+  CULTURAL_ART_DESIGN: '문화·예술·디자인',
+  INSTITUTION_ASSOCIATION: '기관·협회',
+});
+
+export const reverse_industry_type = Object.freeze({
+  서비스: 'SERVICE',
+  '금융·은행': 'FINANCE_BANKING',
+  'IT·정보통신': 'IT_TELECOMMUNICATIONS',
+  '판매·유통': 'SALES_DISTRIBUTION',
+  '제조·생산·화학': 'MANUFACTURING_PRODUCTION_CHEMICALS',
+  교육: 'EDUCATION',
+  건설: 'CONSTRUCTION',
+  '의료·제약': 'MEDICAL_PHARMACEUTICAL',
+  '미디어·광고': 'MEDIA_ADVERTISEMENT',
+  '문화·예술·디자인': 'CULTURAL_ART_DESIGN',
+  '기관·협회': 'INSTITUTION_ASSOCIATION',
+});
+
 export const getTag1 = (value) => {
   return Tag_1[value.toUpperCase()] || value;
 };
@@ -56,4 +84,12 @@ export const getMainsection1 = (value) => {
 
 export const getMainsection2 = (value) => {
   return main_section_2[value.toUpperCase()] || value;
+};
+
+export const getIndustryType = (value) => {
+  return industry_type[value.toUpperCase()] || value;
+};
+
+export const getReverseIndustryType = (value) => {
+  return reverse_industry_type[value.toUpperCase()] || value;
 };

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Input, Pagination, Button, List, Typography, Select, message } from 'antd';
-import { fetchCompanies, fetchIndustryTypes, addCompany } from '../../features/companyThunk';
+import { fetchCompanies, fetchIndustryTypes, addCompany, checkCompanyName } from '../../features/companyThunk';
 import { setSearchTerm, setCurrentPage } from '../../features/companySlice';
 import '../../styles/companyModal.css';
 import { updateUserCompany, fetchUser } from '../../features/userThunk';
+import { getIndustryType, getReverseIndustryType } from '../../enums/Enum';
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -65,31 +66,18 @@ const CompanyModal = ({ visible, onClose }) => {
   };
 
   const handleRegisterDirectInput = async () => {
-    const existingCompany = filteredCompanies.find((company) => company.company_name === companyName);
-
-    if (existingCompany) {
-      message.error('이미 존재하는 회사입니다. 검색을 통해 진행해주세요.');
-      return;
-    }
-
-    const industryTypeMappings = {
-      서비스: 'service',
-      '금융·은행': 'finance_banking',
-      'IT·정보통신': 'IT_telecommunications',
-      '판매·유통': 'sales_distribution',
-      '제조·생산·화학': 'manufacturing_production_chemicals',
-      교육: 'education',
-      건설: 'construction',
-      '의료·제약': 'medical_pharmaceutical',
-      '미디어·광고': 'media_advertisement',
-      '문화·예술·디자인': 'cultural_art_design',
-      '기관·협회': 'institution_association',
-    };
-
-    const industryTypeKey = industryTypeMappings[industryType];
-
     try {
-      // 새로운 회사 추가
+      // 회사명 중복 체크
+      const checkResponse = await dispatch(checkCompanyName(companyName)).unwrap();
+
+      // 이미 존재하는 회사인 경우
+      if (checkResponse.exists) {
+        message.error('이미 존재하는 회사입니다. 검색을 통해 진행해주세요.');
+        return;
+      }
+
+      const industryTypeKey = getReverseIndustryType(industryType);
+
       const newCompany = await dispatch(
         addCompany({ company_name: companyName, industry_type: industryTypeKey })
       ).unwrap();
@@ -100,8 +88,12 @@ const CompanyModal = ({ visible, onClose }) => {
       onClose(); // 모달 닫기
       if (response.user.company_id) window.location.reload(); // 페이지 리로드
     } catch (error) {
-      console.error('Error adding company or updating user company ID:', error);
-      message.error('회사 추가 또는 사용자 업데이트 중 오류가 발생했습니다.');
+      if (error === '이미 존재하는 회사입니다. 검색을 통해 진행해주세요.') {
+        message.error(error);
+      } else {
+        console.error('Error adding company or updating user company ID:', error);
+        message.error('이미 존재하는 회사입니다. 검색을 통해 진행해주세요.');
+      }
     }
   };
 
@@ -130,7 +122,7 @@ const CompanyModal = ({ visible, onClose }) => {
       footer={null}
       width={644}
       bodyStyle={{ height: '800px', overflowY: 'auto', padding: 20 }}
-      style={{ height: '860px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+      style={{ height: '800px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
       title={null}
       closeIcon={null}
     >
@@ -234,7 +226,7 @@ const CompanyModal = ({ visible, onClose }) => {
                   >
                     <List.Item.Meta
                       title={item.company_name}
-                      description={item.industry_type}
+                      description={getIndustryType(item.industry_type)}
                       style={{
                         fontSize: 16,
                         fontStyle: 'normal',

@@ -25,11 +25,7 @@ const MenuTag = () => {
     // user 정보가 없고 selectedLocation이 null일 때 현재 위치를 불러옴
     if (!user) {
       dispatch(getCurrentLocation());
-    }
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    if (user) {
+    } else if (user) {
       dispatch(fetchSelectedLocation(user.user_id));
     }
   }, [dispatch, user]);
