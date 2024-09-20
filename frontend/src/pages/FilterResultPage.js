@@ -25,6 +25,7 @@ const FilterResultPage = () => {
   const [originalPlaces, setOriginalPlaces] = useState([]);
   const [hoveredPlace, setHoveredPlace] = useState(null);
   const [isSortedStandard, setIsSortedStandard] = useState('distance');
+  const [visibleSpotCount, setVisibleSpotCount] = useState(20);
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -42,7 +43,7 @@ const FilterResultPage = () => {
         };
         const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
 
-        const updatedPlaces = response.data.slice(0, 10).map((place) => ({
+        const updatedPlaces = response.data.map((place) => ({
           title: place.spot_name,
           main_section_1: place.sec_1,
           main_section_2: place.sec_2,
@@ -174,10 +175,6 @@ const FilterResultPage = () => {
     setIsFilterVisible(!isFilterVisible);
   };
 
-  const addFilter = (filter) => {
-    setSelectedFilters([...selectedFilters, filter]);
-  };
-
   const handleSelectFilter = (filter) => {
     if (selectedFilters.includes(filter)) {
       setSelectedFilters(selectedFilters.filter((item) => item !== filter));
@@ -285,6 +282,10 @@ const FilterResultPage = () => {
   const sortByDistance = () => {
     setPlaces(originalPlaces);
     setIsSortedStandard('distance');
+  };
+
+  const handleLoadMore = () => {
+    setVisibleSpotCount((prevCount) => prevCount + 20);
   };
 
   return (
@@ -586,7 +587,10 @@ const FilterResultPage = () => {
                           lineHeight: '48px',
                           cursor: 'pointer',
                         }}
-                        onClick={() => toggleFilter()}
+                        onClick={() => {
+                          toggleFilter();
+                          setSelectedFilters([]);
+                        }}
                       >
                         취소
                       </div>
@@ -615,7 +619,7 @@ const FilterResultPage = () => {
               {/* 가변 줄: 세부 필터에서 선택한 옵션 표시 */}
               <Row style={{ margin: '10px 0' }}>
                 {selectedFilters.map((filter, index) => (
-                  <Tag key={index} color="red" closable onClose={() => addFilter(filter)}>
+                  <Tag key={index} color="red" closable onClose={() => handleSelectFilter(filter)}>
                     {filter}
                   </Tag>
                 ))}
@@ -662,7 +666,7 @@ const FilterResultPage = () => {
           <List
             itemLayout="vertical"
             size="large"
-            dataSource={places}
+            dataSource={places.slice(0, visibleSpotCount)}
             renderItem={(place) => (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
                 <Card
@@ -758,6 +762,37 @@ const FilterResultPage = () => {
               </div>
             )}
           />
+
+          {/* 더보기 버튼 */}
+          {visibleSpotCount < places.length && (
+            <div
+              style={{
+                textAlign: 'center',
+                marginBottom: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Button
+                onClick={handleLoadMore}
+                style={{
+                  backgroundColor: '#F2F2F2',
+                  border: 'none',
+                  color: '#444',
+                  padding: '10px 16px',
+                  borderRadius: '20px',
+                  fontSize: '14px',
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span>더보기</span>
+                <DownOutlined style={{ fontSize: '12px' }} />
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* 오른쪽 지도 영역 */}
@@ -769,6 +804,22 @@ const FilterResultPage = () => {
               height: '100%',
             }}
           ></div>
+
+          {/* deem 배경 */}
+          {isFilterVisible && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                zIndex: 10,
+              }}
+              onClick={toggleFilter}
+            />
+          )}
         </div>
       </Row>
     </Col>

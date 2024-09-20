@@ -27,7 +27,7 @@ export const main_section_1 = Object.freeze({
   WESTERN: '양식',
   JAPANESE: '일식',
   CHINESE: '중식',
-  FUSHION: '퓨전',
+  FUSION: '퓨전',
 });
 
 export const main_section_2 = Object.freeze({
