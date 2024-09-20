@@ -1,22 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Button, Card, List, DatePicker, InputNumber, Row, Col, Select, Typography, Image, Tag, Slider } from 'antd';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import {
+  Button,
+  Card,
+  List,
+  DatePicker,
+  InputNumber,
+  Row,
+  Col,
+  Select,
+  Typography,
+  Image,
+  Tag,
+  Slider,
+  Modal,
+} from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { getTag1, getTag2, getTag3, getMainsection1, getMainsection2 } from '../enums/Enum';
+import UserLocation from '../components/common/UserLocationModal';
+import LoginAlert from '../components/alert/LoginAlert';
+import { fetchSelectedLocation } from '../features/userLocation';
+import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
 
 const FilterResultPage = () => {
+  const user = useSelector((state) => state.user.user);
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
+  const [locationName, setLocationName] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedAmount, setSelectedAmount] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [selectedRange, setSelectedRange] = useState([10000, 400000]);
@@ -26,6 +46,11 @@ const FilterResultPage = () => {
   const [hoveredPlace, setHoveredPlace] = useState(null);
   const [isSortedStandard, setIsSortedStandard] = useState('distance');
   const [visibleSpotCount, setVisibleSpotCount] = useState(20);
+  const [isLoginAlertVisible, setIsLoginAlertVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedLatitude, setSelectedLatitude] = useState(null);
+  const [selectedLongitude, setSelectedLongitude] = useState(null);
+  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -35,6 +60,14 @@ const FilterResultPage = () => {
   const address = queryParams.get('address');
 
   useEffect(() => {
+    setLocationName(address);
+    setSelectedTime(time);
+    setSelectedAmount(amount);
+    if (date) {
+      const formattedDate = dayjs(date, 'YYYY년 MM월 DD일');
+      setSelectedDate(formattedDate);
+    }
+
     const fetchPlacesByDistance = async () => {
       try {
         const currentPosition = {
@@ -127,6 +160,16 @@ const FilterResultPage = () => {
           title: place.title,
         });
 
+        // 마커에 마우스를 올렸을 때
+        window.naver.maps.Event.addListener(marker, 'mouseover', () => {
+          setHoveredPlace(place);
+        });
+
+        // 마커에서 마우스를 뗐을 때
+        window.naver.maps.Event.addListener(marker, 'mouseout', () => {
+          setHoveredPlace(null);
+        });
+
         if (hoveredPlace === place) {
           const infoWindow = new window.naver.maps.InfoWindow({
             content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
@@ -158,12 +201,10 @@ const FilterResultPage = () => {
 
   const handleDateChange = (dateString) => {
     setSelectedDate(dateString);
-    setIsSelectOpen(true);
   };
 
   const handleTimeChange = (value) => {
     setSelectedTime(value);
-    setIsSelectOpen(false);
   };
 
   const buttonStyle = {
@@ -293,6 +334,88 @@ const FilterResultPage = () => {
     setVisibleSpotCount((prevCount) => prevCount + 20);
   };
 
+  const showLocationModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleLoginAlertClose = () => {
+    setIsLoginAlertVisible(false);
+  };
+
+  const getCoordinates = async (address) => {
+    try {
+      const response = await fetch(`http://localhost:80/geocode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch coordinates');
+      }
+
+      const data = await response.json();
+      return { latitude: data.latitude, longitude: data.longitude };
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      throw error;
+    }
+  };
+
+  const handleOk = async () => {
+    setIsModalVisible(false);
+    if (user) {
+      const selectedLocation = await fetchSelectedLocation(user.user_id);
+      setLocationName(selectedLocation.location_road_address);
+    }
+  };
+
+  const handleCancel = async () => {
+    setIsModalVisible(false);
+    setModalKey(modalKey + 1);
+    if (user) {
+      const selectedLocation = await fetchSelectedLocation(user.user_id);
+      setLocationName(selectedLocation.location_road_address);
+    }
+  };
+
+  const disabledDate = (current) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return current && current.toDate() < today;
+  };
+
+  const handleSearch = async () => {
+    const updatedDate = selectedDate ? selectedDate.format('YYYY년 MM월 DD일') : date;
+    const updatedTime = selectedTime || time;
+    const updatedAmount = selectedAmount || amount;
+
+    let latitude, longitude;
+
+    if (locationName === '역삼역 2번 출구') {
+      latitude = '37.5000263';
+      longitude = '127.0365456';
+    } else {
+      try {
+        const coordinates = await getCoordinates(locationName);
+        latitude = coordinates.latitude;
+        longitude = coordinates.longitude;
+      } catch (error) {
+        console.error('Failed to fetch coordinates:', error);
+        return;
+      }
+    }
+    setSelectedLatitude(latitude);
+    setSelectedLongitude(longitude);
+
+    navigate(
+      `/filterResult?date=${updatedDate}&time=${updatedTime}&amount=${updatedAmount}&lat=${latitude}&lng=${longitude}&address=${locationName}`
+    );
+  };
+
   return (
     <Col style={{ width: '100%', height: '100vh', backgroundColor: 'white' }}>
       {/* 필터 영역 */}
@@ -324,8 +447,18 @@ const FilterResultPage = () => {
                   backgroundColor: '#FAFAFA',
                 }}
               >
-                <span>{address || '장소 선택'}</span>
-                <DownOutlined style={{ fontSize: '15px', position: 'absolute', right: '10px' }} />
+                <span>{locationName}</span>
+                {user ? (
+                  <DownOutlined
+                    onClick={showLocationModal}
+                    style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+                  />
+                ) : (
+                  <DownOutlined
+                    onClick={() => setIsLoginAlertVisible(true)}
+                    style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+                  />
+                )}
               </Button>
               <div
                 style={{
@@ -341,9 +474,10 @@ const FilterResultPage = () => {
           </Col>
           <Col style={{ minWidth: 240 }}>
             <DatePicker
-              placeholder="날짜 선택"
+              placeholder={date}
               value={selectedDate}
               style={{ width: 240, height: 40 }}
+              disabledDate={disabledDate}
               format="YYYY년 MM월 DD일"
               suffixIcon={<CalendarOutlined />}
               onChange={handleDateChange}
@@ -352,19 +486,21 @@ const FilterResultPage = () => {
           </Col>
           <Col style={{ minWidth: 240 }}>
             <Select
-              placeholder="저녁회식"
+              placeholder={time}
               style={{ width: 240, height: 40 }}
               suffixIcon={<ClockCircleOutlined style={{ fontSize: 15 }} />}
               onChange={handleTimeChange}
               value={selectedTime}
-            >
-              <Option value="점심회식">점심회식</Option>
-              <Option value="저녁회식">저녁회식</Option>
-            </Select>
+              defaultValue={selectedTime}
+              options={[
+                { value: '점심회식', label: '점심회식' },
+                { value: '저녁회식', label: '저녁회식' },
+              ]}
+            />
           </Col>
           <Col style={{ minWidth: 240 }}>
             <InputNumber
-              placeholder="3명"
+              placeholder={`${amount}명`}
               style={{
                 width: 240,
                 height: 40,
@@ -391,6 +527,7 @@ const FilterResultPage = () => {
                 alignItems: 'center',
                 padding: 0,
               }}
+              onClick={handleSearch}
             />
           </Col>
         </Row>
@@ -826,6 +963,21 @@ const FilterResultPage = () => {
           )}
         </div>
       </Row>
+
+      <Modal
+        key={modalKey}
+        title=""
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+        width="fit-content"
+        style={{ maxWidth: '90%' }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <UserLocation visible={isModalVisible} />
+      </Modal>
+      <LoginAlert visible={isLoginAlertVisible} onClose={handleLoginAlertClose} />
     </Col>
   );
 };
