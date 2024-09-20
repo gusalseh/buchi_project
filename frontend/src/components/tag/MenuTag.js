@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSelectedLocation, getCurrentLocation } from '../../features/userLocationThunk';
 import { getDistance } from '../../utils/distance';
-import SpotCard from '../card/SpotCard'; // SpotCard 컴포넌트를 import합니다.
+import SpotCard from '../card/SpotCard';
 import axios from 'axios';
 
 const MenuTag = () => {
@@ -15,11 +15,8 @@ const MenuTag = () => {
 
   const dispatch = useDispatch();
 
-  // Redux 상태에서 선택된 위치와 로딩 상태, 에러를 가져옴
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
-  const loading = useSelector((state) => state.userLocation.loading);
-  const error = useSelector((state) => state.userLocation.error);
-  const user = useSelector((state) => state.user.user); // user 정보
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     // user 정보가 없고 selectedLocation이 null일 때 현재 위치를 불러옴
@@ -28,17 +25,17 @@ const MenuTag = () => {
     } else if (user) {
       dispatch(fetchSelectedLocation(user.user_id));
     }
-  }, [dispatch, user]);
+  }, [user]);
 
   useEffect(() => {
+    // 랜덤 mainSection2 값을 가져오고 데이터를 조회하는 함수
     const fetchRandomMainSection2 = async () => {
       try {
-        //main_section_2의 랜덤 값을 받아옴
         const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
         const randomMainSection2 = randomResponse.data;
         setRandomMainSection2(randomMainSection2);
 
-        //mainSection2 값을 사용해 데이터 조회
+        // mainSection2 값을 사용해 데이터 조회
         const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
           params: { mainSection2: randomMainSection2 },
         });
@@ -49,14 +46,15 @@ const MenuTag = () => {
       }
     };
 
+    fetchRandomMainSection2();
+  }, []);
+
+  useEffect(() => {
     if (selectedLocation) {
-      // selectedLocation이 있을 때만 실행, user 상태에 따른 위치 정보
       setSelectedLatitude(user ? selectedLocation?.location_lat : selectedLocation.latitude);
       setSelectedLongitude(user ? selectedLocation?.location_lng : selectedLocation.longitude);
-
-      fetchRandomMainSection2();
     }
-  }, [selectedLocation]);
+  }, [selectedLocation, user]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수
@@ -177,4 +175,4 @@ const MenuTag = () => {
   );
 };
 
-export default MenuTag;
+export default React.memo(MenuTag);

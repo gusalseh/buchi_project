@@ -17,19 +17,13 @@ const FoodQuantityTag = () => {
 
   // Redux 상태에서 선택된 위치와 로딩 상태, 에러를 가져옴
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
-  const loading = useSelector((state) => state.userLocation.loading);
-  const error = useSelector((state) => state.userLocation.error);
   const user = useSelector((state) => state.user.user); // user 정보
 
   useEffect(() => {
     // user 정보가 없고 selectedLocation이 null일 때 현재 위치를 불러옴
     if (!user) {
       dispatch(getCurrentLocation());
-    }
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    if (user) {
+    } else if (user) {
       dispatch(fetchSelectedLocation(user.user_id));
     }
   }, [dispatch, user]);
@@ -53,15 +47,15 @@ const FoodQuantityTag = () => {
         console.error('랜덤 subsection1 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);
       }
     };
-
+    fetchRandomSubSection2();
+  }, []);
+  useEffect(() => {
     if (selectedLocation) {
       // selectedLocation이 있을 때만 실행
       setSelectedLatitude(user ? selectedLocation?.location_lat : selectedLocation.latitude);
       setSelectedLongitude(user ? selectedLocation?.location_lng : selectedLocation.longitude);
-
-      fetchRandomSubSection2();
     }
-  }, [selectedLocation]); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
+  }, [selectedLocation, user]); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCards = 10; // SpotCard의 총 개수

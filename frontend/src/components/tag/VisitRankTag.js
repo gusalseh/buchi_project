@@ -8,7 +8,6 @@ import axios from 'axios';
 
 const VisitRankTag = () => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState({});
-  const [randomMainSection2, setRandomMainSection2] = useState('');
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
 
@@ -24,11 +23,7 @@ const VisitRankTag = () => {
     // user 정보가 없고 selectedLocation이 null일 때 현재 위치를 불러옴
     if (!user) {
       dispatch(getCurrentLocation());
-    }
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    if (user) {
+    } else if (user) {
       dispatch(fetchSelectedLocation(user.user_id));
     }
   }, [dispatch, user]);
