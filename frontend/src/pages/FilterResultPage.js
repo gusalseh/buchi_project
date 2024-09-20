@@ -563,6 +563,50 @@ const FilterResultPage = () => {
                   </Col>
                 ))}
               </Row>
+              {/* 가변 줄: 세부 필터에서 선택한 옵션 표시 */}
+              <Row style={{ margin: '10px 0', width: '520px', display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
+                {selectedFilters.map((filter) => (
+                  <Tag key={filter} color="red" closable onClose={() => handleSelectFilter(filter)}>
+                    {filter}
+                  </Tag>
+                ))}
+              </Row>
+              {/* 두 번째 줄: 왼쪽에 도보 10분 이내, 오른쪽에 거리순/리뷰순 필터 */}
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Select defaultValue="10" style={{ width: 130, borderRadius: '6px' }}>
+                    <Option value="5">도보 5분 이내</Option>
+                    <Option value="10">도보 10분 이내</Option>
+                    <Option value="15">도보 15분 이내</Option>
+                  </Select>
+                </Col>
+                <Col>
+                  <Row gutter={8}>
+                    <Col>
+                      <Button
+                        style={{ border: 'none', boxShadow: 'none', background: 'none' }}
+                        onClick={sortByDistance}
+                      >
+                        <Text
+                          style={{ color: isSortedStandard === 'distance' ? '#000000' : '#B3B3B3', fontSize: '17px' }}
+                        >
+                          거리순
+                        </Text>
+                      </Button>
+                    </Col>
+                    <Text style={{ marginTop: '4px' }}>|</Text>
+                    <Col>
+                      <Button style={{ border: 'none', boxShadow: 'none', background: 'none' }} onClick={sortByRating}>
+                        <Text
+                          style={{ color: isSortedStandard === 'rating' ? '#000000' : '#B3B3B3', fontSize: '17px' }}
+                        >
+                          별점순
+                        </Text>
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
               {/* 세부 필터 애니메이션 스르륵 */}
               <div style={filterContainerStyle}>
                 {/* 첫 번째 Col: 필터 카테고리 */}
@@ -759,50 +803,6 @@ const FilterResultPage = () => {
                   </Row>
                 </Col>
               </div>
-              {/* 가변 줄: 세부 필터에서 선택한 옵션 표시 */}
-              <Row style={{ margin: '10px 0' }}>
-                {selectedFilters.map((filter, index) => (
-                  <Tag key={index} color="red" closable onClose={() => handleSelectFilter(filter)}>
-                    {filter}
-                  </Tag>
-                ))}
-              </Row>
-              {/* 두 번째 줄: 왼쪽에 도보 10분 이내, 오른쪽에 거리순/리뷰순 필터 */}
-              <Row justify="space-between" align="middle">
-                <Col>
-                  <Select defaultValue="10" style={{ width: 130, borderRadius: '6px' }}>
-                    <Option value="5">도보 5분 이내</Option>
-                    <Option value="10">도보 10분 이내</Option>
-                    <Option value="15">도보 15분 이내</Option>
-                  </Select>
-                </Col>
-                <Col>
-                  <Row gutter={8}>
-                    <Col>
-                      <Button
-                        style={{ border: 'none', boxShadow: 'none', background: 'none' }}
-                        onClick={sortByDistance}
-                      >
-                        <Text
-                          style={{ color: isSortedStandard === 'distance' ? '#000000' : '#B3B3B3', fontSize: '17px' }}
-                        >
-                          거리순
-                        </Text>
-                      </Button>
-                    </Col>
-                    <Text style={{ marginTop: '4px' }}>|</Text>
-                    <Col>
-                      <Button style={{ border: 'none', boxShadow: 'none', background: 'none' }} onClick={sortByRating}>
-                        <Text
-                          style={{ color: isSortedStandard === 'rating' ? '#000000' : '#B3B3B3', fontSize: '17px' }}
-                        >
-                          별점순
-                        </Text>
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
             </div>
           </div>
           {/* 하단 식당 카드 영역 */}
