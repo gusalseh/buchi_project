@@ -88,28 +88,43 @@ const FilterResultPage = () => {
         };
         const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
 
-        const updatedPlaces = response.data.map((place) => ({
-          title: place.spot_name,
-          main_section_1: place.mainSec_1,
-          main_section_2: place.mainSec_2,
-          sub_section_1: place.subSec_1,
-          sub_section_2: place.subSec_2,
-          sub_section_3: place.subSec_3,
-          sub_section_4: place.subSec_4,
-          sub_section_5: place.subSec_5,
-          tag_1: place.tag_1,
-          tag_2: place.tag_2,
-          tag_3: place.tag_3,
-          distance: place.walking_time,
-          max_group_seats: place.max_group_seats,
-          rating: parseInt(place.avg_rating),
-          reviews: place.review_count,
-          price: parseInt(place.avg_price),
-          lat: place.spot_lat,
-          lng: place.spot_lng,
-          img: place.spot_main_img,
-          walking_time: place.walking_time,
-        }));
+        const updatedPlaces = response.data.map((place) => {
+          const serviceTags = [];
+
+          if (place.private_room === 1) serviceTags.push('개인룸');
+          if (place.parking_lot > 0) serviceTags.push('주차가능');
+          if (place.valet === 1) serviceTags.push('발렛가능');
+          if (place.corkage === 'free') serviceTags.push('콜키지 무료');
+          if (place.corkage === 'charge') serviceTags.push('콜키지 유료');
+          if (place.rental === 1) serviceTags.push('대관가능');
+          if (place.placard === 1) serviceTags.push('플랜카드 부착 가능');
+          if (place.indoor_toilet === 1) serviceTags.push('실내화장실');
+          if (place.wheelchair === 1) serviceTags.push('휠체어 이용가능');
+
+          return {
+            title: place.spot_name,
+            main_section_1: place.mainSec_1,
+            main_section_2: place.mainSec_2,
+            sub_section_1: place.subSec_1,
+            sub_section_2: place.subSec_2,
+            sub_section_3: place.subSec_3,
+            sub_section_4: place.subSec_4,
+            sub_section_5: place.subSec_5,
+            tag_1: place.tag_1,
+            tag_2: place.tag_2,
+            tag_3: place.tag_3,
+            distance: place.walking_time,
+            max_group_seats: place.max_group_seats,
+            rating: parseInt(place.avg_rating),
+            reviews: place.review_count,
+            price: parseInt(place.avg_price),
+            lat: place.spot_lat,
+            lng: place.spot_lng,
+            img: place.spot_main_img,
+            walking_time: place.walking_time,
+            serviceTags: serviceTags,
+          };
+        });
 
         setPlaces(updatedPlaces);
         setOriginalPlaces(updatedPlaces);
@@ -461,6 +476,7 @@ const FilterResultPage = () => {
           getSubsection3(place.sub_section_3),
         ],
         분위기: [getTag2(place.tag_2), getTag3(place.tag_3)],
+        '시설·서비스': place.serviceTags,
       };
 
       const matchesAllFilters = Object.keys(tagGroup).every((filterGroup) => {
@@ -468,10 +484,16 @@ const FilterResultPage = () => {
           if (filterGroup === '동행인' && firstFilter.includes(filter)) return true;
           if (filterGroup === '음식' && secondFilter.includes(filter)) return true;
           if (filterGroup === '분위기' && thirdFilter.includes(filter)) return true;
+          if (filterGroup === '시설·서비스' && fourthFilter.includes(filter)) return true;
           return false;
         });
 
         if (groupFilters.length === 0) return true;
+
+        // 시설·서비스 그룹에 대해서는 모든 선택된 필터가 포함되어 있는지 확인
+        if (filterGroup === '시설·서비스') {
+          return groupFilters.every((filter) => tagGroup['시설·서비스'].includes(filter));
+        }
 
         return groupFilters.some((filter) => tagGroup[filterGroup].includes(filter));
       });
