@@ -99,40 +99,43 @@ export const reverse_industry_type = Object.freeze({
 });
 
 export const getTag1 = (value) => {
-  return Tag_1[value.toUpperCase()] || value;
+  return value ? Tag_1[value.toUpperCase()] || value : '';
 };
 
 export const getTag2 = (value) => {
-  return Tag_2[value.toUpperCase()] || value;
+  return value ? Tag_2[value.toUpperCase()] || value : '';
 };
 
 export const getTag3 = (value) => {
-  return Tag_3[value.toUpperCase()] || value;
+  return value ? Tag_3[value.toUpperCase()] || value : '';
 };
 
 export const getMainsection1 = (value) => {
-  return main_section_1[value.toUpperCase()] || value;
+  return value ? main_section_1[value.toUpperCase()] || value : '';
 };
 
 export const getMainsection2 = (value) => {
-  return main_section_2[value.toUpperCase()] || value;
+  return value ? main_section_2[value.toUpperCase()] || value : '';
 };
 
 export const getSubsection1 = (value) => {
-  return sub_section_1[value.toUpperCase()] || value;
+  return value ? sub_section_1[value.toUpperCase()] || value : '';
 };
 
 export const getSubsection2 = (value) => {
-  return sub_section_2[value.toUpperCase()] || value;
+  return value ? sub_section_2[value.toUpperCase()] || value : '';
 };
+
 export const getSubsection3 = (value) => {
-  return sub_section_3[value.toUpperCase()] || value;
+  return value ? sub_section_3[value.toUpperCase()] || value : '';
 };
+
 export const getSubsection4 = (value) => {
-  return sub_section_4[value.toUpperCase()] || value;
+  return value ? sub_section_4[value.toUpperCase()] || value : '';
 };
+
 export const getSubsection5 = (value) => {
-  return sub_section_5[value.toUpperCase()] || value;
+  return value ? sub_section_5[value.toUpperCase()] || value : '';
 };
 
 export const getIndustryType = (value) => {

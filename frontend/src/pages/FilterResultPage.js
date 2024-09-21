@@ -19,7 +19,18 @@ import {
 import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import { getTag1, getTag2, getTag3, getMainsection1, getMainsection2 } from '../enums/Enum';
+import {
+  getTag1,
+  getTag2,
+  getTag3,
+  getMainsection1,
+  getMainsection2,
+  getSubsection1,
+  getSubsection2,
+  getSubsection3,
+  getSubsection4,
+  getSubsection5,
+} from '../enums/Enum';
 import UserLocation from '../components/common/UserLocationModal';
 import LoginAlert from '../components/alert/LoginAlert';
 import { fetchSelectedLocation } from '../features/userLocation';
@@ -50,7 +61,7 @@ const FilterResultPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
-  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
+  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -102,6 +113,7 @@ const FilterResultPage = () => {
 
         setPlaces(updatedPlaces);
         setOriginalPlaces(updatedPlaces);
+        applyFilters(updatedPlaces);
 
         console.log('places:', updatedPlaces);
       } catch (error) {
@@ -111,7 +123,7 @@ const FilterResultPage = () => {
     if (latitude && longitude) {
       fetchPlacesByDistance();
     }
-  }, [latitude, longitude, location.search]);
+  }, [latitude, longitude, location.search, selectedFilters]);
 
   useEffect(() => {
     const map = new window.naver.maps.Map('map', {
@@ -227,12 +239,24 @@ const FilterResultPage = () => {
     setIsFilterVisible(!isFilterVisible);
   };
 
+  // const handleSelectFilter = (filter) => {
+  //   if (selectedFilters.includes(filter)) {
+  //     setSelectedFilters(selectedFilters.filter((item) => item !== filter));
+  //   } else {
+  //     setSelectedFilters([...selectedFilters, filter]);
+  //   }
+  // };
+
   const handleSelectFilter = (filter) => {
+    let updatedFilters;
     if (selectedFilters.includes(filter)) {
-      setSelectedFilters(selectedFilters.filter((item) => item !== filter));
+      updatedFilters = selectedFilters.filter((item) => item !== filter);
     } else {
-      setSelectedFilters([...selectedFilters, filter]);
+      updatedFilters = [...selectedFilters, filter];
     }
+
+    setSelectedFilters(updatedFilters);
+    applyFilters(originalPlaces);
   };
 
   const getFilterStyle = (filter) => ({
@@ -302,7 +326,7 @@ const FilterResultPage = () => {
     '전통주',
   ];
 
-  const thirdFilter = ['조용한 담소', '활발한 수다', '시끌벅적한', '캐주얼한', '격식있는', '이국적·이색적'];
+  const thirdFilter = ['조용한담소', '활발한수다', '시끌벅적한', '캐주얼한', '격식있는', '이국적·이색적', '전통적인'];
 
   const fourthFilter = [
     '개인룸',
@@ -420,6 +444,44 @@ const FilterResultPage = () => {
     navigate(
       `/filterResult?date=${updatedDate}&time=${updatedTime}&amount=${updatedAmount}&lat=${latitude}&lng=${longitude}&address=${locationName}`
     );
+  };
+
+  const applyFilters = (placesToFilter) => {
+    if (selectedFilters.length === 0) {
+      setPlaces(placesToFilter);
+      return;
+    }
+
+    const filteredPlaces = placesToFilter.filter((place) => {
+      const tagGroup = {
+        동행인: [getTag1(place.tag_1)],
+        음식: [
+          getMainsection1(place.main_section_1),
+          getMainsection2(place.main_section_2),
+          getSubsection3(place.sub_section_3),
+        ],
+        분위기: [getTag2(place.tag_2), getTag3(place.tag_3)],
+      };
+
+      const matchesAllFilters = Object.keys(tagGroup).every((filterGroup) => {
+        const groupFilters = selectedFilters.filter((filter) => {
+          if (filterGroup === '동행인' && firstFilter.includes(filter)) return true;
+          if (filterGroup === '음식' && secondFilter.includes(filter)) return true;
+          if (filterGroup === '분위기' && thirdFilter.includes(filter)) return true;
+          return false;
+        });
+
+        if (groupFilters.length === 0) return true;
+
+        return groupFilters.some((filter) => tagGroup[filterGroup].includes(filter));
+      });
+
+      return matchesAllFilters;
+    });
+
+    console.log('filteredPlaces', filteredPlaces);
+
+    setPlaces(filteredPlaces);
   };
 
   return (
