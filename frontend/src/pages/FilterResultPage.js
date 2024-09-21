@@ -19,6 +19,7 @@ import {
 import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import {
   getTag1,
   getTag2,
@@ -34,7 +35,7 @@ import {
 import UserLocation from '../components/common/UserLocationModal';
 import LoginAlert from '../components/alert/LoginAlert';
 import { fetchSelectedLocation } from '../features/userLocation';
-import dayjs from 'dayjs';
+import { fetchPlacesByDistance } from '../features/fetchPlacesByDistance';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -255,14 +256,6 @@ const FilterResultPage = () => {
     setIsFilterVisible(!isFilterVisible);
   };
 
-  // const handleSelectFilter = (filter) => {
-  //   if (selectedFilters.includes(filter)) {
-  //     setSelectedFilters(selectedFilters.filter((item) => item !== filter));
-  //   } else {
-  //     setSelectedFilters([...selectedFilters, filter]);
-  //   }
-  // };
-
   const handleSelectFilter = (filter) => {
     let updatedFilters;
     if (selectedFilters.includes(filter)) {
@@ -456,10 +449,11 @@ const FilterResultPage = () => {
     }
     setSelectedLatitude(latitude);
     setSelectedLongitude(longitude);
+    setSelectedAmount(updatedAmount);
 
-    navigate(
-      `/filterResult?date=${updatedDate}&time=${updatedTime}&amount=${updatedAmount}&lat=${latitude}&lng=${longitude}&address=${locationName}`
-    );
+    await fetchPlacesByDistance({ latitude, longitude, amount: selectedAmount });
+
+    window.location.href = `/filterResult?date=${updatedDate}&time=${updatedTime}&amount=${updatedAmount}&lat=${latitude}&lng=${longitude}&address=${locationName}`;
   };
 
   const applyFilters = (placesToFilter, range = selectedRange) => {
