@@ -50,7 +50,7 @@ const FilterResultPage = () => {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const [selectedRange, setSelectedRange] = useState([10000, 400000]);
+  const [selectedRange, setSelectedRange] = useState([10000, 1000000]);
   const [selectedDetailFilter, setSelectedDetailFilter] = useState(null);
   const [places, setPlaces] = useState([]);
   const [originalPlaces, setOriginalPlaces] = useState([]);
@@ -61,6 +61,7 @@ const FilterResultPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
+  const [filteredCount, setFilteredCount] = useState(0);
   const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링
 
   const date = queryParams.get('date');
@@ -128,7 +129,7 @@ const FilterResultPage = () => {
 
         setPlaces(updatedPlaces);
         setOriginalPlaces(updatedPlaces);
-        applyFilters(updatedPlaces);
+        applyFilters(updatedPlaces, selectedRange);
 
         console.log('places:', updatedPlaces);
       } catch (error) {
@@ -138,7 +139,7 @@ const FilterResultPage = () => {
     if (latitude && longitude) {
       fetchPlacesByDistance();
     }
-  }, [latitude, longitude, location.search, selectedFilters]);
+  }, [latitude, longitude, location.search, selectedFilters, selectedRange]);
 
   useEffect(() => {
     const map = new window.naver.maps.Map('map', {
@@ -271,7 +272,7 @@ const FilterResultPage = () => {
     }
 
     setSelectedFilters(updatedFilters);
-    applyFilters(originalPlaces);
+    applyFilters(originalPlaces, selectedRange);
   };
 
   const getFilterStyle = (filter) => ({
@@ -313,7 +314,7 @@ const FilterResultPage = () => {
   };
 
   const firstFilter = [
-    '친한 사람과 함께',
+    '친한사람과 함께',
     '동료와 함께',
     '상사와 함께',
     '임원과 함께',
@@ -461,9 +462,11 @@ const FilterResultPage = () => {
     );
   };
 
-  const applyFilters = (placesToFilter) => {
-    if (selectedFilters.length === 0) {
+  const applyFilters = (placesToFilter, range = selectedRange) => {
+    const isDefaultRange = range[0] === 10000 && range[1] === 1000000;
+    if (selectedFilters.length === 0 && isDefaultRange) {
       setPlaces(placesToFilter);
+      setFilteredCount(placesToFilter.length);
       return;
     }
 
@@ -498,12 +501,22 @@ const FilterResultPage = () => {
         return groupFilters.some((filter) => tagGroup[filterGroup].includes(filter));
       });
 
-      return matchesAllFilters;
+      // 예산 필터 적용
+      console.log('평균가격:', place.price);
+      console.log('인원수:', selectedAmount);
+      const totalCost = place.price * selectedAmount;
+
+      const isWithinBudget = totalCost >= selectedRange[0] && totalCost <= selectedRange[1];
+
+      console.log('예산필터:', isWithinBudget);
+
+      return matchesAllFilters && isWithinBudget;
     });
 
     console.log('filteredPlaces', filteredPlaces);
 
     setPlaces(filteredPlaces);
+    setFilteredCount(filteredPlaces.length);
   };
 
   return (
@@ -659,6 +672,20 @@ const FilterResultPage = () => {
                     {filter}
                   </Tag>
                 ))}
+                {/* 예산 필터가 설정되어 있는 경우 예산을 표시 */}
+                {(selectedRange[0] !== 10000 || selectedRange[1] !== 1000000) && (
+                  <Tag
+                    color="red"
+                    closable
+                    onClose={() => {
+                      setSelectedRange([10000, 1000000]);
+                    }}
+                  >
+                    {selectedRange[0] === 10000
+                      ? `~ ${selectedRange[1].toLocaleString()} 원`
+                      : `${selectedRange[0].toLocaleString()} 원 ~ ${selectedRange[1].toLocaleString()} 원`}
+                  </Tag>
+                )}
               </Row>
               {/* 두 번째 줄: 왼쪽에 도보 10분 이내, 오른쪽에 거리순/리뷰순 필터 */}
               <Row justify="space-between" align="middle">
@@ -773,26 +800,39 @@ const FilterResultPage = () => {
                       justifyContent: 'space-between',
                     }}
                   >
-                    <InputNumber
-                      value={selectedRange[0]}
-                      onChange={(value) => setSelectedRange([value, selectedRange[1]])}
-                      min={0}
-                      style={{ width: '140px' }}
-                    />
+                    <div
+                      style={{
+                        width: '140px',
+                        border: '1px solid #d9d9d9',
+                        padding: '4px 11px',
+                        borderRadius: '6px',
+                      }}
+                    >
+                      {selectedRange[0].toLocaleString()} 원
+                    </div>
                     <span>~</span>
-                    <InputNumber
-                      value={selectedRange[1]}
-                      onChange={(value) => setSelectedRange([selectedRange[0], value])}
-                      max={1000000}
-                      style={{ width: '140px' }}
-                    />
+                    <div
+                      style={{
+                        width: '140px',
+                        border: '1px solid #d9d9d9',
+                        padding: '4px 11px',
+                        borderRadius: '6px',
+                        textAlign: 'right',
+                      }}
+                    >
+                      {selectedRange[1].toLocaleString()} 원
+                    </div>
                   </Row>
                   <Slider
                     range
                     value={selectedRange}
-                    onChange={(value) => setSelectedRange(value)}
+                    onChange={(value) => {
+                      const roundedValues = value.map((v) => Math.floor(v / 10000) * 10000);
+                      setSelectedRange(roundedValues);
+                      applyFilters(originalPlaces, roundedValues);
+                    }}
                     min={10000}
-                    max={400000}
+                    max={1000000}
                     step={10000}
                     style={{ borderBottom: '1px solid #E0E0E0', paddingBottom: '32px', marginBottom: '32px' }}
                   />
@@ -886,7 +926,7 @@ const FilterResultPage = () => {
                         }}
                         onClick={() => toggleFilter()}
                       >
-                        결과보기
+                        결과보기({filteredCount}건)
                       </div>
                     </Col>
                   </Row>
