@@ -34,7 +34,6 @@ const DrinkTag = () => {
         const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_3_random`);
         const randomSubSection3 = randomResponse.data;
         setRandomSubSection3(randomSubSection3);
-        console.log('check randomMainSection3', randomSubSection3);
 
         const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_3_list', {
           params: { subSection3: randomSubSection3 },

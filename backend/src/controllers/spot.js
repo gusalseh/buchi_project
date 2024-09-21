@@ -91,6 +91,87 @@ exports.getSpotList = async (req, res) => {
   }
 };
 
+exports.getSpotById = async (req, res) => {
+  const { spot_id } = req.params;
+
+  try {
+    const sectionSpot = await SectionLabel.findOne({
+      where: {
+        spot_id,
+      },
+      include: [
+        {
+          model: Spot,
+          include: [
+            {
+              model: TagLabel,
+            },
+            {
+              model: Menu,
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!sectionSpot) {
+      return res.status(404).json({ message: 'Spot not found' });
+    }
+
+    const mappings_2 = {
+      friendly: '친한사람과 함께',
+      partner: '동료와 함께',
+      boss: '상사와 함께',
+      executive: '임원과 함께',
+      vendor: '거래처와 함께',
+      foreigner: '외국인과 함께',
+      quiet: '조용한담소',
+      chatter: '활발한수다',
+      noisy: '시끌벅적한',
+      casual: '캐주얼한',
+      modern: '모던한',
+      formal: '격식있는',
+      traditional: '전통적인',
+      exotic: '이국적/이색적',
+    };
+
+    const mappings_3 = {
+      korean: '한식',
+      chinese: '양식',
+      japanese: '일식',
+      western: '양식',
+      asian: '아시안',
+      fusion: '퓨전',
+      pork_belly: '삼겹살',
+      chicken: '치킨',
+      grilled_beef: '소고기구이',
+      pork_libs: '돼지갈비',
+      chinese_cuisine: '중국요리',
+      sashimi: '회',
+    };
+
+    sectionSpot.main_section_1 = mappings_3[sectionSpot.main_section_1];
+    sectionSpot.main_section_2 = mappings_3[sectionSpot.main_section_2];
+    sectionSpot.Spot.TagLabel.tag_1 = mappings_2[sectionSpot.Spot.TagLabel.tag_1];
+    sectionSpot.Spot.TagLabel.tag_2 = mappings_2[sectionSpot.Spot.TagLabel.tag_2];
+    sectionSpot.Spot.TagLabel.tag_3 = mappings_2[sectionSpot.Spot.TagLabel.tag_3];
+
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spot_id);
+
+    const mergedData = {
+      sectionSpot,
+      visitReviewData: visitReviewData || null,
+    };
+
+    res.json(mergedData);
+  } catch (error) {
+    console.error('Error fetching spot data:', error);
+    res.status(500).json({ error: 'Spot 데이터를 불러올 수 없습니다.' });
+  }
+};
+
 exports.getSpotByDist = async (req, res) => {
   const { latitude, longitude, amount } = req.body;
 

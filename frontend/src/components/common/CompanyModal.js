@@ -216,9 +216,8 @@ const CompanyModal = ({ visible, onClose }) => {
                     key={item.company_id}
                     onClick={() => handleItemClick(item.company_id)}
                     style={{
-                      backgroundColor: selectedItemId === item.company_id ? '#fde3cf' : '#ffffff',
+                      backgroundColor: selectedItemId === item.company_id ? '#FDF5F4' : '#ffffff',
                       cursor: 'pointer',
-                      borderRadius: '4px',
                       padding: '12px 20px',
                       height: 90,
                       transition: 'background-color 0.3s ease',

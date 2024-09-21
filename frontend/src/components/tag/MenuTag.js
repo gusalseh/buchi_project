@@ -94,7 +94,7 @@ const MenuTag = () => {
         marginLeft: '20rem',
         display: 'flex',
         flexDirection: 'column',
-        height: 592,
+        height: 600,
         gap: 20,
         backgroundColor: 'white',
         position: 'relative',

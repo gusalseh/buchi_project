@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Tag, Typography, Rate } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { Card, Tag, Typography } from 'antd';
 import { Image } from 'antd';
 import { StarFilled } from '@ant-design/icons';
 import { getDistance } from '../../utils/distance';
-import axios from 'axios';
 
 const { Text, Title } = Typography;
 
 const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
+  const navigate = useNavigate();
+
   const sectionLabel = sectionLabelSpot.sectionLabelSpot.sectionSpot;
   const sectionLabelrating = sectionLabelSpot.sectionLabelSpot.visitReviewData;
   const spot = sectionLabel.Spot;
@@ -24,8 +25,12 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
     spot.spot_lng
   );
 
+  const handleCardClick = () => {
+    navigate(`/spotdetail/${spot.spot_id}`);
+  };
+
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+    <div onClick={handleCardClick} style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
       <Card
         hoverable
         cover={
@@ -39,7 +44,17 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           />
         }
         bordered={false}
-        style={{ width: 360, height: 494, padding: 20, boxShadow: 'none' }} // 카드 크기 그대로
+        style={{
+          width: 360,
+          height: 510,
+          padding: 20,
+          margin: 20,
+
+          boxShadow: 'none', // 기본 그림자 효과
+          transition: 'box-shadow 0.3s ease-in-out', // 부드러운 애니메이션 }} // 카드 크기 그대로
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')} // hover 시 더 강한 그림자
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')} // hover 해제 시 원래 그림자
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           {' '}

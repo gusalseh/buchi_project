@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Spot } = require('../models'); // sequelize 불러오기
-const { getSpotList, getSpotByDist } = require('../controllers/spot');
+const { Spot } = require('../models');
+const { getSpotList, getSpotByDist, getSpotById } = require('../controllers/spot');
 
-// 모든 spot 정보를 가져오는 엔드포인트
 router.get('/', async (req, res) => {
   try {
     const spots = await Spot.findAll();
@@ -13,8 +12,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-//spot과 sectionLabel, visit, review 데이터 join한 정보 가져오는 엔드포인트
 router.get('/spotlist', getSpotList);
+
+router.get('/spotlistById/:spot_id', getSpotById);
 
 router.post('/getSpotByDistance', getSpotByDist);
 
