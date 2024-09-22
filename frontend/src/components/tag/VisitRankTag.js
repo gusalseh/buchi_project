@@ -43,6 +43,11 @@ const VisitRankTag = () => {
       setSelectedLongitude(user ? selectedLocation?.location_lng : selectedLocation.longitude);
 
       fetchSpotList();
+    } else if (!selectedLocation) {
+      setSelectedLatitude(37.500483);
+      setSelectedLongitude(127.036707);
+
+      fetchSpotList();
     }
   }, [selectedLocation]);
 
@@ -181,7 +186,8 @@ const VisitRankTag = () => {
             ) : (
               <div
                 style={{
-                  writingMode: 'horizontal-tb',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
                   transform: 'none',
                 }}
               >
@@ -191,11 +197,12 @@ const VisitRankTag = () => {
           ) : (
             <div
               style={{
-                writingMode: 'horizontal-tb',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
                 transform: 'none',
               }}
             >
-              데이터를 불러오는 중입니다...
+              데이터가 부족한 지역입니다.
             </div>
           )}
         </div>

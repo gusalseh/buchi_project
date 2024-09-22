@@ -51,6 +51,9 @@ const DrinkTag = () => {
     if (selectedLocation) {
       setSelectedLatitude(user ? selectedLocation?.location_lat : selectedLocation.latitude);
       setSelectedLongitude(user ? selectedLocation?.location_lng : selectedLocation.longitude);
+    } else if (!selectedLocation) {
+      setSelectedLatitude(37.500483);
+      setSelectedLongitude(127.036707);
     }
   }, [selectedLocation, user]); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
 
@@ -188,7 +191,8 @@ const DrinkTag = () => {
             ) : (
               <div
                 style={{
-                  writingMode: 'horizontal-tb',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
                   transform: 'none',
                 }}
               >
@@ -198,11 +202,12 @@ const DrinkTag = () => {
           ) : (
             <div
               style={{
-                writingMode: 'horizontal-tb',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
                 transform: 'none',
               }}
             >
-              데이터를 불러오는 중입니다...
+              데이터가 부족한 지역입니다.
             </div>
           )}
         </div>
