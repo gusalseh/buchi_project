@@ -76,7 +76,7 @@ const TeamSpot = () => {
   return (
     <div>
       {user.user && user.user.company_id && companyVisitSpotList.length > 0 ? (
-        <div style={{ marginBottom: 80, height: 620, padding: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
           <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
             {/* 왼쪽 박스 */}
             <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>

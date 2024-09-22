@@ -6,13 +6,13 @@ import { Collapse, Card, Row, Col, Typography, Rate, Button, Tag, Image, Divider
 import {
   EnvironmentOutlined,
   PhoneOutlined,
-  CarOutlined,
-  CreditCardOutlined,
+  DownOutlined,
   HeartOutlined,
   ShareAltOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
 import { StarFilled } from '@ant-design/icons';
+import MenuSimulation from '../components/card/MenuSimulation';
 import Image1 from '../assets/Img/spotdetailpicto/pictoX2/parking.png';
 import Image2 from '../assets/Img/spotdetailpicto/pictoX2/valet.png';
 import Image3 from '../assets/Img/spotdetailpicto/pictoX2/rental.png';
@@ -45,6 +45,7 @@ const isOpen = (start_time, end_time) => {
 const SpotDetailPage = () => {
   const { id } = useParams();
   const [spotData, setSpotData] = useState(null);
+  const [visibleMenuCount, setVisibleMenuCount] = useState(4);
 
   useEffect(() => {
     const fetchSpotData = async () => {
@@ -90,6 +91,10 @@ const SpotDetailPage = () => {
   } = spotData;
 
   const distance = getDistance(37.5665, 126.978, spot_lat, spot_lng); // 예시 사용자 위치 (서울)
+
+  const handleLoadMore = () => {
+    setVisibleMenuCount((prevCount) => prevCount + 4); // 4개씩 추가로 표시
+  };
 
   return (
     <div
@@ -186,7 +191,7 @@ const SpotDetailPage = () => {
             {/* 리뷰 및 평점 */}
             <Row align="middle" gutter={[8, 8]}>
               <Col>
-                <StarFilled style={{ color: '#DB5744', fontSize: '20px', marginRight: '8px' }} />
+                <StarFilled style={{ color: '#DB5744', fontSize: '20px' }} />
               </Col>
               <Col>
                 <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
@@ -293,197 +298,75 @@ const SpotDetailPage = () => {
 
           <Divider />
 
-          {/* 메뉴 상세 */}
-          <Card title="메뉴 상세" bordered={false} style={{ boxShadow: 'none' }}>
-            {/* 모둠한판(500g) */}
-            <Row gutter={[16, 16]} align="middle">
-              <Col xs={24} sm={4}>
-                <Image
-                  alt="모둠한판"
-                  src="/default-image.jpg"
-                  width={80}
-                  height={80}
-                  style={{ objectFit: 'cover', borderRadius: '8px' }}
-                  preview={false}
-                />
-              </Col>
-              <Col xs={24} sm={20}>
-                <Row justify="space-between" align="middle">
-                  <Title level={5} style={{ margin: 0 }}>
-                    모둠한판(500g)
-                  </Title>
-                  <Tag color="red" style={{ fontSize: '12px' }}>
-                    추천
-                  </Tag>
+          {/* 메뉴 상세 섹션 */}
+          <Card title="메뉴 상세" bordered={false} style={{ boxShadow: 'none', marginBottom: '20px' }}>
+            {Menus.slice(0, visibleMenuCount).map((menu, index) => (
+              <div key={index}>
+                <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '16px' }}>
+                  <Col xs={4}>
+                    <Image
+                      alt={menu.menu_name}
+                      src={menu.menu_img || '/default-image.jpg'}
+                      width={80}
+                      height={80}
+                      style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      preview={false}
+                    />
+                  </Col>
+                  <Col xs={4}>
+                    <Row>
+                      {index === 0 && (
+                        <Tag
+                          color="red"
+                          style={{
+                            fontSize: '12px',
+                            border: '1px solid #DB5744',
+                            borderRadius: '8px',
+                          }}
+                        >
+                          추천
+                        </Tag>
+                      )}
+                      <Title level={5} style={{ margin: 0, fontSize: '16px', lineHeight: '1.2' }}>
+                        {menu.menu_name}
+                      </Title>
+                    </Row>
+                    <Text strong style={{ fontSize: '16px' }}>
+                      {menu.price} 원
+                    </Text>
+                  </Col>
                 </Row>
-                <Text type="secondary">삼겹살, 고등살, 갈매기살</Text>
-                <br />
-                <Text strong style={{ fontSize: '16px' }}>
-                  45,000 원
-                </Text>
-              </Col>
-            </Row>
+                <Divider />
+              </div>
+            ))}
 
-            <Divider />
-
-            {/* 한돈 생삼겹살(160g) */}
-            <Row gutter={[16, 16]} align="middle">
-              <Col xs={24} sm={4}>
-                <Image
-                  alt="한돈 생삼겹살"
-                  src="/default-image.jpg"
-                  width={80}
-                  height={80}
-                  style={{ objectFit: 'cover', borderRadius: '8px' }}
-                  preview={false}
-                />
-              </Col>
-              <Col xs={24} sm={20}>
-                <Title level={5} style={{ margin: 0 }}>
-                  한돈 생삼겹살(160g)
-                </Title>
-                <Text type="secondary">400시간 숙성한 도드람 한돈 생삼겹살</Text>
-                <br />
-                <Text strong style={{ fontSize: '16px' }}>
-                  45,000 원
-                </Text>
-              </Col>
-            </Row>
-
-            <Divider />
-
-            {/* 한돈 꼬들살(160g) */}
-            <Row gutter={[16, 16]} align="middle">
-              <Col xs={24} sm={4}>
-                <Image
-                  alt="한돈 꼬들살"
-                  src="/default-image.jpg"
-                  width={80}
-                  height={80}
-                  style={{ objectFit: 'cover', borderRadius: '8px' }}
-                  preview={false}
-                />
-              </Col>
-              <Col xs={24} sm={20}>
-                <Title level={5} style={{ margin: 0 }}>
-                  한돈 꼬들살(160g)
-                </Title>
-                <Text strong style={{ fontSize: '16px' }}>
-                  15,000 원
-                </Text>
-              </Col>
-            </Row>
-
-            <Divider />
-
-            {/* 갈매기살(150g) */}
-            <Row gutter={[16, 16]} align="middle">
-              <Col xs={24} sm={4}>
-                <Image
-                  alt="갈매기살"
-                  src="/default-image.jpg"
-                  width={80}
-                  height={80}
-                  style={{ objectFit: 'cover', borderRadius: '8px' }}
-                  preview={false}
-                />
-              </Col>
-              <Col xs={24} sm={20}>
-                <Title level={5} style={{ margin: 0 }}>
-                  갈매기살(150g)
-                </Title>
-                <Text strong style={{ fontSize: '16px' }}>
-                  16,000 원
-                </Text>
-              </Col>
-            </Row>
+            {visibleMenuCount < Menus.length && (
+              <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                <Button
+                  onClick={handleLoadMore}
+                  style={{
+                    backgroundColor: '#F2F2F2',
+                    border: 'none',
+                    color: '#444',
+                    padding: '10px 16px',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span>더보기</span>
+                  <DownOutlined style={{ fontSize: '12px' }} />
+                </Button>
+              </div>
+            )}
           </Card>
         </Col>
 
-        {/* 오른쪽 섹션: 주문 및 예약 */}
         <Col xs={24} lg={8}>
-          <Card title="메뉴" bordered={false} style={{ boxShadow: 'none', borderRadius: '8px' }}>
-            <Collapse defaultActiveKey={['1']} accordion>
-              <Panel header="메인" key="1">
-                <div
-                  style={{
-                    marginBottom: '16px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div>
-                    <Text strong>모둠한판(500g)</Text>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <InputNumber min={1} max={10} defaultValue={1} style={{ width: '60px', marginRight: '8px' }} />
-                    <Text style={{ fontSize: '16px', fontWeight: 'bold' }}>45,000 원</Text>
-                  </div>
-                </div>
-                <Divider />
-                <div
-                  style={{
-                    marginBottom: '16px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div>
-                    <Text strong>한돈 생삼겹살(160g)</Text>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <InputNumber min={1} max={10} defaultValue={2} style={{ width: '60px', marginRight: '8px' }} />
-                    <Text style={{ fontSize: '16px', fontWeight: 'bold' }}>30,000 원</Text>
-                  </div>
-                </div>
-              </Panel>
-              <Panel header="사이드" key="2">
-                <Text>사이드 메뉴 선택</Text>
-              </Panel>
-              <Panel header="음료/주류" key="3">
-                <Text>음료 선택</Text>
-              </Panel>
-            </Collapse>
-
-            <Divider />
-
-            <Row justify="space-between" style={{ marginBottom: '16px' }}>
-              <Text strong>총 주문 금액</Text>
-              <Text strong style={{ fontSize: '16px', fontWeight: 'bold', color: '#DB5744' }}>
-                75,000 원
-              </Text>
-            </Row>
-
-            <Button
-              type="default"
-              block
-              style={{
-                marginTop: '16px',
-                backgroundColor: '#F3F3F3',
-                color: '#DB5744',
-                borderColor: '#DB5744',
-                height: '48px',
-                fontWeight: 'bold',
-              }}
-            >
-              식당가기
-            </Button>
-            <Button
-              type="primary"
-              block
-              style={{
-                marginTop: '8px',
-                backgroundColor: '#DB5744',
-                borderColor: '#DB5744',
-                height: '48px',
-                fontWeight: 'bold',
-              }}
-            >
-              바로 예약하기
-            </Button>
-          </Card>
+          <Text>식당</Text>
+          <MenuSimulation />
         </Col>
       </Row>
     </div>

@@ -49,7 +49,6 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           height: 510,
           padding: 20,
           margin: 20,
-
           boxShadow: 'none', // 기본 그림자 효과
           transition: 'box-shadow 0.3s ease-in-out', // 부드러운 애니메이션 }} // 카드 크기 그대로
         }}

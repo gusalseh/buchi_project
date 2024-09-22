@@ -58,7 +58,11 @@ const VisitRankSpotCard = (sectionLabelSpot) => {
             alignItems: 'center',
             fontWeight: 'bold',
             zIndex: 1, // 다른 요소 위에 표시되도록 z-index 추가
+            boxShadow: 'none', // 기본 그림자 효과
+            transition: 'box-shadow 0.3s ease-in-out', // 부드러운 애니메이션 }} // 카드 크기 그대로
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')} // hover 시 더 강한 그림자
+          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')} // hover 해제 시 원래 그림자
         >
           {index + 1}
         </div>
