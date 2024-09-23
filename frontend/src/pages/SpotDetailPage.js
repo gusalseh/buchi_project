@@ -99,37 +99,45 @@ const SpotDetailPage = () => {
   return (
     <div
       style={{
+        width: '100%',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        margin: '0 auto',
-        maxWidth: 1920,
-        padding: '20px 16px',
+        justifyContent: 'flex-start',
+        paddingLeft: 340,
+        paddingRight: 340,
+        marginTop: 40,
       }}
     >
-      <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 20, width: '100%', height: 'auto' }}>
+      <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 20 }}>
         {/* 메인 이미지 (큰 이미지) */}
         <Col xs={24} md={12}>
           <Image
             alt={spot_name}
             src={spot_main_img || '/default-image.jpg'}
             fallback="/default.png"
-            style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              aspectRatio: '1/1',
+              maxWidth: 'none',
+              maxHeight: 'none',
+            }}
             preview={false}
           />
         </Col>
 
         {/* 서브 이미지 (작은 이미지 4개) */}
         <Col xs={24} md={12}>
-          <Row gutter={[16, 16]} justify="center">
+          <Row gutter={[16, 16]}>
             <Col xs={12}>
               <Image
                 alt={`${spot_name} - sub 1`}
                 src={spot_sub_img_1 || '/default-image.jpg'}
                 fallback="/default.png"
-                style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }}
+                style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
                 preview={false}
               />
             </Col>
@@ -138,18 +146,18 @@ const SpotDetailPage = () => {
                 alt={`${spot_name} - sub 2`}
                 src={spot_sub_img_2 || '/default-image.jpg'}
                 fallback="/default.png"
-                style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }}
+                style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
                 preview={false}
               />
             </Col>
           </Row>
-          <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
+          <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
             <Col xs={12}>
               <Image
                 alt={`${spot_name} - sub 3`}
                 src={spot_sub_img_3 || '/default-image.jpg'}
                 fallback="/default.png"
-                style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }}
+                style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
                 preview={false}
               />
             </Col>
@@ -158,7 +166,7 @@ const SpotDetailPage = () => {
                 alt={`${spot_name} - sub 4`}
                 src={spot_sub_img_4 || '/default-image.jpg'}
                 fallback="/default.png"
-                style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }}
+                style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
                 preview={false}
               />
             </Col>
@@ -166,25 +174,42 @@ const SpotDetailPage = () => {
         </Col>
       </Row>
 
-      <Row gutter={[32, 32]} justify="center" style={{ width: '100%' }}>
+      <Row
+        gutter={[0, 20]}
+        justify="start"
+        style={{ padding: 0, display: 'flex', justifyContent: 'flex-start', width: '100%' }}
+      >
         {/* 왼쪽 섹션: 매장 정보 및 메뉴 상세 */}
-        <Col xs={24} lg={16}>
+        <Col xs={24} lg={13} style={{ padding: 0 }}>
           {/* 매장 정보 */}
-          <Card bordered={false} style={{ boxShadow: 'none' }}>
+          <Card bordered={false} style={{ padding: 0, boxShadow: 'none' }}>
             {/* 상단 가게 이름과 리뷰, 아이콘 */}
             <Row justify="space-between" align="middle">
-              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Title level={2} style={{ marginBottom: 0, marginRight: '8px', textAlign: 'center', width: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+                <Title
+                  style={{
+                    fontSize: 36,
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    marginBottom: 0,
+                    marginRight: '8px',
+                    textAlign: 'left',
+                    width: 'auto',
+                  }}
+                >
                   {spot_name}
                 </Title>
-                <Text type="secondary" style={{ marginTop: 5 }}>
+                <Text
+                  type="secondary"
+                  style={{ marginLeft: 8, fontSize: 17, fontStyle: 'normal', fontWeight: 500, marginTop: 5 }}
+                >
                   {main_section_1}
                   {main_section_2 != null ? `· ${main_section_2}` : ' '}
                 </Text>
               </div>
               <Col>
-                <HeartOutlined style={{ fontSize: '20px', marginRight: '16px' }} />
-                <ShareAltOutlined style={{ fontSize: '20px' }} />
+                <HeartOutlined style={{ fontSize: 28, marginRight: '16px' }} />
+                <ShareAltOutlined style={{ fontSize: 28 }} />
               </Col>
             </Row>
 
@@ -216,7 +241,9 @@ const SpotDetailPage = () => {
             </Row>
             <Row style={{ marginBottom: '16px' }}>
               <Col offset={1}>
-                <Text style={{ fontSize: '16px', color: 'red' }}>취창업센터에서 도보 2분</Text>
+                <Text style={{ fontSize: 17, fontStyle: 'normal', fontWeight: 500, color: '#CC3C28' }}>
+                  취창업센터에서 도보 2분
+                </Text>
               </Col>
             </Row>
 
@@ -287,11 +314,20 @@ const SpotDetailPage = () => {
             </Row>
 
             {/* 하단 텍스트 */}
-            <Text style={{ marginTop: '16px', textAlign: 'left' }}>
+            <Text
+              style={{
+                color: '#404040',
+                fontSize: 15,
+                fontStyle: 'normal',
+                fontWeight: 500,
+                marginTop: '16px',
+                textAlign: 'left',
+              }}
+            >
               <ul style={{ marginTop: 20, listStyleType: 'disc', color: '' }}>
-                <li style={{ marginTop: 5 }}>단체석 최대 {max_group_seats}인</li>
-                <li style={{ marginTop: 5 }}>발렛 요금 3,000원</li>
-                <li style={{ marginTop: 5 }}>콜키지 무료</li>
+                <li style={{ marginTop: 8 }}>단체석 최대 {max_group_seats}인</li>
+                <li style={{ marginTop: 8 }}>발렛 요금 3,000원</li>
+                <li style={{ marginTop: 8 }}>콜키지 무료</li>
               </ul>
             </Text>
           </Card>
@@ -299,39 +335,64 @@ const SpotDetailPage = () => {
           <Divider />
 
           {/* 메뉴 상세 섹션 */}
-          <Card title="메뉴 상세" bordered={false} style={{ boxShadow: 'none', marginBottom: '20px' }}>
+          <Card
+            title={<span style={{ fontSize: '30px', fontStyle: 'normal', fontWeight: 500 }}>메뉴 상세</span>}
+            bordered={false}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              boxShadow: 'none',
+              marginBottom: '20px',
+            }}
+          >
             {Menus.slice(0, visibleMenuCount).map((menu, index) => (
               <div key={index}>
-                <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '16px' }}>
-                  <Col xs={4}>
+                <Row gutter={[0, 16]} align="middle" style={{ marginBottom: 20 }}>
+                  <Col xs={6} style={{ padding: 0 }}>
                     <Image
                       alt={menu.menu_name}
                       src={menu.menu_img || '/default-image.jpg'}
-                      width={80}
-                      height={80}
-                      style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      width={140}
+                      height={140}
+                      style={{ objectFit: 'cover' }}
                       preview={false}
+                      bordered={false}
                     />
                   </Col>
-                  <Col xs={4}>
-                    <Row>
+                  <Col xs={18} style={{ padding: 0 }}>
+                    <Row
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: 0,
+                      }}
+                    >
                       {index === 0 && (
                         <Tag
-                          color="red"
                           style={{
                             fontSize: '12px',
                             border: '1px solid #DB5744',
-                            borderRadius: '8px',
+                            borderRadius: '4px',
+                            color: '#CC3C28',
+                            marginRight: '8px',
                           }}
                         >
                           추천
                         </Tag>
                       )}
-                      <Title level={5} style={{ margin: 0, fontSize: '16px', lineHeight: '1.2' }}>
+                      <Title
+                        level={5}
+                        style={{
+                          fontSize: '20px',
+                          fontWeight: 500,
+                          margin: 0,
+                        }}
+                      >
                         {menu.menu_name}
                       </Title>
                     </Row>
-                    <Text strong style={{ fontSize: '16px' }}>
+                    <Text strong style={{ fontSize: 17, fontWeight: 500 }}>
                       {menu.price} 원
                     </Text>
                   </Col>
@@ -341,10 +402,11 @@ const SpotDetailPage = () => {
             ))}
 
             {visibleMenuCount < Menus.length && (
-              <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', textAlign: 'center', marginTop: '16px' }}>
                 <Button
                   onClick={handleLoadMore}
                   style={{
+                    bottom: 41,
                     backgroundColor: '#F2F2F2',
                     border: 'none',
                     color: '#444',
@@ -354,6 +416,7 @@ const SpotDetailPage = () => {
                     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
                     display: 'flex',
                     alignItems: 'center',
+                    zIndex: 1,
                   }}
                 >
                   <span>더보기</span>
@@ -364,9 +427,8 @@ const SpotDetailPage = () => {
           </Card>
         </Col>
 
-        <Col xs={24} lg={8}>
-          <Text>식당</Text>
-          <MenuSimulation />
+        <Col xs={24} lg={8} style={{ marginLeft: 30 }}>
+          <MenuSimulation menu={Menus} />
         </Col>
       </Row>
     </div>

@@ -1,48 +1,72 @@
 import React, { useState } from 'react';
-import { Collapse, Row, Col, Typography, Divider, Button } from 'antd';
+import { useSelector } from 'react-redux';
+import { Col, Collapse, Row, Typography, Divider, Button, message } from 'antd';
 import { MinusOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import LoginAlert from '../alert/LoginAlert';
 
 const { Panel } = Collapse;
 const { Text } = Typography;
 
-const initialMenus = [
-  { id: 1, name: '모둠한판(500g)', price: 45000, recommended: true },
-  { id: 2, name: '한돈 생삼겹살(160g)', price: 15000 },
-];
-
-const MenuSimulation = () => {
+const MenuSimulation = (menus) => {
   const [selectedItems, setSelectedItems] = useState([]);
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+
+  const user = useSelector((state) => state.user.user);
 
   const handleMenuSelect = (menu) => {
-    const existingItem = selectedItems.find((item) => item.id === menu.id);
+    const existingItem = selectedItems.find((item) => item.menu_id === menu.menu_id);
     if (!existingItem) {
       setSelectedItems([...selectedItems, { ...menu, quantity: 1 }]);
     }
   };
 
   const handleQuantityChange = (id, value) => {
-    setSelectedItems(selectedItems.map((item) => (item.id === id ? { ...item, quantity: value } : item)));
+    setSelectedItems(selectedItems.map((item) => (item.menu_id === id ? { ...item, quantity: value } : item)));
   };
 
   const handleRemove = (id) => {
-    setSelectedItems(selectedItems.filter((item) => item.id !== id));
+    setSelectedItems(selectedItems.filter((item) => item.menu_id !== id));
   };
 
   const totalPrice = selectedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+  const mainDishes = menus.menu.filter((menu) => menu.menu_type === 'maindish');
+  const sideDishes = menus.menu.filter((menu) => menu.menu_type === 'sidedish');
+  const liquors = menus.menu.filter((menu) => menu.menu_type === 'liquar');
+  const beverages = menus.menu.filter((menu) => menu.menu_type === 'beverage');
+
+  console.log('user Test: ', user);
+
+  const handleActionClick = () => {
+    if (!user) {
+      setShowLoginAlert(true);
+    } else {
+      message.success('기능이 작동합니다.');
+    }
+  };
+
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <Collapse style={{ backgroundColor: 'white', marginBottom: 8 }}>
+    <div
+      style={{
+        borderRadius: 8,
+        border: '1px solid var(--0Gray-200, #E5E5E5)',
+        padding: '15px',
+        maxWidth: '600px',
+        width: 520,
+        margin: '0 auto',
+      }}
+    >
+      <Text style={{ fontSize: 24, fontStyle: 'normal', fontWeight: 600 }}>메뉴</Text>
+      <Collapse style={{ marginTop: 10, backgroundColor: 'white', marginBottom: 8 }}>
         <Panel header="메인">
-          {initialMenus.map((menu) => (
+          {mainDishes.map((menu) => (
             <div
-              key={menu.id}
+              key={menu.menu_id}
               onClick={() => handleMenuSelect(menu)}
               style={{ cursor: 'pointer', marginBottom: '10px' }}
             >
-              <Row>
-                {menu.recommended && <span style={{ color: '#DB5744', fontWeight: 'bold', marginRight: 8 }}>추천</span>}
-                <span style={{ fontWeight: 'bold' }}>{menu.name}</span>
+              <Row justify="space-between">
+                <span style={{ fontWeight: 'bold' }}>{menu.menu_name}</span>
                 <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>{menu.price.toLocaleString()} 원</span>
               </Row>
             </div>
@@ -51,15 +75,30 @@ const MenuSimulation = () => {
       </Collapse>
       <Collapse style={{ backgroundColor: 'white', marginBottom: 8 }}>
         <Panel header="사이드">
-          {initialMenus.map((menu) => (
+          {sideDishes.map((menu) => (
             <div
-              key={menu.id}
+              key={menu.menu_id}
               onClick={() => handleMenuSelect(menu)}
               style={{ cursor: 'pointer', marginBottom: '10px' }}
             >
-              <Row>
-                {menu.recommended && <span style={{ color: '#DB5744', fontWeight: 'bold', marginRight: 8 }}>추천</span>}
-                <span style={{ fontWeight: 'bold' }}>{menu.name}</span>
+              <Row justify="space-between">
+                <span style={{ fontWeight: 'bold' }}>{menu.menu_name}</span>
+                <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>{menu.price.toLocaleString()} 원</span>
+              </Row>
+            </div>
+          ))}
+        </Panel>
+      </Collapse>
+      <Collapse style={{ backgroundColor: 'white', marginBottom: 8 }}>
+        <Panel header="주류">
+          {liquors.map((menu) => (
+            <div
+              key={menu.menu_id}
+              onClick={() => handleMenuSelect(menu)}
+              style={{ cursor: 'pointer', marginBottom: '10px' }}
+            >
+              <Row justify="space-between">
+                <span style={{ fontWeight: 'bold' }}>{menu.menu_name}</span>
                 <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>{menu.price.toLocaleString()} 원</span>
               </Row>
             </div>
@@ -67,16 +106,15 @@ const MenuSimulation = () => {
         </Panel>
       </Collapse>
       <Collapse style={{ backgroundColor: 'white' }}>
-        <Panel header="음료/주류">
-          {initialMenus.map((menu) => (
+        <Panel header="음료">
+          {beverages.map((menu) => (
             <div
-              key={menu.id}
+              key={menu.menu_id}
               onClick={() => handleMenuSelect(menu)}
               style={{ cursor: 'pointer', marginBottom: '10px' }}
             >
-              <Row>
-                {menu.recommended && <span style={{ color: '#DB5744', fontWeight: 'bold', marginRight: 8 }}>추천</span>}
-                <span style={{ fontWeight: 'bold' }}>{menu.name}</span>
+              <Row justify="space-between">
+                <span style={{ fontWeight: 'bold' }}>{menu.menu_name}</span>
                 <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>{menu.price.toLocaleString()} 원</span>
               </Row>
             </div>
@@ -88,17 +126,24 @@ const MenuSimulation = () => {
 
       {selectedItems.length > 0 && (
         <div>
-          <Text strong>선택된 메뉴</Text>
+          <Text strong style={{ marginLeft: 5 }}>
+            선택된 메뉴
+          </Text>
           {selectedItems.map((item) => (
-            <Row key={item.id} style={{ marginBottom: '10px' }} align="middle">
-              <Col span={10}>
-                <Text>{item.name}</Text>
+            <Row
+              key={item.menu_id}
+              gutter={[8, 8]}
+              style={{ marginLeft: 15, width: '30rem', marginBottom: '10px' }}
+              align="middle"
+            >
+              <Col span={8}>
+                <Text>{item.menu_name}</Text>
               </Col>
               <Col span={8}>
                 <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', width: 'fit-content' }}>
                   <Button
                     icon={<MinusOutlined />}
-                    onClick={() => handleQuantityChange(item.id, Math.max(1, item.quantity - 1))}
+                    onClick={() => handleQuantityChange(item.menu_id, Math.max(1, item.quantity - 1))}
                     style={{
                       border: 'none',
                       width: '32px',
@@ -112,32 +157,36 @@ const MenuSimulation = () => {
                   </div>
                   <Button
                     icon={<PlusOutlined />}
-                    onClick={() => handleQuantityChange(item.id, Math.min(20, item.quantity + 1))}
+                    onClick={() => handleQuantityChange(item.menu_id, Math.min(20, item.quantity + 1))}
                     style={{
                       border: 'none',
                       width: '32px',
                       height: '32px',
                       borderLeft: '1px solid #ccc',
                       borderRadius: '0px',
-                      boxShadow: 'none', // 중복된 경계선 문제 해결
+                      boxShadow: 'none',
                     }}
                   />
                 </div>
               </Col>
               <Col span={6} style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                {' '}
-                {/* 금액이 줄바꿈되지 않도록 설정 */}
                 <Text strong>{(item.price * item.quantity).toLocaleString()} 원</Text>
               </Col>
               <Col
                 span={2}
-                style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{
+                  whiteSpace: 'nowrap',
+                  textAlign: 'right',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
                 <Button
                   type="link"
-                  onClick={() => handleRemove(item.id)}
+                  onClick={() => handleRemove(item.menu_id)}
                   style={{
-                    color: 'black', // X 버튼 색상 검은색으로 설정
+                    color: 'black',
                     padding: 0,
                   }}
                 >
@@ -147,21 +196,31 @@ const MenuSimulation = () => {
             </Row>
           ))}
 
-          <Divider />
+          <Divider
+            style={{
+              borderColor: 'black',
+              borderWidth: '1px',
+            }}
+          />
 
           <Row justify="space-between" style={{ marginBottom: '16px' }}>
-            <Text strong>총 주문 금액</Text>
+            <Text strong style={{ marginLeft: 5 }}>
+              총 주문 금액
+            </Text>
             <Text strong style={{ fontSize: '16px', fontWeight: 'bold', color: '#DB5744', whiteSpace: 'nowrap' }}>
               {totalPrice.toLocaleString()} 원
             </Text>
           </Row>
 
-          <Row gutter={16}>
+          <Row>
             <Col span={12}>
               <Button
                 block
+                onClick={handleActionClick}
                 style={{
-                  height: '48px',
+                  marginLeft: 20,
+                  width: 160,
+                  height: '40px',
                   borderColor: '#DB5744',
                   color: '#DB5744',
                   fontWeight: 'bold',
@@ -175,8 +234,11 @@ const MenuSimulation = () => {
               <Button
                 block
                 type="primary"
+                onClick={handleActionClick}
                 style={{
-                  height: '48px',
+                  marginLeft: -50,
+                  width: 300,
+                  height: '40px',
                   backgroundColor: '#DB5744',
                   borderColor: '#DB5744',
                   fontWeight: 'bold',
@@ -188,6 +250,8 @@ const MenuSimulation = () => {
           </Row>
         </div>
       )}
+
+      {showLoginAlert && <LoginAlert visible={showLoginAlert} onClose={() => setShowLoginAlert(false)} />}
     </div>
   );
 };
