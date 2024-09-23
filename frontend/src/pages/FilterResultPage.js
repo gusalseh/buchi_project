@@ -73,6 +73,10 @@ const FilterResultPage = () => {
   const address = queryParams.get('address');
 
   useEffect(() => {
+    window.handleCardClick = handleCardClick;
+  }, []);
+
+  useEffect(() => {
     setLocationName(address);
     setSelectedTime(time);
     setSelectedAmount(amount);
@@ -104,6 +108,7 @@ const FilterResultPage = () => {
           if (place.wheelchair === 1) serviceTags.push('휠체어 이용가능');
 
           return {
+            id: place.spot_id,
             title: place.spot_name,
             main_section_1: place.mainSec_1,
             main_section_2: place.mainSec_2,
@@ -212,7 +217,9 @@ const FilterResultPage = () => {
           <div style="display: flex; justify-content: space-between; font-size: 12px;">
             <p style="font-size: 13px; color: #666;">${getMainsection1(place.main_section_1)}
                             ${place.main_section_2 ? ` · ${getMainsection2(place.main_section_2)}` : ''}</p>
-            <a href="#" style="color: #CC3C28; text-decoration: none;">상세보기</a>
+            <a href="javascript:void(0)" onclick="window.handleCardClick(${
+              place.id
+            })" style="color: #CC3C28; text-decoration: none;">상세보기</a>
           </div>
         </div>`,
             position: new window.naver.maps.LatLng(place.lat, place.lng),
@@ -511,6 +518,10 @@ const FilterResultPage = () => {
 
     setPlaces(filteredPlaces);
     setFilteredCount(filteredPlaces.length);
+  };
+
+  const handleCardClick = (id) => {
+    navigate(`/spotdetail/${id}`);
   };
 
   return (
@@ -871,7 +882,6 @@ const FilterResultPage = () => {
                       marginTop: '8px',
                       marginBottom: '32px',
                       gap: '8px',
-                      // paddingBottom: '24px',
                       paddingBottom: '30px',
                     }}
                   >
@@ -949,6 +959,7 @@ const FilterResultPage = () => {
                   }}
                   onMouseEnter={() => handleCardMouseEnter(place)}
                   onMouseLeave={handleCardMouseLeave}
+                  onClick={() => handleCardClick(place.id)}
                   bordered={false}
                   bodyStyle={{ padding: 12 }}
                 >
