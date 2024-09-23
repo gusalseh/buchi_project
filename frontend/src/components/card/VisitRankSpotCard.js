@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Tag, Typography, Rate } from 'antd';
 import { Image } from 'antd';
 import { StarFilled } from '@ant-design/icons';
@@ -8,6 +9,12 @@ import axios from 'axios';
 const { Text, Title } = Typography;
 
 const VisitRankSpotCard = (sectionLabelSpot) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/spotdetail/${spot.spot_id}`);
+  };
+
   const sectionLabel = sectionLabelSpot.sectionLabelSpot.sectionSpot;
   const sectionLabelrating = sectionLabelSpot.sectionLabelSpot.visitReviewData;
   const spot = sectionLabel.Spot;
@@ -25,7 +32,7 @@ const VisitRankSpotCard = (sectionLabelSpot) => {
   );
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, position: 'relative' }}>
+    <div onClick={handleCardClick} style={{ display: 'flex', flexWrap: 'wrap', gap: 20, position: 'relative' }}>
       <Card
         hoverable
         cover={
@@ -35,11 +42,13 @@ const VisitRankSpotCard = (sectionLabelSpot) => {
             fallback="/default.png"
             preview={false}
             bordered={false}
-            style={{ width: 320, height: 320, objectFit: 'cover', borderRadius: 8 }} // 이미지 크기는 유지하고 모서리만 둥글게
+            style={{ width: 320, height: 320, objectFit: 'cover', borderRadius: 8 }}
           />
         }
         bordered={false}
-        style={{ width: 360, height: 494, padding: 20, boxShadow: 'none' }} // 카드 크기 그대로
+        style={{ width: 360, height: 494, padding: 20, boxShadow: 'none', transition: 'box-shadow 0.3s ease-in-out' }}
+        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')} // hover 시 더 강한 그림자
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')} // hover 해제 시 원래 그림자
       >
         <div
           style={{
