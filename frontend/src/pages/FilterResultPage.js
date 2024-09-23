@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
@@ -20,18 +20,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import {
-  getTag1,
-  getTag2,
-  getTag3,
-  getMainsection1,
-  getMainsection2,
-  getSubsection1,
-  getSubsection2,
-  getSubsection3,
-  getSubsection4,
-  getSubsection5,
-} from '../enums/Enum';
+import { getTag1, getTag2, getTag3, getMainsection1, getMainsection2, getSubsection3 } from '../enums/Enum';
 import UserLocation from '../components/common/UserLocationModal';
 import LoginAlert from '../components/alert/LoginAlert';
 import { fetchSelectedLocation } from '../features/userLocation';
@@ -63,7 +52,8 @@ const FilterResultPage = () => {
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
   const [filteredCount, setFilteredCount] = useState(0);
-  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링
+  const [modalKey, setModalKey] = useState(0);
+  const filterContainerRef = useRef(null);
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -311,6 +301,16 @@ const FilterResultPage = () => {
 
   const handleClickDetailFilter = (filter) => {
     setSelectedDetailFilter(filter);
+
+    const filterElement = filterRefs[filter].current;
+    if (filterElement && filterContainerRef.current) {
+      const scrollOffset = filterElement.offsetTop - filterContainerRef.current.offsetTop;
+
+      filterContainerRef.current.scrollTo({
+        top: scrollOffset,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const firstFilter = [
@@ -322,25 +322,7 @@ const FilterResultPage = () => {
     '외국인과 함께',
   ];
 
-  const secondFilter = [
-    '한식',
-    '중식',
-    '일식',
-    '양식',
-    '아시안',
-    '퓨전',
-    // '호프집',
-    // '이자카야',
-    // '브런치',
-    // '디저트·카페',
-    // '한정식',
-    // '파인다이닝',
-    // '패밀리레스토랑',
-    '와인',
-    '칵테일',
-    '위스키',
-    '전통주',
-  ];
+  const secondFilter = ['한식', '중식', '일식', '양식', '아시안', '퓨전', '와인', '칵테일', '위스키', '전통주'];
 
   const thirdFilter = ['조용한담소', '활발한수다', '시끌벅적한', '캐주얼한', '격식있는', '이국적·이색적', '전통적인'];
 
@@ -502,9 +484,6 @@ const FilterResultPage = () => {
         return groupFilters.some((filter) => tagGroup[filterGroup].includes(filter));
       });
 
-      // 예산 필터 적용
-      console.log('평균가격:', place.price);
-      console.log('인원수:', selectedAmount);
       const totalCost = place.price * selectedAmount;
 
       const isWithinBudget = totalCost >= selectedRange[0] && totalCost <= selectedRange[1];
@@ -522,6 +501,14 @@ const FilterResultPage = () => {
 
   const handleCardClick = (id) => {
     navigate(`/spotdetail/${id}`);
+  };
+
+  const filterRefs = {
+    동행인: useRef(null),
+    예산: useRef(null),
+    음식: useRef(null),
+    분위기: useRef(null),
+    '시설·서비스': useRef(null),
   };
 
   return (
@@ -729,7 +716,7 @@ const FilterResultPage = () => {
                 </Col>
               </Row>
               {/* 세부 필터 애니메이션 스르륵 */}
-              <div style={filterContainerStyle}>
+              <div style={filterContainerStyle} ref={filterContainerRef}>
                 {/* 첫 번째 Col: 필터 카테고리 */}
                 <Col
                   style={{
@@ -767,7 +754,9 @@ const FilterResultPage = () => {
                 {/* 두 번째 Col: 선택 가능한 필터 값들 (스크롤 가능) */}
                 <Col style={{ flex: 1, padding: '16px', marginLeft: '16px', marginRight: '16px' }}>
                   {/* 동행인 필터 */}
-                  <Text strong>동행인</Text>
+                  <Text strong ref={filterRefs['동행인']}>
+                    동행인
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
@@ -784,8 +773,8 @@ const FilterResultPage = () => {
                     ))}
                   </Row>
                   {/* 예산 필터 */}
-                  <Text strong>
-                    1인당 예산
+                  <Text strong ref={filterRefs['예산']}>
+                    예산
                     <span
                       style={{
                         fontSize: 12,
@@ -842,7 +831,9 @@ const FilterResultPage = () => {
                     style={{ borderBottom: '1px solid #E0E0E0', paddingBottom: '32px', marginBottom: '32px' }}
                   />
                   {/* 음식 필터 */}
-                  <Text strong>음식 및 주류</Text>
+                  <Text strong ref={filterRefs['음식']}>
+                    음식 및 주류
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
@@ -859,7 +850,9 @@ const FilterResultPage = () => {
                     ))}
                   </Row>
                   {/* 분위기 필터 */}
-                  <Text strong>분위기</Text>
+                  <Text strong ref={filterRefs['분위기']}>
+                    분위기
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
@@ -876,7 +869,9 @@ const FilterResultPage = () => {
                     ))}
                   </Row>
                   {/* 시설·서비스 필터 */}
-                  <Text strong>시설·서비스</Text>
+                  <Text strong ref={filterRefs['시설·서비스']}>
+                    시설·서비스
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
