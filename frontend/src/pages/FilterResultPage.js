@@ -53,6 +53,7 @@ const FilterResultPage = () => {
   const [selectedLongitude, setSelectedLongitude] = useState(null);
   const [filteredCount, setFilteredCount] = useState(0);
   const [modalKey, setModalKey] = useState(0);
+  const [markers, setMarkers] = useState([]);
   const filterContainerRef = useRef(null);
 
   const date = queryParams.get('date');
@@ -177,51 +178,58 @@ const FilterResultPage = () => {
     window.naverMap = map;
   }, [latitude, longitude]);
 
-  // 호버 액션을 처리하는 useEffect
   useEffect(() => {
     if (places.length > 0) {
-      console.log('marker:', places);
+      // 기존 마커 제거
+      markers.forEach((marker) => marker.setMap(null));
+      setMarkers([]);
 
-      // 장소마다 마커 추가
-      places.forEach((place) => {
+      // 새로운 마커 생성 및 저장
+      const newMarkers = places.map((place) => {
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(place.lat, place.lng),
           map: window.naverMap,
           title: place.title,
         });
 
-        // 마커에 마우스를 올렸을 때
         window.naver.maps.Event.addListener(marker, 'mouseover', () => {
           setHoveredPlace(place);
         });
 
-        // 마커에서 마우스를 뗐을 때
         window.naver.maps.Event.addListener(marker, 'mouseout', () => {
           setHoveredPlace(null);
         });
 
-        if (hoveredPlace === place) {
-          const infoWindow = new window.naver.maps.InfoWindow({
-            content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
-          <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #333;">${place.title}</h3>
+        return marker;
+      });
+
+      setMarkers(newMarkers);
+    }
+  }, [places]);
+
+  useEffect(() => {
+    // hoveredPlace가 있을 때만 InfoWindow 생성
+    if (hoveredPlace) {
+      const infoWindow = new window.naver.maps.InfoWindow({
+        content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
+          <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #333;">${hoveredPlace.title}</h3>
           <div style="display: flex; justify-content: space-between; font-size: 12px;">
-            <p style="font-size: 13px; color: #666;">${getMainsection1(place.main_section_1)}
-                            ${place.main_section_2 ? ` · ${getMainsection2(place.main_section_2)}` : ''}</p>
+            <p style="font-size: 13px; color: #666;">${getMainsection1(hoveredPlace.main_section_1)}
+              ${hoveredPlace.main_section_2 ? ` · ${getMainsection2(hoveredPlace.main_section_2)}` : ''}</p>
             <a href="javascript:void(0)" onclick="window.handleCardClick(${
-              place.id
+              hoveredPlace.id
             })" style="color: #CC3C28; text-decoration: none;">상세보기</a>
           </div>
         </div>`,
-            position: new window.naver.maps.LatLng(place.lat, place.lng),
-            map: window.naverMap,
-            borderColor: '#CC3C28',
-          });
-          infoWindow.open(window.naverMap, marker);
-        }
-        return marker;
+        position: new window.naver.maps.LatLng(hoveredPlace.lat, hoveredPlace.lng),
+        map: window.naverMap,
+        borderColor: '#CC3C28',
+        pixelOffset: new window.naver.maps.Point(0, -10),
       });
+
+      infoWindow.open(window.naverMap);
     }
-  }, [places, hoveredPlace]);
+  }, [hoveredPlace]);
 
   useEffect(() => {
     if (isFilterVisible) {
@@ -497,6 +505,25 @@ const FilterResultPage = () => {
 
     setPlaces(filteredPlaces);
     setFilteredCount(filteredPlaces.length);
+  };
+
+  // 기존 마커 제거 및 필터링된 장소로 마커 업데이트
+  const handleFilterResults = () => {
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+
+    const filteredMarkers = places.map((place) => {
+      const marker = new window.naver.maps.Marker({
+        position: new window.naver.maps.LatLng(place.lat, place.lng),
+        map: window.naverMap,
+        title: place.title,
+      });
+
+      return marker;
+    });
+
+    setMarkers(filteredMarkers);
+    toggleFilter();
   };
 
   const handleCardClick = (id) => {
@@ -923,7 +950,7 @@ const FilterResultPage = () => {
                           lineHeight: '48px',
                           cursor: 'pointer',
                         }}
-                        onClick={() => toggleFilter()}
+                        onClick={() => handleFilterResults()}
                       >
                         결과보기({filteredCount}건)
                       </div>
