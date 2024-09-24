@@ -26,20 +26,9 @@ class Spot extends Sequelize.Model {
           type: Sequelize.DECIMAL(11, 8),
           allowNull: true,
         },
-        // 대분류 카테고리 확정 필요
-        spot_category_1: {
-          type: Sequelize.ENUM('korean', 'chinese', 'japanese', 'western', 'asian', 'fushion'),
-          allowNull: false,
-        },
-        // 소분류 카테고리 확정 필요
-        spot_category_2: {
-          type: Sequelize.ENUM('cat1', 'cat2', 'cat3', 'cat4', 'cat5'),
-          allowNull: true,
-        },
         private_room: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         parking_lot: {
           type: Sequelize.INTEGER,
@@ -47,25 +36,23 @@ class Spot extends Sequelize.Model {
         },
         valet: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         corkage: {
           type: Sequelize.ENUM('no', 'free', 'charge'),
-          allowNull: false,
-          defaultValue: 'no',
+          allowNull: true,
         },
         max_group_seats: {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: true,
         },
         start_time: {
           type: Sequelize.TIME,
-          allowNull: false,
+          allowNull: true,
         },
         end_time: {
           type: Sequelize.TIME,
-          allowNull: false,
+          allowNull: true,
         },
         break_start_time: {
           type: Sequelize.TIME,
@@ -85,28 +72,24 @@ class Spot extends Sequelize.Model {
         },
         // 0000000(일주일의 boolean화)
         open_day: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.STRING(20),
           allowNull: true,
         },
         rental: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         placard: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         indoor_toilet: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         wheelchair: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         promotion: {
           type: Sequelize.STRING(200),
@@ -117,6 +100,30 @@ class Spot extends Sequelize.Model {
           allowNull: true,
         },
         // image url 어디에 서빙할지 (spot 테이블 or image 테이블)
+        spot_main_img: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_1: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_2: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_3: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_4: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
+        spot_sub_img_5: {
+          type: Sequelize.STRING(200),
+          allowNull: true,
+        },
       },
       {
         sequelize,
@@ -130,8 +137,30 @@ class Spot extends Sequelize.Model {
       }
     );
   }
+  static associate(models) {
+    // Spot은 하나의 SectionLabel을 가질 수 있다 (1:1 관계)
+    Spot.hasOne(models.SectionLabel, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
 
-  static associate(db) {}
+    // Spot은 하나의 TagLabel을 가질 수 있다 (1:1 관계)
+    Spot.hasOne(models.TagLabel, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
+
+    // Spot은 여러 Menu를 가질 수 있다 (1:N 관계)
+    Spot.hasMany(models.Menu, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
+
+    Spot.hasMany(models.Visit, {
+      foreignKey: 'spot_id',
+      sourceKey: 'spot_id',
+    });
+  }
 }
 
 module.exports = Spot;

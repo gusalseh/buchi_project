@@ -64,9 +64,12 @@ class UserLocation extends Sequelize.Model {
       }
     );
   }
-
-  static associate(db) {
-    // UserLocation user를 참조합니다.
+  static associate(models) {
+    // UserLocation은 하나의 User에 속한다 (1:1 관계)
+    UserLocation.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      targetKey: 'user_id',
+    });
   }
 }
 

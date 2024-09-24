@@ -1,5 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const bodyParser = require('body-parser');
+const axios = require('axios');
 const { sequelize } = require('./models');
 const { corsMiddleware } = require('./middlewares');
 const passport = require('passport');
@@ -10,6 +13,8 @@ const app = express();
 // 미들웨어 설정
 app.use(corsMiddleware);
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // 세션 설정
 app.use(
@@ -35,7 +40,64 @@ app.use('/image', imageRoutes);
 const userLocationRoutes = require('./routes/userLocation');
 app.use('/api/userLocation', userLocationRoutes);
 
-const PORT = process.env.PORT || 3000;
+const companyRoutes = require('./routes/company');
+app.use('/api/companies', companyRoutes);
+
+const sectionLabelRoutes = require('./routes/sectionLabel');
+app.use('/api/sectionLabels', sectionLabelRoutes);
+
+const spotRoutes = require('./routes/spot');
+app.use('/api/spots', spotRoutes);
+
+const visitRoutes = require('./routes/visit');
+app.use('/api/visits', visitRoutes);
+
+const companySpotVisitRoutes = require('./routes/companySpotVisit');
+app.use('/api/company_spot_visits', companySpotVisitRoutes);
+
+app.get('/reverse_geocode', async (req, res) => {
+  const { lat, lon } = req.query;
+  const response = await axios.get(
+    `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&orders=roadaddr&output=json`,
+    {
+      method: 'GET',
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_MAP_CLIENT_ID,
+        'X-NCP-APIGW-API-KEY': process.env.NAVER_MAP_CLIENT_SECRET,
+      },
+    }
+  );
+  const data = response.data;
+  res.json(data);
+});
+
+app.post('/geocode', async (req, res) => {
+  const { address } = req.body;
+
+  try {
+    const response = await axios.get(
+      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${encodeURIComponent(address)}`,
+      {
+        headers: {
+          'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_MAP_CLIENT_ID,
+          'X-NCP-APIGW-API-KEY': process.env.NAVER_MAP_CLIENT_SECRET,
+        },
+      }
+    );
+
+    if (response.data.addresses.length === 0) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+
+    const { y: latitude, x: longitude } = response.data.addresses[0];
+    res.json({ latitude, longitude });
+  } catch (error) {
+    console.error('Error fetching geocode:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   sequelize.sync();

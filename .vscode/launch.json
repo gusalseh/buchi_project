@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "type": "chrome",
+      "name": "http://app.use(express.json());",
+      "request": "launch",
+      "url": "http://app.use(express.json());"
+    },
+    {
+      "type": "node-terminal",
+      "name": "스크립트 실행: start",
+      "request": "launch",
+      "command": "npm run start",
+      "cwd": "${workspaceFolder}/backend"
+    }
+  ]
+}

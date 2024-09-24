@@ -33,9 +33,10 @@ const Tag = () => {
         overflow: 'hidden', // 여기서 overflow를 'hidden'으로 설정해 잘리는 문제 방지
       }}
     >
-      <div style={{ height: 32, fontSize: 32 }}>#태그</div>
+      <div style={{ color: 'black', height: 32, fontSize: 32 }}>#짜글이</div>
       <div
         style={{
+          height: 570,
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
@@ -58,24 +59,19 @@ const Tag = () => {
             width: 'calc(100% - 40px)', // 전체 슬라이드의 너비를 정확하게 설정
           }}
         >
-          {Array.from({ length: totalCards - 1 }).map(
-            (
-              _,
-              index // 마지막 카드는 제외하고 렌더링
-            ) => (
-              <div
-                key={index}
-                style={{
-                  minWidth: 340, // SpotCard의 너비를 고정
-                  flexShrink: 0, // 카드가 줄어들지 않도록 설정
-                }}
-              >
-                <SpotCard />
-              </div>
-            )
-          )}
+          {Array.from({ length: totalCards }).map((_, index) => (
+            <div
+              key={index}
+              style={{
+                minWidth: 340, // SpotCard의 너비를 고정
+                flexShrink: 0, // 카드가 줄어들지 않도록 설정
+              }}
+            >
+              <SpotCard />
+            </div>
+          ))}
         </div>
-        {currentIndex < totalCards - 2 && (
+        {currentIndex < totalCards - 4 && (
           <Button onClick={handleNext} style={{ position: 'absolute', right: 0, zIndex: 1 }}>
             &gt;
           </Button>

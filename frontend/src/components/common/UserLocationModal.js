@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Input, Row, Col, Typography, Divider, Dropdown, Menu, Spin, Modal } from 'antd';
-import { EnvironmentOutlined, MoreOutlined, LoadingOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, MoreOutlined } from '@ant-design/icons';
 import { Work, Domain } from '@mui/icons-material';
 import {
   createLocation,
   fetchUserLocations,
   updateSelectedLocation,
   deleteLocation,
+  updateLocationByType,
 } from '../../features/userLocation';
+
+import { fetchSelectedLocation } from '../../features/userLocationThunk';
 
 // TODO: registeredLocations 우선 순위로 배열하는 로직 -> utils 모듈로 독립
 // TODO: 3개의 Modal들 -> alert(modal) 디렉토리로 독립
 const UserLocation = ({ saveLocation, visible }) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [address, setAddress] = useState('');
@@ -26,6 +30,7 @@ const UserLocation = ({ saveLocation, visible }) => {
   const [isConfirmVisible, setIsConfirmVisible] = useState(false); // 현재 설정 위치 변경 확인모달
   const [isLimitVisible, setIsLimitVisible] = useState(false); // 근무지, 출장지는 1개씩 제한모달
   const [selectedLocationId, setSelectedLocationId] = useState(null); // 선택된 위치 ID
+  const [limitMessage, setLimitMessage] = useState(''); // 근무지, 출장지 1개 제한 모달의 내용을 담는 상태
 
   // 모달이 열릴 때마다 상태를 초기화
   useEffect(() => {
@@ -41,6 +46,7 @@ const UserLocation = ({ saveLocation, visible }) => {
       const fetchData = async () => {
         try {
           const fetchLocations = await fetchUserLocations(user.user_id);
+
           fetchLocations.sort((a, b) => {
             if (b.selected && !a.selected) return 1;
             if (a.selected && !b.selected) return -1;
@@ -69,6 +75,18 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleTypeChange = (e) => {
     setLocationType(e);
+
+    const locationTypeMap = {
+      근무지: 'onsite',
+      출장지: 'offsite',
+    };
+
+    if (locationTypeMap[e]) {
+      const isLocationExists = registeredLocations.some((location) => location.location_type === locationTypeMap[e]);
+      if (isLocationExists) {
+        return;
+      }
+    }
   };
 
   const handleInputClick = () => {
@@ -96,6 +114,7 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const handleLimitClose = () => {
     setIsLimitVisible(false);
+    setLimitMessage('');
   };
 
   const handleIframeLoad = () => {
@@ -108,19 +127,27 @@ const UserLocation = ({ saveLocation, visible }) => {
       const isOffsiteExists = registeredLocations.some((location) => location.location_type === 'offsite');
 
       if (locationType === '근무지' && isOnsiteExists) {
+        setLimitMessage('근무지로 저장된 주소가 있습니다. 이 주소로 변경하시겠습니까?');
         setIsLimitVisible(true);
         return;
       }
 
       if (locationType === '출장지' && isOffsiteExists) {
+        setLimitMessage('출장지로 저장된 주소가 있습니다. 이 주소로 변경하시겠습니까?');
         setIsLimitVisible(true);
         return;
       }
+
+      const address = addressDetail.roadAddress || addressDetail.jibunAddress;
+
+      const { latitude, longitude } = await getCoordinates(address);
 
       await createLocation({
         user_id: user.user_id,
         location_type: locationType,
         location_name: locationName || null,
+        location_latitude: latitude,
+        location_longitude: longitude,
         location_road_address: addressDetail.roadAddress,
         location_jibun_address: addressDetail.jibunAddress || null,
         location_building_name: addressDetail.buildingName || null,
@@ -144,7 +171,71 @@ const UserLocation = ({ saveLocation, visible }) => {
       setIsIframeVisible(false);
       setLoading(false);
     } catch (error) {
-      console.log('handleRegisterLocation Failed');
+      alert('Location registration failed: ' + error.message);
+    }
+  };
+
+  const handleUpdateLocation = async () => {
+    try {
+      const address = addressDetail.roadAddress || addressDetail.jibunAddress;
+      const { latitude, longitude } = await getCoordinates(address);
+
+      await updateLocationByType({
+        user_id: user.user_id,
+        location_type: locationType,
+        location_name: locationName || null,
+        location_latitude: latitude,
+        location_longitude: longitude,
+        location_road_address: addressDetail.roadAddress,
+        location_jibun_address: addressDetail.jibunAddress || null,
+        location_building_name: addressDetail.buildingName || null,
+      });
+
+      // 주소 목록을 다시 가져와 상태 업데이트
+      const fetchLocations = await fetchUserLocations(user.user_id);
+      fetchLocations.sort((a, b) => {
+        if (b.selected && !a.selected) return 1;
+        if (a.selected && !b.selected) return -1;
+        return 0;
+      });
+      setRegisteredLocations(fetchLocations);
+
+      setIsLimitVisible(false);
+      setIsAddressSelected(false);
+      setLocationType(null);
+      setLocationName('');
+      setAddress('');
+      setAddressDetail({ roadAddress: '', jibunAddress: '', buildingName: '' });
+      setIsIframeVisible(false);
+      setLoading(false);
+    } catch (error) {
+      alert('Location update failed: ' + error.message);
+    }
+  };
+
+  const getCoordinates = async (address) => {
+    try {
+      const response = await fetch(`http://localhost:80/geocode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch coordinates');
+      }
+
+      const data = await response.json();
+
+      if (!data) {
+        throw new Error('No results found');
+      }
+      return data;
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      throw error;
     }
   };
 
@@ -159,10 +250,11 @@ const UserLocation = ({ saveLocation, visible }) => {
         if (a.selected && !b.selected) return -1;
         return 0;
       });
+      dispatch(fetchSelectedLocation(user.user_id));
       setRegisteredLocations(fetchLocations);
       handleConfirmClose();
     } catch (error) {
-      console.log('handleSelectLocation Failed');
+      console.error('handleSelectLocation Failed: ', error);
     }
   };
 
@@ -259,7 +351,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               >
                 주소 검색하기
               </Button>
-              {/* 등록주소 10개인데 더 등록하려고 하면 뜨는 경고모달 */}
+              {/* 등록주소 10개일 경우, 등록하기 시 오래된 주소 삭제 후 설정 */}
               <Modal
                 visible={isAlertVisible}
                 onCancel={handleAlertClose}
@@ -269,7 +361,7 @@ const UserLocation = ({ saveLocation, visible }) => {
                 bodyStyle={{ textAlign: 'center' }}
               >
                 <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', marginTop: '20px' }}>
-                  등록할 수 있는 위치는 최대 10개입니다
+                  주소는 최대 10개까지 저장 가능합니다
                 </div>
                 <div style={{ fontSize: '14px', color: '#737373', marginBottom: '24px' }}>
                   추가로 등록을 원하시면 등록된 위치 중 하나를 삭제해 주세요
@@ -320,9 +412,8 @@ const UserLocation = ({ saveLocation, visible }) => {
             ) : (
               <div style={{ marginTop: 20, width: '100%', overflow: 'hidden' }}>
                 {registeredLocations.map((location, index) => (
-                  <div>
+                  <div key={location.location_id}>
                     <div
-                      key={location.location_id}
                       onClick={(e) => {
                         if (!e.defaultPrevented) handleLocationClick(location.location_id);
                       }}
@@ -579,7 +670,7 @@ const UserLocation = ({ saveLocation, visible }) => {
             }}
             onClick={() => handleSelectLocation(selectedLocationId)}
           >
-            네
+            예
           </Button>
           <Button
             style={{
@@ -596,7 +687,8 @@ const UserLocation = ({ saveLocation, visible }) => {
           </Button>
         </div>
       </Modal>
-      {/* 근무지 또는 출장지가 이미 있음 */}
+
+      {/* 근무지 또는 출장지가 이미 있는데 덮어쓰기 저장할때 */}
       <Modal
         visible={isLimitVisible}
         onCancel={handleLimitClose}
@@ -606,21 +698,36 @@ const UserLocation = ({ saveLocation, visible }) => {
         bodyStyle={{ textAlign: 'center' }}
       >
         <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '24px' }}>
-          근무지와 출장지는 1개씩만 등록 가능합니다
+          {/* 근무지와 출장지는 1개씩만 등록 가능합니다 */}
+          {limitMessage}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
           <Button
             style={{
-              borderRadius: 'var(--BorderRadius-borderRadiusLG, 8px)',
-              backgroundColor: 'var(--0Gray-500, #737373)',
-              color: 'var(--Background-colorBgContainer, #FFF)',
-              width: '170px',
+              borderRadius: '8px',
+              backgroundColor: '#CC3C28',
+              color: '#FFF',
+              width: '120px',
               height: '40px',
+              fontWeight: 'bold',
+            }}
+            onClick={handleUpdateLocation}
+          >
+            변경
+          </Button>
+          <Button
+            style={{
+              borderRadius: '8px',
+              backgroundColor: '#A3A3A3',
+              color: '#FFF',
+              width: '120px',
+              height: '40px',
+              fontWeight: 'bold',
             }}
             onClick={handleLimitClose}
           >
-            확인
+            취소
           </Button>
         </div>
       </Modal>

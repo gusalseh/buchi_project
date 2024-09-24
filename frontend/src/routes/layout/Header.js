@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
-import Login from '../../pages/LoginPage';
+import { LoginPage, RegisterPage } from '../../pages/LoginPage';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUser, logoutUser } from '../../features/userThunk';
 import SearchInput from '../../components/common/SearchInput';
@@ -10,6 +10,7 @@ import logo from '../../assets/Img/buchi_logo_full.png';
 
 export default function Header() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
@@ -21,12 +22,18 @@ export default function Header() {
     setIsModalVisible(true);
   };
 
+  const registerShowModal = () => {
+    setIsRegisterModalVisible(true);
+  };
+
   const handleOk = () => {
     setIsModalVisible(false);
+    setIsRegisterModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsRegisterModalVisible(false);
   };
 
   const handleLogout = () => {
@@ -44,13 +51,15 @@ export default function Header() {
         justifyContent: 'center',
         flexShrink: 0,
         backgroundColor: '#FFF',
+        border: 'none',
+        borderBottom: '0.5px solid #A3A3A3',
       }}
     >
       <div
         style={{
           display: 'flex',
           width: '100%',
-          padding: '19.11px 340px 18.11px 340px',
+          padding: '20px 340px 20px 340px',
           justifyContent: 'center',
           alignItems: 'center',
           flexShrink: 0,
@@ -80,13 +89,15 @@ export default function Header() {
                 <BellOutlined style={{ width: 24, height: 24, color: '#000', fontWeight: '500' }} />
                 <button style={{ marginLeft: 13 }}>
                   <UserOutlined style={{ width: 24, height: 24, color: '#000', fontWeight: '500' }} />
-                  <span style={{ marginLeft: '3px', fontSize: '18px', fontWeight: 'normal', color: '#000' }}>
+                  <button style={{ marginLeft: '3px', fontSize: '18px', fontWeight: 'normal', color: '#000' }}>
                     {user.nickname}
-                  </span>
+                  </button>
                 </button>
 
                 {/* 개발 편의를 위해 로그아웃 버튼 임시 추가  */}
-                <button onClick={handleLogout}>Logout</button>
+                <button style={{ marginLeft: 20 }} onClick={handleLogout}>
+                  로그아웃
+                </button>
               </div>
             ) : (
               <div
@@ -101,7 +112,7 @@ export default function Header() {
                 <button style={{ marginRight: 15 }} onClick={showModal}>
                   로그인
                 </button>
-                <button onClick={showModal}>회원가입</button>
+                <button onClick={registerShowModal}>회원가입</button>
               </div>
             )}
           </div>
@@ -117,7 +128,19 @@ export default function Header() {
         style={{ maxWidth: '90%' }}
         bodyStyle={{ padding: 0 }}
       >
-        <Login />
+        <LoginPage />
+      </Modal>
+      <Modal
+        title=""
+        visible={isRegisterModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+        width="fit-content"
+        style={{ maxWidth: '90%' }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <RegisterPage />
       </Modal>
     </div>
   );

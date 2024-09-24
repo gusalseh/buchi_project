@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const { User } = require('../models');
 
 const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
 const { join, login, logout } = require('../controllers/auth');
@@ -47,7 +48,7 @@ router.get(
       nickname: req.user.nickname,
     };
     console.log('Naver login successful, redirecting...'); // 로그인 성공 후 리다이렉트 확인
-    res.redirect('http://localhost:3001/');
+    res.redirect('http://localhost:3000/');
   }
 );
 
@@ -57,6 +58,34 @@ router.get('/api/user', (req, res) => {
     res.json(req.user);
   } else {
     res.status(401).json({ message: 'Not authenticated' });
+  }
+});
+
+// 사용자 company_id Update 엔드포인트
+router.put('/update-company', isLoggedIn, async (req, res) => {
+  console.log('PUT /auth/update-company hit');
+  console.log('Authenticated user:', req.user); // req.user가 설정되어 있는지 확인
+
+  const { companyId } = req.body;
+
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  try {
+    const user = await User.findByPk(req.user.user_id); // 현재 로그인한 사용자 정보를 가져옴
+    console.log('Found user:', user); // user 객체를 출력하여 확인
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.company_id = companyId; // company_id 업데이트
+
+    await user.save(); // 변경 사항 저장
+
+    res.json({ message: 'Company ID updated successfully', user });
+  } catch (saveError) {
+    console.error('Error saving company ID:', saveError);
+    res.status(500).json({ message: 'Error saving company ID' });
   }
 });
 

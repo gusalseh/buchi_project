@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Modal, Select } from 'antd';
-import { Layout, Typography, DatePicker, InputNumber, Row, Col, Button } from 'antd';
-import { CalendarOutlined, ClockCircleOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
+import { Layout, Typography, DatePicker, InputNumber, Row, Col, Button, Spin } from 'antd';
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  UserOutlined,
+  SearchOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import UserLocation from './UserLocationModal';
 import { fetchSelectedLocation } from '../../features/userLocation';
 import LoginAlert from '../alert/LoginAlert';
@@ -14,24 +21,116 @@ const { Option } = Select;
 
 const Filter = () => {
   const user = useSelector((state) => state.user.user);
-  const [locationName, setLocationName] = useState('역삼역 2번 출구');
+  const [locationName, setLocationName] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
   const [isLoginAlertVisible, setIsLoginAlertVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null); // TODO: 날짜, 시간, 인원의 정보를 한꺼번에 state 관리해주는게 좋아보임
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedAmount, setSelectedAmount] = useState(null);
+  const [selectedLatitude, setSelectedLatitude] = useState(null);
+  const [selectedLongitude, setSelectedLongitude] = useState(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false); // 시간 선택 filter 열릴지 말지
+  const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
+  const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLocation = async () => {
+      setIsLoading(true);
       if (user) {
         const selectedLocation = await fetchSelectedLocation(user.user_id);
-        setLocationName(selectedLocation.location_road_address);
+        if (selectedLocation && selectedLocation.location_road_address) {
+          setLocationName(selectedLocation.location_road_address);
+        }
       }
+      setIsLoading(false);
+      setIsLocationFetched(true);
     };
 
     fetchLocation();
-  }, [user]);
+  }, [user, locationName, isLocationFetched]);
+
+  useEffect(() => {
+    if (isLocationFetched && !locationName) {
+      setIsLoading(true);
+      const getCurrentLocation = () => {
+        return new Promise((resolve, reject) => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          } else {
+            reject(new Error('Geolocation is not supported by this browser.'));
+          }
+        });
+      };
+
+      const onSuccess = (position) => {
+        const { latitude, longitude } = position.coords;
+        setSelectedLatitude(latitude);
+        setSelectedLongitude(longitude);
+        getReverseGeocode(latitude, longitude);
+      };
+
+      const onError = (error) => {
+        console.error(error);
+        // alert('위치를 가져올 수 없습니다.');
+        setLocationName('역삼역 2번 출구');
+      };
+
+      const getReverseGeocode = async (latitude, longitude) => {
+        try {
+          setIsLoading(true);
+          const response = await fetch(`http://localhost:80/reverse_geocode?lat=${latitude}&lon=${longitude}`);
+
+          if (!response.ok) {
+            const text = await response.text();
+            console.error(`Error response: ${text}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (data.results && data.results[0]) {
+            const roadAddress = formatAddress(data.results) || '주소를 찾을 수 없습니다.';
+            setLocationName(roadAddress);
+          } else {
+            setLocationName('주소를 찾을 수 없습니다.');
+          }
+        } catch (error) {
+          console.error('Reverse geocoding failed:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      const getFetchedLocation = async () => {
+        try {
+          const position = await getCurrentLocation();
+          onSuccess(position);
+        } catch (error) {
+          onError(error);
+        }
+      };
+
+      getFetchedLocation();
+    }
+  }, [locationName, isLocationFetched]);
+
+  const formatAddress = (data) => {
+    const item = data[0];
+    const region = item.region;
+    const land = item.land;
+
+    const city = (region.area1?.name).slice(0, 2);
+    const district = region.area2?.name;
+
+    const roadName = land.name;
+    const buildingNumber = land.number1;
+
+    const address = `${city} ${district} ${roadName} ${buildingNumber}`;
+
+    return address;
+  };
 
   const showLocationModal = () => {
     setIsModalVisible(true);
@@ -85,42 +184,92 @@ const Filter = () => {
     setIsSelectOpen(false);
   };
 
+  const getCoordinates = async (address) => {
+    try {
+      const response = await fetch(`http://localhost:80/geocode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch coordinates');
+      }
+
+      const data = await response.json();
+      return { latitude: data.latitude, longitude: data.longitude };
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      throw error;
+    }
+  };
+
+  const handleSearch = async () => {
+    const date = selectedDate ? selectedDate.format('YYYY년 MM월 DD일') : getTodayFormatted();
+    const time = selectedTime || '저녁회식';
+    const amount = selectedAmount || 3;
+
+    let latitude, longitude;
+
+    if (locationName === '역삼역 2번 출구') {
+      latitude = '37.5000263';
+      longitude = '127.0365456';
+    } else {
+      try {
+        const coordinates = await getCoordinates(locationName);
+        latitude = coordinates.latitude;
+        longitude = coordinates.longitude;
+      } catch (error) {
+        console.error('Failed to fetch coordinates:', error);
+        return;
+      }
+    }
+    setSelectedLatitude(latitude);
+    setSelectedLongitude(longitude);
+
+    navigate(
+      `/filterResult?date=${date}&time=${time}&amount=${amount}&lat=${latitude}&lng=${longitude}&address=${locationName}`
+    );
+  };
+
   return (
     <Layout style={{ Height: '235px', backgroundColor: 'white' }}>
       <Content style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px', width: 400 }}>
-          <Button
-            style={{
-              minWidth: 250,
-              width: 400,
-              textAlign: 'center',
-              border: 'none',
-              display: 'flex',
-              flexDirection: 'row',
-              fontSize: '24px',
-              fontStyle: 'normal',
-              fontWeight: 300,
-              position: 'relative',
-            }}
-            value="location"
-          >
-            {locationName === '역삼역 2번 출구' ? (
-              <span style={{ color: 'var(--0Gray-500, #737373)' }}>{locationName}</span>
-            ) : (
+          {isLoading ? (
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+          ) : (
+            <Button
+              style={{
+                minWidth: 250,
+                width: 400,
+                textAlign: 'center',
+                border: 'none',
+                display: 'flex',
+                flexDirection: 'row',
+                fontSize: '24px',
+                fontStyle: 'normal',
+                fontWeight: 300,
+                position: 'relative',
+              }}
+              value="location"
+            >
               <span>{locationName}</span>
-            )}
-            {user ? (
-              <DownOutlined
-                onClick={showLocationModal}
-                style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-              />
-            ) : (
-              <DownOutlined
-                onClick={() => setIsLoginAlertVisible(true)}
-                style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-              />
-            )}
-          </Button>
+              {user ? (
+                <DownOutlined
+                  onClick={showLocationModal}
+                  style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+                />
+              ) : (
+                <DownOutlined
+                  onClick={() => setIsLoginAlertVisible(true)}
+                  style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
+                />
+              )}
+            </Button>
+          )}
 
           <div
             style={{
@@ -181,6 +330,7 @@ const Filter = () => {
               suffixIcon={<UserOutlined />}
               min={1}
               max={100}
+              value={selectedAmount}
               onChange={(value) => {
                 if (value < 1) {
                   return 1;
@@ -188,7 +338,7 @@ const Filter = () => {
                 if (value > 100) {
                   return 100;
                 }
-                return value;
+                setSelectedAmount(value);
               }}
             />
           </Col>
@@ -205,6 +355,7 @@ const Filter = () => {
                 alignItems: 'center',
                 padding: 0,
               }}
+              onClick={handleSearch}
             />
           </Col>
         </Row>

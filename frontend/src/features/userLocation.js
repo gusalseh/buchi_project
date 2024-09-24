@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const createLocation = async (locationData) => {
   try {
-    const response = await axios.post('http://localhost:3000/api/userLocation', locationData);
+    const response = await axios.post(`http://localhost:80/api/userLocation`, locationData);
     return response.data;
   } catch (error) {
     console.error('Error creating location:', error);
@@ -13,7 +14,7 @@ export const createLocation = async (locationData) => {
 export const updateSelectedLocation = async (locationId, updatedData) => {
   try {
     const response = await axios.put(
-      `http://localhost:3000/api/userLocation/updateSelectedUserLocation/${locationId}`,
+      `http://localhost:80/api/userLocation/updateSelectedUserLocation/${locationId}`,
       updatedData
     );
     return response.data;
@@ -26,7 +27,7 @@ export const updateSelectedLocation = async (locationId, updatedData) => {
 export const deleteLocation = async (locationId, updatedData) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/api/userLocation/deleteUserLocation/${locationId}`,
+      `http://localhost:80/api/userLocation/deleteUserLocation/${locationId}`,
       updatedData
     );
     return response.data;
@@ -38,7 +39,7 @@ export const deleteLocation = async (locationId, updatedData) => {
 
 export const fetchUserLocations = async (userId) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/userLocation/fetchUserLocation/${userId}`);
+    const response = await axios.get(`http://localhost:80/api/userLocation/fetchUserLocation/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user locations:', error);
@@ -48,10 +49,20 @@ export const fetchUserLocations = async (userId) => {
 
 export const fetchSelectedLocation = async (userId) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/userLocation/selectedLocation/${userId}`);
+    const response = await axios.get(`http://localhost:80/api/userLocation/selectedLocation/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching selected location:', error);
     return { location_road_address: '역삼역 2번 출구' };
+  }
+};
+
+export const updateLocationByType = async (locationData) => {
+  try {
+    const response = await axios.put(`http://localhost:80/api/userLocation/updateLocationByType`, locationData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating location:', error);
+    throw error;
   }
 };

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const passport = require('passport');
 const { Strategy: NaverStrategy, Profile: NaverProfile } = require('passport-naver-v2');
 const axios = require('axios');
@@ -11,7 +12,7 @@ module.exports = () => {
       {
         clientID: process.env.NAVER_CLIENT_ID,
         clientSecret: process.env.NAVER_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/auth/naver/callback',
+        callbackURL: 'http://localhost:80/auth/naver/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         console.log('naver profile', profile);

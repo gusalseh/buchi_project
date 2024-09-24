@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { s3 } = require('.');
 const { ListObjectsV2Command } = require('@aws-sdk/client-s3');
 

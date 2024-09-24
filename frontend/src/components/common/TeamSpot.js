@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Row, Col, Typography } from 'antd';
 import { useSelector } from 'react-redux';
+import CompanyModal from './CompanyModal';
 import LoginAlert from '../alert/LoginAlert';
+import CompanySpotCard from '../card/CompanySpotCard';
+import axios from 'axios';
 
 const { Text } = Typography;
 
 const TeamSpot = () => {
-  const [companyId, setCompanyId] = useState(null); // 회사 ID 상태 관리
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
-  const [isAlertVisible, setIsAlertVisible] = useState(false); //Alert 상태 관리
+  const [companyId, setCompanyId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [companyVisitSpotList, setCompanyVisitSpotList] = useState({});
 
   const openAlert = () => {
     setIsAlertVisible(true);
@@ -18,21 +23,23 @@ const TeamSpot = () => {
     setIsAlertVisible(false);
   };
 
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    const fetchCompanyData = async () => {
+    const fetchUserData = async () => {
       try {
-        if (user && user.user) {
-          // 로그인 상태: user 객체가 null이 아니고, 빈 객체도 아닌 경우
-          if (user.company_id) {
-            setCompanyId(user.company_id); // 사용자에 연결된 회사 ID 설정
-          } else {
-            setCompanyId(null); // 회사 ID가 없는 경우
-          }
+        if (!user || !user.user || !user.user.company_id) {
+          setCompanyId(null);
         } else {
-          // 비로그인 상태: user가 null이거나, 빈 객체인 경우
-          setCompanyId(null); // 회사 ID를 null로 설정
+          setCompanyId(user.user.company_id);
         }
       } catch (error) {
         console.error('회사 ID를 가져오는 중 오류 발생:', error);
@@ -41,73 +48,97 @@ const TeamSpot = () => {
       }
     };
 
-    fetchCompanyData();
-  }, [user]); // user가 변경될 때마다 useEffect 재실행
+    fetchUserData();
+  }, [user]);
+
+  useEffect(() => {
+    if (user.user && user.user.company_id) {
+      const fetchUserCompanyVisitSpot = async () => {
+        try {
+          // user_id를 사용해 정보 가져오기
+          const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
+            params: { userId: user.user.user_id },
+          });
+          const companyVisitList = companyVisitResponse.data;
+          setCompanyVisitSpotList(companyVisitList);
+        } catch (error) {
+          console.error('fetchUserCompanyVisitSpot 에서 error 발생: ', error);
+        }
+      };
+      fetchUserCompanyVisitSpot();
+    }
+  }, [user]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // 데이터 로딩 중에 표시되는 메시지
+    return <div>Loading...</div>;
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      {companyId ? (
-        // 회사 ID가 있을 때 UI
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card title="우리 회사 사원들의 회식 장소" bordered>
-              <Card type="inner" title="역삼동1" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동2" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동3" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card title="비슷한 업종 사람들의 회식 장소" bordered>
-              <Card type="inner" title="역삼동1" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동2" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-              <Card type="inner" title="역삼동3" extra={<Text>회식장소</Text>}>
-                <Text>평범한 장소</Text>
-                <Text>별점 4.2 | 리뷰 123</Text>
-              </Card>
-            </Card>
-          </Col>
-        </Row>
+    <div style={{ minWidth: 1360 }}>
+      {user.user && user.user.company_id && companyVisitSpotList.length > 0 ? (
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
+          <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
+            {/* 왼쪽 박스 */}
+            <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
+              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+                {companyVisitSpotList[0].company_name}
+              </Text>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+              >
+                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
+              </div>
+              {companyVisitSpotList.slice(0, 3).map((spot, index) => (
+                <CompanySpotCard key={index} spotList={spot} index={index} />
+              ))}
+            </Col>
+
+            {/* 오른쪽 박스 */}
+            <Col
+              style={{
+                width: 620,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+                borderLeft: 'solid, #E5E5E5',
+                borderLeftWidth: 1,
+                paddingLeft: 20,
+              }}
+            >
+              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+                {companyVisitSpotList[0].industry_type}
+              </Text>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+              >
+                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+                  비슷한 업종 사람들의 회식 장소
+                </Text>
+              </div>
+              {companyVisitSpotList.slice(3, 6).map((spot, index) => (
+                <CompanySpotCard key={index} spotList={spot} index={index} />
+              ))}
+            </Col>
+          </Row>
+        </div>
       ) : (
-        // 회사 ID가 없을 때 UI
-        <div style={{ textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
+        <div style={{ width: '100%', textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
           <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
-          <div style={{ marginTop: '20px' }}>
-            {user.user ? (
-              <Button type="primary" style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
+          {user.user ? (
+            <div style={{ marginTop: '20px' }}>
+              <Button type="primary" onClick={openModal} style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
                 내 회사 정보 입력하기
               </Button>
-            ) : (
-              <>
-                <Button
-                  type="primary"
-                  onClick={openAlert}
-                  style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}
-                >
-                  내 회사 정보 입력하기
-                </Button>
-                <LoginAlert visible={isAlertVisible} onClose={closeAlert} />
-              </>
-            )}
-          </div>
+              <CompanyModal visible={isModalVisible} onClose={closeModal} />
+            </div>
+          ) : (
+            <div style={{ marginTop: '20px' }}>
+              <Button type="primary" onClick={openAlert} style={{ backgroundColor: '#B22222', borderColor: '#B22222' }}>
+                내 회사 정보 입력하기
+              </Button>
+              <LoginAlert visible={isAlertVisible} onClose={closeAlert} />
+            </div>
+          )}
         </div>
       )}
     </div>

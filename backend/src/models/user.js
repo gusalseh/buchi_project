@@ -76,10 +76,24 @@ class User extends Sequelize.Model {
       }
     );
   }
+  static associate(models) {
+    // User는 여러 개의 Visit를 가질 수 있다 (1:N 관계)
+    User.hasMany(models.Visit, {
+      foreignKey: 'user_id',
+      sourceKey: 'user_id',
+    });
 
-  static associate(db) {
-    // User는 여러 Tag를 가질 수 있으며, UserTag를 통해 연결
-    User.belongsToMany(db.Tag, { through: db.SpotTag, foreignKey: 'user_id' });
+    // User는 여러 개의 UserLocation을 가질 수 있다 (1:N 관계)
+    User.hasMany(models.UserLocation, {
+      foreignKey: 'user_id',
+      sourceKey: 'user_id',
+    });
+
+    // User는 한 개의 Company에 속한다. (1:1 관계)
+    User.belongsTo(models.Company, {
+      foreignKey: 'company_id',
+      targetKey: 'company_id',
+    });
   }
 }
 
