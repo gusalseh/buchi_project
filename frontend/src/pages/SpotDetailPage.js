@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { getDistance } from '../utils/distance';
+import { getRandomValet } from '../utils/randomValet';
 import { Collapse, Card, Row, Col, Typography, Button, Tag, Image, Divider, message } from 'antd';
 import {
   EnvironmentOutlined,
@@ -47,7 +48,17 @@ const SpotDetailPage = () => {
   };
 
   const handleShareClick = () => {
-    message.info('공유 기능이 아직 구현되지 않았습니다.');
+    const currentUrl = window.location.href;
+
+    navigator.clipboard
+      .writeText(currentUrl)
+      .then(() => {
+        message.success('URL이 클립보드에 복사되었습니다!');
+      })
+      .catch((error) => {
+        message.error('URL 복사에 실패했습니다.');
+        console.error('복사 오류:', error);
+      });
   };
 
   useEffect(() => {
@@ -80,6 +91,7 @@ const SpotDetailPage = () => {
         spot_sub_img_4,
         spot_lat,
         spot_lng,
+        corkage,
         start_time,
         end_time,
         max_group_seats,
@@ -90,6 +102,19 @@ const SpotDetailPage = () => {
     },
     visitReviewData: { averageRating, reviewCount },
   } = spotData;
+
+  const translateCorkage = (corkage) => {
+    switch (corkage) {
+      case 'No':
+        return '불가능';
+      case 'free':
+        return '무료';
+      case 'charge':
+        return '유료';
+    }
+  };
+
+  const translatedCorkage = translateCorkage(corkage);
 
   const distance = getDistance(37.5665, 126.978, spot_lat, spot_lng); // 예시 사용자 위치 (서울)
 
@@ -106,8 +131,8 @@ const SpotDetailPage = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft: 340,
-        paddingRight: 340,
+        paddingLeft: '17%',
+        paddingRight: '17%',
         marginTop: 40,
       }}
     >
@@ -216,7 +241,11 @@ const SpotDetailPage = () => {
                     <HeartOutlined style={{ fontSize: 28, color: 'black' }} />
                   )}
                 </div>
-                <ShareAltOutlined onClick={handleShareClick} style={{ marginLeft: 10, fontSize: 28 }} />
+                <ShareAltOutlined
+                  className={'share'}
+                  onClick={handleShareClick}
+                  style={{ marginLeft: 10, fontSize: 28 }}
+                />
               </Col>
             </Row>
 
@@ -333,8 +362,8 @@ const SpotDetailPage = () => {
             >
               <ul style={{ marginTop: 20, listStyleType: 'disc', color: '' }}>
                 <li style={{ marginTop: 8 }}>단체석 최대 {max_group_seats}인</li>
-                <li style={{ marginTop: 8 }}>발렛 요금 3,000원</li>
-                <li style={{ marginTop: 8 }}>콜키지 무료</li>
+                <li style={{ marginTop: 8 }}>발렛 요금 {getRandomValet()}원</li>
+                <li style={{ marginTop: 8 }}>콜키지 {translatedCorkage}</li>
               </ul>
             </Text>
           </Card>
@@ -347,6 +376,7 @@ const SpotDetailPage = () => {
             bordered={false}
             style={{
               display: 'flex',
+              minWidth: 680,
               flexDirection: 'column',
               justifyContent: 'center',
               boxShadow: 'none',

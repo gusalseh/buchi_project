@@ -1,7 +1,10 @@
-.heart {
+.heart,
+.share {
   cursor: pointer;
   display: inline-block;
   transition: transform 0.2s ease-in-out; /* 클릭 시 확대 애니메이션 */
+  vertical-align: middle; /* 아이콘을 동일한 세로 정렬로 */
+  margin-left: 10px; /* 아이콘 사이에 적당한 간격 추가 */
 }
 
 .heart.liked {
@@ -9,5 +12,9 @@
 }
 
 .heart:active {
+  transform: scale(1.4); /* 클릭할 때 일시적으로 더 크게 */
+}
+
+.share:active {
   transform: scale(1.4); /* 클릭할 때 일시적으로 더 크게 */
 }
