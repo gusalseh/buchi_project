@@ -111,7 +111,7 @@ const SpotDetailPage = () => {
 
   const translateCorkage = (corkage) => {
     switch (corkage) {
-      case 'No':
+      case 'no':
         return '불가능';
       case 'free':
         return '무료';
