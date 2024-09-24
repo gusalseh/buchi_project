@@ -32,10 +32,10 @@ app.use(passport.session());
 
 // 라우트 설정
 const authRoutes = require('./routes/auth');
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
 const imageRoutes = require('./routes/image');
-app.use('/image', imageRoutes);
+app.use('/api/image', imageRoutes);
 
 const userLocationRoutes = require('./routes/userLocation');
 app.use('/api/userLocation', userLocationRoutes);
@@ -55,7 +55,7 @@ app.use('/api/visits', visitRoutes);
 const companySpotVisitRoutes = require('./routes/companySpotVisit');
 app.use('/api/company_spot_visits', companySpotVisitRoutes);
 
-app.get('/reverse_geocode', async (req, res) => {
+app.get('/api/reverse_geocode', async (req, res) => {
   const { lat, lon } = req.query;
   const response = await axios.get(
     `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&orders=roadaddr&output=json`,
@@ -71,7 +71,7 @@ app.get('/reverse_geocode', async (req, res) => {
   res.json(data);
 });
 
-app.post('/geocode', async (req, res) => {
+app.post('/api/geocode', async (req, res) => {
   const { address } = req.body;
 
   try {

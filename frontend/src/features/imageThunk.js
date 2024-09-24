@@ -4,7 +4,7 @@ import axios from 'axios';
 // Spot 이미지 불러오기
 export const fetchSpotImages = createAsyncThunk('images/fetchSpotImages', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/image/spot/1/images`);
+    const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/api/image/spot/1/images`);
     return response.data.imageUrls;
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -17,7 +17,7 @@ export const fetchSpotImages = createAsyncThunk('images/fetchSpotImages', async 
 // Menu 이미지 불러오기
 export const fetchMenuImages = createAsyncThunk('images/fetchMenuImages', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/image/menu/1/images`);
+    const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/api/image/menu/1/images`);
     return response.data.imageUrls;
   } catch (error) {
     if (error.response && error.response.status === 404) {
