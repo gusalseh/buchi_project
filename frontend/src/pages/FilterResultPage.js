@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
@@ -20,18 +20,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { CalendarOutlined, ClockCircleOutlined, SearchOutlined, StarFilled, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import {
-  getTag1,
-  getTag2,
-  getTag3,
-  getMainsection1,
-  getMainsection2,
-  getSubsection1,
-  getSubsection2,
-  getSubsection3,
-  getSubsection4,
-  getSubsection5,
-} from '../enums/Enum';
+import { getTag1, getTag2, getTag3, getMainsection1, getMainsection2, getSubsection3 } from '../enums/Enum';
 import UserLocation from '../components/common/UserLocationModal';
 import LoginAlert from '../components/alert/LoginAlert';
 import { fetchSelectedLocation } from '../features/userLocation';
@@ -63,7 +52,9 @@ const FilterResultPage = () => {
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
   const [filteredCount, setFilteredCount] = useState(0);
-  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링
+  const [modalKey, setModalKey] = useState(0);
+  const [markers, setMarkers] = useState([]);
+  const filterContainerRef = useRef(null);
 
   const date = queryParams.get('date');
   const time = queryParams.get('time');
@@ -71,6 +62,10 @@ const FilterResultPage = () => {
   const latitude = parseFloat(queryParams.get('lat')) || 37.5665;
   const longitude = parseFloat(queryParams.get('lng')) || 126.978;
   const address = queryParams.get('address');
+
+  useEffect(() => {
+    window.handleCardClick = handleCardClick;
+  }, []);
 
   useEffect(() => {
     setLocationName(address);
@@ -104,6 +99,7 @@ const FilterResultPage = () => {
           if (place.wheelchair === 1) serviceTags.push('휠체어 이용가능');
 
           return {
+            id: place.spot_id,
             title: place.spot_name,
             main_section_1: place.mainSec_1,
             main_section_2: place.mainSec_2,
@@ -182,49 +178,58 @@ const FilterResultPage = () => {
     window.naverMap = map;
   }, [latitude, longitude]);
 
-  // 호버 액션을 처리하는 useEffect
   useEffect(() => {
     if (places.length > 0) {
-      console.log('marker:', places);
+      // 기존 마커 제거
+      markers.forEach((marker) => marker.setMap(null));
+      setMarkers([]);
 
-      // 장소마다 마커 추가
-      places.forEach((place) => {
+      // 새로운 마커 생성 및 저장
+      const newMarkers = places.map((place) => {
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(place.lat, place.lng),
           map: window.naverMap,
           title: place.title,
         });
 
-        // 마커에 마우스를 올렸을 때
         window.naver.maps.Event.addListener(marker, 'mouseover', () => {
           setHoveredPlace(place);
         });
 
-        // 마커에서 마우스를 뗐을 때
         window.naver.maps.Event.addListener(marker, 'mouseout', () => {
           setHoveredPlace(null);
         });
 
-        if (hoveredPlace === place) {
-          const infoWindow = new window.naver.maps.InfoWindow({
-            content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
-          <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #333;">${place.title}</h3>
-          <div style="display: flex; justify-content: space-between; font-size: 12px;">
-            <p style="font-size: 13px; color: #666;">${getMainsection1(place.main_section_1)}
-                            ${place.main_section_2 ? ` · ${getMainsection2(place.main_section_2)}` : ''}</p>
-            <a href="#" style="color: #CC3C28; text-decoration: none;">상세보기</a>
-          </div>
-        </div>`,
-            position: new window.naver.maps.LatLng(place.lat, place.lng),
-            map: window.naverMap,
-            borderColor: '#CC3C28',
-          });
-          infoWindow.open(window.naverMap, marker);
-        }
         return marker;
       });
+
+      setMarkers(newMarkers);
     }
-  }, [places, hoveredPlace]);
+  }, [places]);
+
+  useEffect(() => {
+    // hoveredPlace가 있을 때만 InfoWindow 생성
+    if (hoveredPlace) {
+      const infoWindow = new window.naver.maps.InfoWindow({
+        content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
+          <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #333;">${hoveredPlace.title}</h3>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <p style="font-size: 13px; color: #666;">${getMainsection1(hoveredPlace.main_section_1)}
+              ${hoveredPlace.main_section_2 ? ` · ${getMainsection2(hoveredPlace.main_section_2)}` : ''}</p>
+            <a href="javascript:void(0)" onclick="window.handleCardClick(${
+              hoveredPlace.id
+            })" style="color: #CC3C28; text-decoration: none;">상세보기</a>
+          </div>
+        </div>`,
+        position: new window.naver.maps.LatLng(hoveredPlace.lat, hoveredPlace.lng),
+        map: window.naverMap,
+        borderColor: '#CC3C28',
+        pixelOffset: new window.naver.maps.Point(0, -10),
+      });
+
+      infoWindow.open(window.naverMap);
+    }
+  }, [hoveredPlace]);
 
   useEffect(() => {
     if (isFilterVisible) {
@@ -304,6 +309,16 @@ const FilterResultPage = () => {
 
   const handleClickDetailFilter = (filter) => {
     setSelectedDetailFilter(filter);
+
+    const filterElement = filterRefs[filter].current;
+    if (filterElement && filterContainerRef.current) {
+      const scrollOffset = filterElement.offsetTop - filterContainerRef.current.offsetTop;
+
+      filterContainerRef.current.scrollTo({
+        top: scrollOffset,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const firstFilter = [
@@ -315,25 +330,7 @@ const FilterResultPage = () => {
     '외국인과 함께',
   ];
 
-  const secondFilter = [
-    '한식',
-    '중식',
-    '일식',
-    '양식',
-    '아시안',
-    '퓨전',
-    // '호프집',
-    // '이자카야',
-    // '브런치',
-    // '디저트·카페',
-    // '한정식',
-    // '파인다이닝',
-    // '패밀리레스토랑',
-    '와인',
-    '칵테일',
-    '위스키',
-    '전통주',
-  ];
+  const secondFilter = ['한식', '중식', '일식', '양식', '아시안', '퓨전', '와인', '칵테일', '위스키', '전통주'];
 
   const thirdFilter = ['조용한담소', '활발한수다', '시끌벅적한', '캐주얼한', '격식있는', '이국적·이색적', '전통적인'];
 
@@ -495,9 +492,6 @@ const FilterResultPage = () => {
         return groupFilters.some((filter) => tagGroup[filterGroup].includes(filter));
       });
 
-      // 예산 필터 적용
-      console.log('평균가격:', place.price);
-      console.log('인원수:', selectedAmount);
       const totalCost = place.price * selectedAmount;
 
       const isWithinBudget = totalCost >= selectedRange[0] && totalCost <= selectedRange[1];
@@ -511,6 +505,37 @@ const FilterResultPage = () => {
 
     setPlaces(filteredPlaces);
     setFilteredCount(filteredPlaces.length);
+  };
+
+  // 기존 마커 제거 및 필터링된 장소로 마커 업데이트
+  const handleFilterResults = () => {
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+
+    const filteredMarkers = places.map((place) => {
+      const marker = new window.naver.maps.Marker({
+        position: new window.naver.maps.LatLng(place.lat, place.lng),
+        map: window.naverMap,
+        title: place.title,
+      });
+
+      return marker;
+    });
+
+    setMarkers(filteredMarkers);
+    toggleFilter();
+  };
+
+  const handleCardClick = (id) => {
+    navigate(`/spotdetail/${id}`);
+  };
+
+  const filterRefs = {
+    동행인: useRef(null),
+    예산: useRef(null),
+    음식: useRef(null),
+    분위기: useRef(null),
+    '시설·서비스': useRef(null),
   };
 
   return (
@@ -718,7 +743,7 @@ const FilterResultPage = () => {
                 </Col>
               </Row>
               {/* 세부 필터 애니메이션 스르륵 */}
-              <div style={filterContainerStyle}>
+              <div style={filterContainerStyle} ref={filterContainerRef}>
                 {/* 첫 번째 Col: 필터 카테고리 */}
                 <Col
                   style={{
@@ -756,7 +781,9 @@ const FilterResultPage = () => {
                 {/* 두 번째 Col: 선택 가능한 필터 값들 (스크롤 가능) */}
                 <Col style={{ flex: 1, padding: '16px', marginLeft: '16px', marginRight: '16px' }}>
                   {/* 동행인 필터 */}
-                  <Text strong>동행인</Text>
+                  <Text strong ref={filterRefs['동행인']}>
+                    동행인
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
@@ -773,8 +800,8 @@ const FilterResultPage = () => {
                     ))}
                   </Row>
                   {/* 예산 필터 */}
-                  <Text strong>
-                    1인당 예산
+                  <Text strong ref={filterRefs['예산']}>
+                    예산
                     <span
                       style={{
                         fontSize: 12,
@@ -831,7 +858,9 @@ const FilterResultPage = () => {
                     style={{ borderBottom: '1px solid #E0E0E0', paddingBottom: '32px', marginBottom: '32px' }}
                   />
                   {/* 음식 필터 */}
-                  <Text strong>음식 및 주류</Text>
+                  <Text strong ref={filterRefs['음식']}>
+                    음식 및 주류
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
@@ -848,7 +877,9 @@ const FilterResultPage = () => {
                     ))}
                   </Row>
                   {/* 분위기 필터 */}
-                  <Text strong>분위기</Text>
+                  <Text strong ref={filterRefs['분위기']}>
+                    분위기
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
@@ -865,13 +896,14 @@ const FilterResultPage = () => {
                     ))}
                   </Row>
                   {/* 시설·서비스 필터 */}
-                  <Text strong>시설·서비스</Text>
+                  <Text strong ref={filterRefs['시설·서비스']}>
+                    시설·서비스
+                  </Text>
                   <Row
                     style={{
                       marginTop: '8px',
                       marginBottom: '32px',
                       gap: '8px',
-                      // paddingBottom: '24px',
                       paddingBottom: '30px',
                     }}
                   >
@@ -918,7 +950,7 @@ const FilterResultPage = () => {
                           lineHeight: '48px',
                           cursor: 'pointer',
                         }}
-                        onClick={() => toggleFilter()}
+                        onClick={() => handleFilterResults()}
                       >
                         결과보기({filteredCount}건)
                       </div>
@@ -949,6 +981,7 @@ const FilterResultPage = () => {
                   }}
                   onMouseEnter={() => handleCardMouseEnter(place)}
                   onMouseLeave={handleCardMouseLeave}
+                  onClick={() => handleCardClick(place.id)}
                   bordered={false}
                   bodyStyle={{ padding: 12 }}
                 >
