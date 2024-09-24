@@ -1,14 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Typography, Tag, Image } from 'antd';
 import { StarFilled, PictureOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
 const CompanySpotCard = (spotList) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/spotdetail/${spotList.spotList.spot_id}`);
+  };
+
   const index = spotList.index;
   return (
     <Card
+      onClick={handleCardClick}
       bordered
+      hoverable
       style={{
         width: 600,
         height: 140,
@@ -17,7 +26,11 @@ const CompanySpotCard = (spotList) => {
         justifyContent: 'space-between',
         gap: 16,
         borderRadius: '8px',
+        boxShadow: 'none',
+        transition: 'box-shadow 0.3s ease-in-out',
       }}
+      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')}
+      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
     >
       <div
         style={{

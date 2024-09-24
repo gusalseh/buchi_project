@@ -46,7 +46,7 @@ const VisitRankSpotCard = (sectionLabelSpot) => {
           />
         }
         bordered={false}
-        style={{ width: 360, height: 494, padding: 20, boxShadow: 'none', transition: 'box-shadow 0.3s ease-in-out' }}
+        style={{ width: 360, height: 510, padding: 20, boxShadow: 'none', transition: 'box-shadow 0.3s ease-in-out' }}
         onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')} // hover 시 더 강한 그림자
         onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')} // hover 해제 시 원래 그림자
       >

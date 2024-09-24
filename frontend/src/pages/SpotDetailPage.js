@@ -2,26 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { getDistance } from '../utils/distance';
-import { Collapse, Card, Row, Col, Typography, Rate, Button, Tag, Image, Divider, InputNumber } from 'antd';
+import { Collapse, Card, Row, Col, Typography, Button, Tag, Image, Divider, message } from 'antd';
 import {
   EnvironmentOutlined,
   PhoneOutlined,
   DownOutlined,
   HeartOutlined,
+  HeartFilled,
   ShareAltOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
 import { StarFilled } from '@ant-design/icons';
 import MenuSimulation from '../components/card/MenuSimulation';
-import Image1 from '../assets/Img/spotdetailpicto/pictoX2/parking.png';
-import Image2 from '../assets/Img/spotdetailpicto/pictoX2/valet.png';
-import Image3 from '../assets/Img/spotdetailpicto/pictoX2/rental.png';
-import Image4 from '../assets/Img/spotdetailpicto/pictoX2/private_room.png';
-import Image5 from '../assets/Img/spotdetailpicto/pictoX2/indoor_toilet.png';
-import Image6 from '../assets/Img/spotdetailpicto/pictoX2/corkage.png';
-import Image7 from '../assets/Img/spotdetailpicto/pictoX2/placard.png';
-import Image8 from '../assets/Img/spotdetailpicto/pictoX2/wheelchair.png';
-import Image9 from '../assets/Img/spotdetailpicto/pictoX2/shoesoff.png';
+import pictogram from '../assets/ pictogram';
+import '../styles/HeartIconComponent.css';
 
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -46,6 +40,15 @@ const SpotDetailPage = () => {
   const { id } = useParams();
   const [spotData, setSpotData] = useState(null);
   const [visibleMenuCount, setVisibleMenuCount] = useState(4);
+  const [liked, setLiked] = useState(false); // 상태를 통해 하트의 색상 변경
+
+  const toggleLike = () => {
+    setLiked(!liked); // 클릭할 때 상태를 반전
+  };
+
+  const handleShareClick = () => {
+    message.info('공유 기능이 아직 구현되지 않았습니다.');
+  };
 
   useEffect(() => {
     const fetchSpotData = async () => {
@@ -82,12 +85,10 @@ const SpotDetailPage = () => {
         max_group_seats,
         tel,
         spot_address,
-        TagLabel,
         Menus,
-        promotion,
-        news,
       },
     },
+    visitReviewData: { averageRating, reviewCount },
   } = spotData;
 
   const distance = getDistance(37.5665, 126.978, spot_lat, spot_lng); // 예시 사용자 위치 (서울)
@@ -208,22 +209,28 @@ const SpotDetailPage = () => {
                 </Text>
               </div>
               <Col>
-                <HeartOutlined style={{ fontSize: 28, marginRight: '16px' }} />
-                <ShareAltOutlined style={{ fontSize: 28 }} />
+                <div className={liked ? 'heart liked' : 'heart'} onClick={toggleLike}>
+                  {liked ? (
+                    <HeartFilled style={{ fontSize: 28, color: '#DB5744' }} />
+                  ) : (
+                    <HeartOutlined style={{ fontSize: 28, color: 'black' }} />
+                  )}
+                </div>
+                <ShareAltOutlined onClick={handleShareClick} style={{ marginLeft: 10, fontSize: 28 }} />
               </Col>
             </Row>
 
             {/* 리뷰 및 평점 */}
-            <Row align="middle" gutter={[8, 8]}>
+            <Row align="middle" gutter={[8, 8]} style={{ marginTop: 8 }}>
               <Col>
                 <StarFilled style={{ color: '#DB5744', fontSize: '20px' }} />
               </Col>
               <Col>
                 <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-                  4.2
+                  {averageRating}
                 </Text>
-                <Text type="secondary" style={{ fontSize: '16px' }}>
-                  리뷰 123
+                <Text type="secondary" style={{ marginLeft: 7, fontSize: '16px' }}>
+                  리뷰 {reviewCount}개
                 </Text>
               </Col>
             </Row>
@@ -281,35 +288,35 @@ const SpotDetailPage = () => {
             {/* 픽토그램 그리드 */}
             <Row gutter={[16, 16]}>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image1} alt="주차 가능" style={{ width: '100%' }} />
+                <img src={pictogram.parking} alt="주차 가능" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image2} alt="발렛 가능" style={{ width: '100%' }} />
+                <img src={pictogram.valet} alt="발렛 가능" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image3} alt="단체석" style={{ width: '100%' }} />
+                <img src={pictogram.rental} alt="단체석" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image4} alt="개인룸" style={{ width: '100%' }} />
+                <img src={pictogram.privateRoom} alt="개인룸" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image5} alt="실내화장실" style={{ width: '100%' }} />
+                <img src={pictogram.indoorToilet} alt="실내화장실" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image6} alt="콜키지" style={{ width: '100%' }} />
+                <img src={pictogram.corkage} alt="콜키지" style={{ width: '100%' }} />
               </Col>
             </Row>
 
             {/* 두 번째 줄 */}
             <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image7} alt="플랜카드" style={{ width: '100%' }} />
+                <img src={pictogram.placard} alt="플랜카드" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image8} alt="휠체어 가능" style={{ width: '100%' }} />
+                <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
               </Col>
               <Col xs={8} sm={8} md={4}>
-                <img src={Image9} alt="신발 off" style={{ width: '100%' }} />
+                <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
               </Col>
             </Row>
 

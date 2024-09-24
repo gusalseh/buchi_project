@@ -40,7 +40,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
             fallback="/default.png"
             preview={false}
             bordered={false}
-            style={{ width: 320, height: 320, objectFit: 'cover', borderRadius: 8 }} // 이미지 크기는 유지하고 모서리만 둥글게
+            style={{ width: 320, height: 320, objectFit: 'cover', borderRadius: 8 }}
           />
         }
         bordered={false}
@@ -49,11 +49,11 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           height: 510,
           padding: 20,
           margin: 20,
-          boxShadow: 'none', // 기본 그림자 효과
-          transition: 'box-shadow 0.3s ease-in-out', // 부드러운 애니메이션 }} // 카드 크기 그대로
+          boxShadow: 'none',
+          transition: 'box-shadow 0.3s ease-in-out',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')} // hover 시 더 강한 그림자
-        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')} // hover 해제 시 원래 그림자
+        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0px 5px 8px rgba(0, 0, 0, 0.2)')}
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           {' '}

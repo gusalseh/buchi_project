@@ -87,17 +87,6 @@ const TeamSpot = () => {
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
               >
                 <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
-                <Button
-                  type="default"
-                  shape="round"
-                  style={{
-                    borderColor: '#d9d9d9',
-                    borderWidth: '1px',
-                    color: '#000',
-                  }}
-                >
-                  지도로 보기
-                </Button>
               </div>
               {companyVisitSpotList.slice(0, 3).map((spot, index) => (
                 <CompanySpotCard key={index} spotList={spot} index={index} />
@@ -125,17 +114,6 @@ const TeamSpot = () => {
                 <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
                   비슷한 업종 사람들의 회식 장소
                 </Text>
-                <Button
-                  type="default"
-                  shape="round"
-                  style={{
-                    borderColor: '#d9d9d9',
-                    borderWidth: '1px',
-                    color: '#000',
-                  }}
-                >
-                  지도로 보기
-                </Button>
               </div>
               {companyVisitSpotList.slice(3, 6).map((spot, index) => (
                 <CompanySpotCard key={index} spotList={spot} index={index} />

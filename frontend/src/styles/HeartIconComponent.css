@@ -1,0 +1,13 @@
+.heart {
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.2s ease-in-out; /* 클릭 시 확대 애니메이션 */
+}
+
+.heart.liked {
+  transform: scale(1.1); /* 좋아요가 눌린 상태에서 확대 */
+}
+
+.heart:active {
+  transform: scale(1.4); /* 클릭할 때 일시적으로 더 크게 */
+}

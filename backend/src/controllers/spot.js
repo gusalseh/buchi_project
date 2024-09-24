@@ -222,7 +222,7 @@ exports.getSpotByDist = async (req, res) => {
           s.wheelchair,
           AVG(m.price) AS avg_price,
           AVG(r.rating) AS avg_rating,
-          COUNT(r.review_id) AS review_count
+          COUNT(DISTINCT r.review_id) AS review_count
       FROM spot s
       LEFT JOIN card_label cl ON s.spot_id = cl.spot_id
       LEFT JOIN section_label sl ON s.spot_id = sl.spot_id
