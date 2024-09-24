@@ -208,22 +208,52 @@ const FilterResultPage = () => {
   }, [places]);
 
   useEffect(() => {
-    // hoveredPlace가 있을 때만 InfoWindow 생성
     if (hoveredPlace) {
       const infoWindow = new window.naver.maps.InfoWindow({
-        content: `<div style="width: 220px; padding: 20px; font-family: Arial, sans-serif;">
-          <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #333;">${hoveredPlace.title}</h3>
-          <div style="display: flex; justify-content: space-between; font-size: 12px;">
-            <p style="font-size: 13px; color: #666;">${getMainsection1(hoveredPlace.main_section_1)}
-              ${hoveredPlace.main_section_2 ? ` · ${getMainsection2(hoveredPlace.main_section_2)}` : ''}</p>
-            <a href="javascript:void(0)" onclick="window.handleCardClick(${
-              hoveredPlace.id
-            })" style="color: #CC3C28; text-decoration: none;">상세보기</a>
+        content: `
+        <div style="
+          display: flex; 
+          flex-direction: column; 
+          width: 300px; 
+          padding: 12px;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.15); 
+          border-radius: 10px;
+          background-color: white;
+        ">
+          <div style="display: flex; align-items: center;">
+            <img src="${
+              hoveredPlace.img
+            }" style="width: 70px; height: 70px; border-radius: 6px; object-fit: cover; margin-right: 10px;" />
+            <div style="flex-grow: 1;">
+              <h3 style="margin: 0; font-size: 18px; font-weight: bold; color: #333;">${hoveredPlace.title}</h3>
+              <p style="font-size: 12px; color: #666;">${getMainsection1(hoveredPlace.main_section_1)}
+                ${hoveredPlace.main_section_2 ? ` · ${getMainsection2(hoveredPlace.main_section_2)}` : ''}
+              </p>
+              <p style="margin: 4px 0; color: #666; font-size: 12px;">
+                방문자 리뷰 ${hoveredPlace.reviews}
+              </p>
+            </div>
           </div>
-        </div>`,
+          <div style="display: flex; align-items: center; margin-top: 5px">
+            <button style="
+              width: 100%;
+              height: 30px;
+              background-color: #CC3C28; 
+              color: white; 
+              border: none;
+              border-radius: 5px; 
+              font-size: 12px;
+              cursor: pointer;
+            " onclick="window.handleCardClick(${hoveredPlace.id})">
+              상세보기
+            </button>
+          </div>
+        </div>
+        `,
         position: new window.naver.maps.LatLng(hoveredPlace.lat, hoveredPlace.lng),
         map: window.naverMap,
-        borderColor: '#CC3C28',
+        borderColor: 'transparent',
+        backgroundColor: 'transparent',
         pixelOffset: new window.naver.maps.Point(0, -10),
       });
 

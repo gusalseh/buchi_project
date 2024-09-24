@@ -412,9 +412,8 @@ const UserLocation = ({ saveLocation, visible }) => {
             ) : (
               <div style={{ marginTop: 20, width: '100%', overflow: 'hidden' }}>
                 {registeredLocations.map((location, index) => (
-                  <div>
+                  <div key={location.location_id}>
                     <div
-                      key={location.location_id}
                       onClick={(e) => {
                         if (!e.defaultPrevented) handleLocationClick(location.location_id);
                       }}
