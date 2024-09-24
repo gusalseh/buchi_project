@@ -157,8 +157,9 @@ exports.getSpotById = async (req, res) => {
     sectionSpot.Spot.TagLabel.tag_3 = mappings_2[sectionSpot.Spot.TagLabel.tag_3];
 
     const visitsWithReviews = await getVisitReviewJoinDB();
+    console.log('getVisitReveiwJoinDB() Test: ', visitsWithReviews);
 
-    const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spot_id);
+    const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === parseInt(spot_id, 10));
 
     const mergedData = {
       sectionSpot,
