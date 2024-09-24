@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { getDistance } from '../utils/distance';
 import { getRandomValet } from '../utils/randomValet';
@@ -15,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import { StarFilled } from '@ant-design/icons';
 import MenuSimulation from '../components/card/MenuSimulation';
+import DummyReviewCard from '../components/card/DummyReviewCard';
 import pictogram from '../assets/ pictogram';
 import '../styles/HeartIconComponent.css';
 
@@ -41,10 +43,14 @@ const SpotDetailPage = () => {
   const { id } = useParams();
   const [spotData, setSpotData] = useState(null);
   const [visibleMenuCount, setVisibleMenuCount] = useState(4);
-  const [liked, setLiked] = useState(false); // 상태를 통해 하트의 색상 변경
+  const [liked, setLiked] = useState(false);
+  const dispatch = useDispatch();
+
+  const userId = useSelector((state) => state.user.user_id);
+  const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
 
   const toggleLike = () => {
-    setLiked(!liked); // 클릭할 때 상태를 반전
+    setLiked(!liked);
   };
 
   const handleShareClick = () => {
@@ -272,7 +278,7 @@ const SpotDetailPage = () => {
                 <EnvironmentOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
               </Col>
               <Col>
-                <Text style={{ fontSize: '16px' }}>{spot_address}</Text>
+                <Text style={{ fontSize: '17px' }}>{spot_address}</Text>
               </Col>
             </Row>
             <Row style={{ marginBottom: '16px' }}>
@@ -468,6 +474,8 @@ const SpotDetailPage = () => {
           <MenuSimulation menu={Menus} />
         </Col>
       </Row>
+
+      <DummyReviewCard />
     </div>
   );
 };

@@ -35,13 +35,11 @@ const MenuSimulation = (menus) => {
   const liquors = menus.menu.filter((menu) => menu.menu_type === 'liquar');
   const beverages = menus.menu.filter((menu) => menu.menu_type === 'beverage');
 
-  console.log('user Test: ', user);
-
   const handleActionClick = () => {
     if (!user) {
       setShowLoginAlert(true);
     } else {
-      message.success('기능이 작동합니다.');
+      message.success('추후 개발 예정입니다.');
     }
   };
 

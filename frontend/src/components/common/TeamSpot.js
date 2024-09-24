@@ -74,7 +74,7 @@ const TeamSpot = () => {
   }
 
   return (
-    <div>
+    <div style={{ minWidth: 1360 }}>
       {user.user && user.user.company_id && companyVisitSpotList.length > 0 ? (
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
           <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
