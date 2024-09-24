@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import { getDistance } from '../utils/distance';
 import { getRandomValet } from '../utils/randomValet';
@@ -142,6 +143,15 @@ const SpotDetailPage = () => {
         marginTop: 40,
       }}
     >
+      <Helmet>
+        <title>{spot_name} - 매장 정보</title>
+        <meta name="description" content={`부장님의 취향에서 알아본! ${spot_name}`} />
+        <meta property="og:title" content={spot_name} />
+        <meta property="og:description" content={`${spot_name}`} />
+        <meta property="og:image" content={spot_main_img} />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+
       <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 20 }}>
         {/* 메인 이미지 (큰 이미지) */}
         <Col xs={24} md={12}>
@@ -157,7 +167,6 @@ const SpotDetailPage = () => {
               maxWidth: 'none',
               maxHeight: 'none',
             }}
-            preview={false}
           />
         </Col>
 
@@ -170,7 +179,6 @@ const SpotDetailPage = () => {
                 src={spot_sub_img_1 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
             <Col xs={12}>
@@ -179,7 +187,6 @@ const SpotDetailPage = () => {
                 src={spot_sub_img_2 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
           </Row>
@@ -190,7 +197,6 @@ const SpotDetailPage = () => {
                 src={spot_sub_img_3 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
             <Col xs={12}>
@@ -199,7 +205,6 @@ const SpotDetailPage = () => {
                 src={spot_sub_img_4 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
           </Row>
@@ -399,7 +404,6 @@ const SpotDetailPage = () => {
                       width={140}
                       height={140}
                       style={{ objectFit: 'cover' }}
-                      preview={false}
                       bordered={false}
                     />
                   </Col>
