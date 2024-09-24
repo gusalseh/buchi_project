@@ -27,7 +27,7 @@ export const getCurrentLocation = createAsyncThunk('userLocation/getCurrentLocat
 // Location 생성
 export const createLocation = createAsyncThunk('userLocation/createLocation', async (locationData, thunkAPI) => {
   try {
-    const response = await axios.post('http://localhost:80/api/userLocation', locationData);
+    const response = await axios.post('https://d6utypy1uf0r7.cloudfront.net/api/userLocation', locationData);
     return response.data;
   } catch (error) {
     console.error('Error creating location:', error);
@@ -41,7 +41,7 @@ export const updateSelectedLocation = createAsyncThunk(
   async ({ locationId, updatedData }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://localhost:80/api/userLocation/updateSelectedUserLocation/${locationId}`,
+        `https://d6utypy1uf0r7.cloudfront.net/api/userLocation/updateSelectedUserLocation/${locationId}`,
         updatedData
       );
       return response.data;
@@ -55,7 +55,9 @@ export const updateSelectedLocation = createAsyncThunk(
 // Location 삭제
 export const deleteLocation = createAsyncThunk('userLocation/deleteLocation', async (locationId, thunkAPI) => {
   try {
-    const response = await axios.delete(`http://localhost:80/api/userLocation/deleteUserLocation/${locationId}`);
+    const response = await axios.delete(
+      `https://d6utypy1uf0r7.cloudfront.net/api/userLocation/deleteUserLocation/${locationId}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error deleting location:', error);
@@ -66,7 +68,9 @@ export const deleteLocation = createAsyncThunk('userLocation/deleteLocation', as
 // 특정 User의 모든 Location 조회
 export const fetchUserLocations = createAsyncThunk('userLocation/fetchUserLocations', async (userId, thunkAPI) => {
   try {
-    const response = await axios.get(`http://localhost:80/api/userLocation/fetchUserLocation/${userId}`);
+    const response = await axios.get(
+      `https://d6utypy1uf0r7.cloudfront.net/api/userLocation/fetchUserLocation/${userId}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching user locations:', error);
@@ -79,7 +83,9 @@ export const fetchSelectedLocation = createAsyncThunk(
   'userLocation/fetchSelectedLocation',
   async (userId, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:80/api/userLocation/selectedLocation/${userId}`);
+      const response = await axios.get(
+        `https://d6utypy1uf0r7.cloudfront.net/api/userLocation/selectedLocation/${userId}`
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching selected location:', error);
@@ -94,7 +100,10 @@ export const updateLocationByType = createAsyncThunk(
   'userLocation/updateLocationByType',
   async (locationData, thunkAPI) => {
     try {
-      const response = await axios.put('http://localhost:80/api/userLocation/updateLocationByType', locationData);
+      const response = await axios.put(
+        'https://d6utypy1uf0r7.cloudfront.net/api/userLocation/updateLocationByType',
+        locationData
+      );
       return response.data;
     } catch (error) {
       console.error('Error updating location by type:', error);

@@ -31,13 +31,18 @@ const FoodQuantityTag = () => {
   useEffect(() => {
     const fetchRandomSubSection2 = async () => {
       try {
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_2_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_2_random`
+        );
         const randomSubSection2 = randomResponse.data;
         setRandomSubSection2(randomSubSection2);
 
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_2_list', {
-          params: { subSection2: randomSubSection2 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_2_list',
+          {
+            params: { subSection2: randomSubSection2 },
+          }
+        );
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {

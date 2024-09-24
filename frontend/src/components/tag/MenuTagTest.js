@@ -38,15 +38,20 @@ const MenuTag = () => {
     const fetchRandomMainSection2 = async () => {
       try {
         //main_section_2의 랜덤 값을 받아옴
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/main_section_2_random`
+        );
         const randomMainSection2 = randomResponse.data;
         setRandomMainSection2(randomMainSection2);
         console.log('check randomMainSection2', randomMainSection2);
 
         //mainSection2 값을 사용해 데이터 조회
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
-          params: { mainSection2: randomMainSection2 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/main_section_list',
+          {
+            params: { mainSection2: randomMainSection2 },
+          }
+        );
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {

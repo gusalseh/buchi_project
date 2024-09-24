@@ -56,7 +56,7 @@ const TeamSpot = () => {
       const fetchUserCompanyVisitSpot = async () => {
         try {
           // user_id를 사용해 정보 가져오기
-          const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
+          const companyVisitResponse = await axios.get('https://d6utypy1uf0r7.cloudfront.net/api/company_spot_visits', {
             params: { userId: user.user.user_id },
           });
           const companyVisitList = companyVisitResponse.data;

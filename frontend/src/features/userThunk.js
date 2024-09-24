@@ -3,15 +3,15 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
-  const response = await axios.get(`http://localhost:80/auth/api/user`, {
+  const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/auth/api/user`, {
     withCredentials: true,
   });
   return response.data;
 });
 
 export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
-  await axios.get(`http://localhost:80/auth/logout`, { withCredentials: true });
-  window.location.href = `http://localhost:3000`; // 로그아웃 후 리다이렉트
+  await axios.get(`https://d6utypy1uf0r7.cloudfront.net/auth/logout`, { withCredentials: true });
+  window.location.href = `https://d6utypy1uf0r7.cloudfront.net`; // 로그아웃 후 리다이렉트
 });
 
 export const updateUserCompany = createAsyncThunk(
@@ -19,7 +19,7 @@ export const updateUserCompany = createAsyncThunk(
   async ({ companyId }, { getState, rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `http://localhost:80/auth/update-company`,
+        `https://d6utypy1uf0r7.cloudfront.net/auth/update-company`,
         { companyId },
         { withCredentials: true }
       );

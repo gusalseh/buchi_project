@@ -31,13 +31,18 @@ const PeopleCountTag = () => {
   useEffect(() => {
     const fetchRandomSubSection1 = async () => {
       try {
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_1_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_1_random`
+        );
         const randomSubSection1 = randomResponse.data;
         setRandomSubSection1(randomSubSection1);
 
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_1_list', {
-          params: { subSection1: randomSubSection1 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_1_list',
+          {
+            params: { subSection1: randomSubSection1 },
+          }
+        );
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {

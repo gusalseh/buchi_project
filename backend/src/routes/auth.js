@@ -48,7 +48,7 @@ router.get(
       nickname: req.user.nickname,
     };
     console.log('Naver login successful, redirecting...'); // 로그인 성공 후 리다이렉트 확인
-    res.redirect('http://localhost:3000/');
+    res.redirect('https://d6utypy1uf0r7.cloudfront.net/');
   }
 );
 

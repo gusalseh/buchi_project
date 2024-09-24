@@ -31,13 +31,18 @@ const DrinkTag = () => {
   useEffect(() => {
     const fetchRandomSubSection3 = async () => {
       try {
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_3_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_3_random`
+        );
         const randomSubSection3 = randomResponse.data;
         setRandomSubSection3(randomSubSection3);
 
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_3_list', {
-          params: { subSection3: randomSubSection3 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_3_list',
+          {
+            params: { subSection3: randomSubSection3 },
+          }
+        );
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {

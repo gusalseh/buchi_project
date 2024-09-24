@@ -31,13 +31,18 @@ const WeatherTag = () => {
   useEffect(() => {
     const fetchRandomSubSection5 = async () => {
       try {
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_5_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_5_random`
+        );
         const randomSubSection5 = randomResponse.data;
         setRandomSubSection5(randomSubSection5);
 
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_5_list', {
-          params: { subSection5: randomSubSection5 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_5_list',
+          {
+            params: { subSection5: randomSubSection5 },
+          }
+        );
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {
