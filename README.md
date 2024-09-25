@@ -59,3 +59,5 @@ buchi_project
 │   └── └── styles/            # 스타일 관련 파일 (CSS, SCSS 등)
 └── docs/                      # 프로젝트 문서화
 ```
+
+![인프라구조](./frontend/public/new_cloud_arch2.drawio.png)
