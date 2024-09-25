@@ -62,12 +62,18 @@ const Footer = () => {
                   서비스
                 </Title>
                 <Paragraph>
-                  <Link href="#" style={{ color: '#595959' }}>
+                  <Link
+                    href="https://www.notion.so/adapterz/BUCHI-1-56d5674dbb774f709e5283db2e050fed?pvs=4"
+                    style={{ color: '#595959' }}
+                  >
                     이용 약관
                   </Link>
                 </Paragraph>
                 <Paragraph>
-                  <Link href="#" style={{ color: '#595959' }}>
+                  <Link
+                    href="https://www.notion.so/adapterz/c553f344519746e98bdfe2d261a7c450?pvs=4"
+                    style={{ color: '#595959' }}
+                  >
                     개인정보 처리방침
                   </Link>
                 </Paragraph>
