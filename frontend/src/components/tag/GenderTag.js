@@ -31,13 +31,18 @@ const GenderTag = () => {
   useEffect(() => {
     const fetchRandomSubSection4 = async () => {
       try {
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/sub_section_4_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_4_random`
+        );
         const randomSubSection4 = randomResponse.data;
         setRandomSubSection4(randomSubSection4);
 
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/sub_section_4_list', {
-          params: { subSection4: randomSubSection4 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/sub_section_4_list',
+          {
+            params: { subSection4: randomSubSection4 },
+          }
+        );
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {

@@ -73,7 +73,7 @@ const SpotDetailPage = () => {
   useEffect(() => {
     const fetchSpotData = async () => {
       try {
-        const response = await axios.get(`http://localhost:80/api/spots/spotlistById/${id}`);
+        const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/api/spots/spotlistById/${id}`);
         console.log(response.data);
         setSpotData(response.data);
       } catch (error) {

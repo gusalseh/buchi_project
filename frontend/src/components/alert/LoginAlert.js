@@ -6,7 +6,7 @@ const { Text } = Typography;
 
 const LoginAlert = ({ visible, onClose }) => {
   const handleNaverLogin = () => {
-    window.location.href = `http://localhost:80/api/auth/naver`;
+    window.location.href = `https://d6utypy1uf0r7.cloudfront.net/api/auth/naver`;
   };
 
   const [isLoginScreen, setIsLoginScreen] = useState(false);

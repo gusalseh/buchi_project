@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchPlacesByDistance = async ({ latitude, longitude, amount }) => {
   try {
-    const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', {
+    const response = await axios.post('https://d6utypy1uf0r7.cloudfront.net/api/spots/getSpotByDistance', {
       latitude,
       longitude,
       amount,

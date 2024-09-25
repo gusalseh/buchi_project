@@ -55,7 +55,7 @@ const TeamSpot = () => {
     if (user.user && user.user.company_id) {
       const fetchUserCompanyVisitSpot = async () => {
         try {
-          const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
+          const companyVisitResponse = await axios.get('https://d6utypy1uf0r7.cloudfront.net/api/company_spot_visits', {
             params: { userCompanyId: user.user.company_id },
           });
           console.log('user.user.company_id Test: ', user.user.company_id);

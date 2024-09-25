@@ -30,7 +30,7 @@ const VisitRankTag = () => {
   useEffect(() => {
     const fetchSpotList = async () => {
       try {
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/spots/spotlist');
+        const sectionLabelResponse = await axios.get('https://d6utypy1uf0r7.cloudfront.net/api/spots/spotlist');
         const sectionLabelSpotList = sectionLabelResponse.data;
         setSectionLabelSpotList(sectionLabelSpotList);
       } catch (error) {
