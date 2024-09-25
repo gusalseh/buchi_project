@@ -31,71 +31,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // 라우트 설정
-const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
-
-const imageRoutes = require('./routes/image');
-app.use('/api/image', imageRoutes);
-
-const userLocationRoutes = require('./routes/userLocation');
-app.use('/api/userLocation', userLocationRoutes);
-
-const companyRoutes = require('./routes/company');
-app.use('/api/companies', companyRoutes);
-
-const sectionLabelRoutes = require('./routes/sectionLabel');
-app.use('/api/sectionLabels', sectionLabelRoutes);
-
-const spotRoutes = require('./routes/spot');
-app.use('/api/spots', spotRoutes);
-
-const visitRoutes = require('./routes/visit');
-app.use('/api/visits', visitRoutes);
-
-const companySpotVisitRoutes = require('./routes/companySpotVisit');
-app.use('/api/company_spot_visits', companySpotVisitRoutes);
-
-app.get('/api/reverse_geocode', async (req, res) => {
-  const { lat, lon } = req.query;
-  const response = await axios.get(
-    `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lon},${lat}&orders=roadaddr&output=json`,
-    {
-      method: 'GET',
-      headers: {
-        'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_MAP_CLIENT_ID,
-        'X-NCP-APIGW-API-KEY': process.env.NAVER_MAP_CLIENT_SECRET,
-      },
-    }
-  );
-  const data = response.data;
-  res.json(data);
-});
-
-app.post('/api/geocode', async (req, res) => {
-  const { address } = req.body;
-
-  try {
-    const response = await axios.get(
-      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${encodeURIComponent(address)}`,
-      {
-        headers: {
-          'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_MAP_CLIENT_ID,
-          'X-NCP-APIGW-API-KEY': process.env.NAVER_MAP_CLIENT_SECRET,
-        },
-      }
-    );
-
-    if (response.data.addresses.length === 0) {
-      return res.status(404).json({ message: 'Address not found' });
-    }
-
-    const { y: latitude, x: longitude } = response.data.addresses[0];
-    res.json({ latitude, longitude });
-  } catch (error) {
-    console.error('Error fetching geocode:', error.message);
-    res.status(500).send('Internal Server Error');
-  }
-});
+const indexRoutes = require('./routes/index');
+app.use('/api', indexRoutes);
 
 const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
