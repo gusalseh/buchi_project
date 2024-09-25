@@ -392,7 +392,8 @@ const FilterResultPage = () => {
   };
 
   const sortByDistance = () => {
-    setPlaces(originalPlaces);
+    const sortedPlaces = [...places].sort((a, b) => a.distance - b.distance);
+    setPlaces(sortedPlaces);
     setIsSortedStandard('distance');
   };
 
@@ -508,7 +509,7 @@ const FilterResultPage = () => {
           if (filterGroup === '동행인' && firstFilter.includes(filter)) return true;
           if (filterGroup === '음식' && secondFilter.includes(filter)) return true;
           if (filterGroup === '분위기' && thirdFilter.includes(filter)) return true;
-          if (filterGroup === '시설·서비스' && fourthFilter.includes(filter)) return true;
+          if (filterGroup === '시설·서비스' && fourthFilter.includes(filter) && filter !== '단체석') return true;
           return false;
         });
 
