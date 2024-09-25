@@ -79,7 +79,7 @@ const CompanySpotCard = (spotList) => {
             <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
               {Math.round(spotList.spotList.rating)}
             </Text>
-            <Text>리뷰 1</Text>
+            <Text style={{ color: '#737373', fontSize: 14, fontStyle: 'normal', fontWeight: 500 }}>리뷰 1</Text>
           </div>
         </div>
         <div style={{ marginLeft: 'auto', height: 100 }}>
