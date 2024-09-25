@@ -1,17 +1,17 @@
 .custom-search .ant-input {
   width: 360px;
-  height: 40px; /* 입력 필드의 높이 조정 */
-  line-height: 40px; /* 텍스트가 중앙에 위치하도록 조정 */
-  padding: 0 11px; /* 기본 padding을 유지 */
+  height: 40px;
+  line-height: 40px;
+  padding: 0 11px;
 }
 
 .custom-search .ant-btn {
-  height: 40px; /* 버튼의 높이 조정 */
+  height: 40px;
 }
 
 .custom-search .ant-input-search-button {
-  height: 40px; /* 검색 버튼의 높이 조정 */
-  line-height: 40px; /* 버튼 텍스트의 중앙 정렬 */
+  height: 40px;
+  line-height: 40px;
   background-color: white;
   color: #d9d9d9;
   border: 1px, solid;

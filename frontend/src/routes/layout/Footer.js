@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout, Row, Col, Typography } from 'antd';
 import logo from '../../assets/Img/buchi_logo_full.png';
 

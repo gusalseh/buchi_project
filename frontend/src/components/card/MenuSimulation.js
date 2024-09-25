@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Col, Collapse, Row, Typography, Divider, Button, message } from 'antd';
 import { MinusOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';

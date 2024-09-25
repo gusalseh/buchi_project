@@ -3,9 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
-import { getDistance } from '../utils/distance';
 import { getRandomValet } from '../utils/randomValet';
-import { Collapse, Card, Row, Col, Typography, Button, Tag, Image, Divider, message } from 'antd';
+import { Card, Row, Col, Typography, Button, Tag, Image, Divider, message } from 'antd';
 import {
   EnvironmentOutlined,
   PhoneOutlined,
@@ -21,7 +20,6 @@ import DummyReviewCard from '../components/card/DummyReviewCard';
 import pictogram from '../assets/ pictogram';
 import '../styles/HeartIconComponent.css';
 
-const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
 const isOpen = (start_time, end_time) => {
@@ -127,10 +125,8 @@ const SpotDetailPage = () => {
 
   const translatedCorkage = translateCorkage(corkage);
 
-  const distance = getDistance(37.5665, 126.978, spot_lat, spot_lng); // 예시 사용자 위치 (서울)
-
   const handleLoadMore = () => {
-    setVisibleMenuCount((prevCount) => prevCount + 4); // 4개씩 추가로 표시
+    setVisibleMenuCount((prevCount) => prevCount + 4);
   };
 
   return (
@@ -157,7 +153,6 @@ const SpotDetailPage = () => {
       </Helmet>
 
       <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 20 }}>
-        {/* 메인 이미지 (큰 이미지) */}
         <Col xs={24} md={12}>
           <Image
             alt={spot_name}
@@ -174,7 +169,6 @@ const SpotDetailPage = () => {
           />
         </Col>
 
-        {/* 서브 이미지 (작은 이미지 4개) */}
         <Col xs={24} md={12}>
           <Row gutter={[16, 16]}>
             <Col xs={12}>
@@ -185,6 +179,7 @@ const SpotDetailPage = () => {
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
               />
             </Col>
+
             <Col xs={12}>
               <Image
                 alt={`${spot_name} - sub 2`}
@@ -194,6 +189,7 @@ const SpotDetailPage = () => {
               />
             </Col>
           </Row>
+
           <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
             <Col xs={12}>
               <Image
@@ -203,6 +199,7 @@ const SpotDetailPage = () => {
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
               />
             </Col>
+
             <Col xs={12}>
               <Image
                 alt={`${spot_name} - sub 4`}
@@ -220,11 +217,8 @@ const SpotDetailPage = () => {
         justify="start"
         style={{ padding: 0, display: 'flex', justifyContent: 'flex-start', width: '100%' }}
       >
-        {/* 왼쪽 섹션: 매장 정보 및 메뉴 상세 */}
         <Col xs={24} lg={13} style={{ padding: 0 }}>
-          {/* 매장 정보 */}
           <Card bordered={false} style={{ padding: 0, boxShadow: 'none' }}>
-            {/* 상단 가게 이름과 리뷰, 아이콘 */}
             <Row justify="space-between" align="middle">
               <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                 <Title
@@ -263,8 +257,6 @@ const SpotDetailPage = () => {
                 />
               </Col>
             </Row>
-
-            {/* 리뷰 및 평점 */}
             <Row align="middle" gutter={[8, 8]} style={{ marginTop: 8 }}>
               <Col>
                 <StarFilled style={{ color: '#DB5744', fontSize: '20px' }} />
@@ -281,7 +273,6 @@ const SpotDetailPage = () => {
 
             <Divider />
 
-            {/* 주소 및 취창업센터 거리 */}
             <Row align="middle" style={{ marginBottom: '8px' }}>
               <Col>
                 <EnvironmentOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
@@ -298,7 +289,6 @@ const SpotDetailPage = () => {
               </Col>
             </Row>
 
-            {/* 영업시간 */}
             {start_time && end_time && (
               <Row align="middle" style={{ marginBottom: '8px' }}>
                 <Col>
@@ -317,7 +307,6 @@ const SpotDetailPage = () => {
               </Row>
             )}
 
-            {/* 전화번호 */}
             <Row align="middle">
               <Col>
                 <PhoneOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
@@ -329,7 +318,6 @@ const SpotDetailPage = () => {
 
             <Divider />
 
-            {/* 픽토그램 그리드 */}
             <Row gutter={[16, 16]}>
               <Col xs={8} sm={8} md={4}>
                 <img src={pictogram.parking} alt="주차 가능" style={{ width: '100%' }} />
@@ -351,7 +339,6 @@ const SpotDetailPage = () => {
               </Col>
             </Row>
 
-            {/* 두 번째 줄 */}
             <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
               <Col xs={8} sm={8} md={4}>
                 <img src={pictogram.placard} alt="플랜카드" style={{ width: '100%' }} />
@@ -364,7 +351,6 @@ const SpotDetailPage = () => {
               </Col>
             </Row>
 
-            {/* 하단 텍스트 */}
             <Text
               style={{
                 color: '#404040',
@@ -385,7 +371,6 @@ const SpotDetailPage = () => {
 
           <Divider />
 
-          {/* 메뉴 상세 섹션 */}
           <Card
             title={<span style={{ fontSize: '30px', fontStyle: 'normal', fontWeight: 500 }}>메뉴 상세</span>}
             bordered={false}

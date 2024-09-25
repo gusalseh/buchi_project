@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal, Button } from 'antd';
 
 const CustomModal = ({ title, visible, onOk, onCancel, footer, children }) => {

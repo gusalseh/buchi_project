@@ -6,7 +6,6 @@ import ImagePage from '../pages/ImagePage';
 import ConsentPage from '../pages/ConsentPage';
 import FilterResultPage from '../pages/FilterResultPage';
 import SpotDetailPage from '../pages/SpotDetailPage';
-// 필요한 다른 페이지 컴포넌트도 임포트
 
 const RoutesSetup = () => {
   return (

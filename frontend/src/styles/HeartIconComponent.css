@@ -2,19 +2,19 @@
 .share {
   cursor: pointer;
   display: inline-block;
-  transition: transform 0.2s ease-in-out; /* 클릭 시 확대 애니메이션 */
-  vertical-align: middle; /* 아이콘을 동일한 세로 정렬로 */
-  margin-left: 10px; /* 아이콘 사이에 적당한 간격 추가 */
+  transition: transform 0.2s ease-in-out;
+  vertical-align: middle;
+  margin-left: 10px;
 }
 
 .heart.liked {
-  transform: scale(1.1); /* 좋아요가 눌린 상태에서 확대 */
+  transform: scale(1.1);
 }
 
 .heart:active {
-  transform: scale(1.4); /* 클릭할 때 일시적으로 더 크게 */
+  transform: scale(1.4);
 }
 
 .share:active {
-  transform: scale(1.4); /* 클릭할 때 일시적으로 더 크게 */
+  transform: scale(1.4);
 }

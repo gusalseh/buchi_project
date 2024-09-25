@@ -12,8 +12,8 @@ const companySlice = createSlice({
     error: null,
     currentPage: 1,
     pageSize: 5,
-    checkCompanyStatus: 'idle', // 추가된 상태
-    checkCompanyError: null, // 추가된 에러 상태
+    checkCompanyStatus: 'idle',
+    checkCompanyError: null,
   },
   reducers: {
     setSearchTerm(state, action) {
@@ -28,6 +28,8 @@ const companySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
+      //fetchCompanies
       .addCase(fetchCompanies.pending, (state) => {
         state.status = 'loading';
       })
@@ -40,6 +42,8 @@ const companySlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+
+      //fetchIndustryTypes
       .addCase(fetchIndustryTypes.pending, (state) => {
         state.industryStatus = 'loading';
       })
@@ -51,10 +55,14 @@ const companySlice = createSlice({
         state.industryStatus = 'failed';
         state.error = action.error.message;
       })
+
+      //addCompany
       .addCase(addCompany.fulfilled, (state, action) => {
         state.companies.push(action.payload);
         state.filteredCompanies.push(action.payload);
       })
+
+      //checkCompanyName
       .addCase(checkCompanyName.pending, (state) => {
         state.checkCompanyStatus = 'loading';
         state.checkCompanyError = null;

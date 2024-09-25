@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Row, Col, Typography } from 'antd';
+import { useState, useEffect } from 'react';
+import { Button, Row, Col, Typography } from 'antd';
 import { useSelector } from 'react-redux';
 import CompanyModal from './CompanyModal';
 import LoginAlert from '../alert/LoginAlert';
@@ -55,7 +55,6 @@ const TeamSpot = () => {
     if (user.user && user.user.company_id) {
       const fetchUserCompanyVisitSpot = async () => {
         try {
-          // user_id를 사용해 정보 가져오기
           const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
             params: { userId: user.user.user_id },
           });
@@ -78,7 +77,6 @@ const TeamSpot = () => {
       {user.user && user.user.company_id && companyVisitSpotList.length > 0 ? (
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
           <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
-            {/* 왼쪽 박스 */}
             <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
               <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
                 {companyVisitSpotList[0].company_name}
@@ -93,7 +91,6 @@ const TeamSpot = () => {
               ))}
             </Col>
 
-            {/* 오른쪽 박스 */}
             <Col
               style={{
                 width: 620,

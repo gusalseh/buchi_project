@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import { LoginPage, RegisterPage } from '../../pages/LoginPage';
@@ -94,7 +94,6 @@ export default function Header() {
                   </button>
                 </button>
 
-                {/* 개발 편의를 위해 로그아웃 버튼 임시 추가  */}
                 <button style={{ marginLeft: 20 }} onClick={handleLogout}>
                   로그아웃
                 </button>

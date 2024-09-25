@@ -12,12 +12,11 @@ const initialState = {
 const imageSlice = createSlice({
   name: 'images',
   initialState,
-  reducers: {
-    // 동기 작업이 필요하면 여기에 추가 가능
-  },
+  reducers: {},
   extraReducers: (builder) => {
-    // Spot 이미지 요청에 대한 리듀서
     builder
+
+      //fetchSpotImages
       .addCase(fetchSpotImages.pending, (state) => {
         state.loading = true;
         state.spotError = null;
@@ -29,10 +28,9 @@ const imageSlice = createSlice({
       .addCase(fetchSpotImages.rejected, (state, action) => {
         state.loading = false;
         state.spotError = action.payload;
-      });
+      })
 
-    // Menu 이미지 요청에 대한 리듀서
-    builder
+      //fetchMenuImages
       .addCase(fetchMenuImages.pending, (state) => {
         state.loading = true;
         state.menuError = null;

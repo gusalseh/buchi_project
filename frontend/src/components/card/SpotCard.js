@@ -57,7 +57,6 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           {' '}
-          {/* 제목과 텍스트 간 간격 조정 */}
           <Title level={4} style={{ margin: 0 }}>
             {spot.spot_name.length > 7 ? `${spot.spot_name.slice(0, 7)}...` : spot.spot_name}
           </Title>
@@ -70,8 +69,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', marginTop: 8, alignItems: 'center' }}>
             {' '}
-            {/* 텍스트 정렬 맞춤 */}
-            <Text>도보 {Math.round((distance * 1000) / (1.29 * 60))}분</Text> {/* 텍스트 수정 */}
+            <Text>도보 {Math.round((distance * 1000) / (1.29 * 60))}분</Text>
             <Text style={{ margin: '0 8px' }}>|</Text>
             <Text>최대 {spot.max_group_seats}인</Text>
             <Text style={{ margin: '0 8px' }}>|</Text>
@@ -80,7 +78,6 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
 
           <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
             {' '}
-            {/* 태그 간격 조정 */}
             <Tag color="#FAE7E5" style={{ color: 'black' }}>
               {tagLabel.tag_1}
             </Tag>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Typography } from 'antd';
-import Login from '../auth/Login'; // Login 컴포넌트 임포트
+import Login from '../auth/Login';
 
 const { Text } = Typography;
 
@@ -9,14 +9,12 @@ const LoginAlert = ({ visible, onClose }) => {
     window.location.href = `http://localhost:80/auth/naver`;
   };
 
-  const [isLoginScreen, setIsLoginScreen] = useState(false); // login 화면으로 전환할 상태 관리
+  const [isLoginScreen, setIsLoginScreen] = useState(false);
 
-  //alert에서 로그인 클릭 시 login모달로 전환
   const handleLoginAlertClick = () => {
     setIsLoginScreen(true);
   };
 
-  // 모달이 닫힐 때 isLoginScreen을 false로 초기화
   const handleClose = () => {
     setIsLoginScreen(false);
     onClose();
@@ -26,7 +24,7 @@ const LoginAlert = ({ visible, onClose }) => {
     <>
       {isLoginScreen ? (
         <Modal
-          visible={visible} // MainPage.js에서 전달된 visible 속성을 사용
+          visible={visible}
           onCancel={handleClose}
           footer={null}
           closable={true}
@@ -41,7 +39,7 @@ const LoginAlert = ({ visible, onClose }) => {
       ) : null}
 
       <Modal
-        visible={!isLoginScreen && visible} // MainPage.js에서 전달된 visible 속성을 사용하고 isLoginScreen이 false일 때만 표시
+        visible={!isLoginScreen && visible}
         onCancel={handleClose}
         footer={null}
         closable={true}
