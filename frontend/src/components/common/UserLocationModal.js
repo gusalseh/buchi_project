@@ -215,7 +215,7 @@ const UserLocation = ({ saveLocation, visible }) => {
 
   const getCoordinates = async (address) => {
     try {
-      const response = await fetch(`http://localhost:80/geocode`, {
+      const response = await fetch(`http://localhost:80/api/geocode`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
