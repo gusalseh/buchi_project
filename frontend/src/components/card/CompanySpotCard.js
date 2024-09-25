@@ -12,6 +12,7 @@ const CompanySpotCard = (spotList) => {
   };
 
   const index = spotList.index;
+  console.log('spotList Test: ', spotList);
 
   return (
     <Card
@@ -77,9 +78,11 @@ const CompanySpotCard = (spotList) => {
           <div style={{ display: 'flex', alignItems: 'center', marginLeft: 18, marginTop: '8px' }}>
             <StarFilled style={{ color: '#DB5744', marginRight: '4px', width: 20, height: 20 }} />
             <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-              {Math.round(spotList.spotList.rating)}
+              {Math.round(spotList.spotList.average_rating)}
             </Text>
-            <Text style={{ color: '#737373', fontSize: 14, fontStyle: 'normal', fontWeight: 500 }}>리뷰 1</Text>
+            <Text style={{ color: '#737373', fontSize: 14, fontStyle: 'normal', fontWeight: 500 }}>
+              리뷰 {spotList.spotList.review_count}
+            </Text>
           </div>
         </div>
         <div style={{ marginLeft: 'auto', height: 100 }}>

@@ -13,7 +13,7 @@ const TeamSpot = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [companyVisitSpotList, setCompanyVisitSpotList] = useState({});
+  const [companyVisitSpotList, setCompanyVisitSpotList] = useState([]);
 
   const openAlert = () => {
     setIsAlertVisible(true);
@@ -56,17 +56,25 @@ const TeamSpot = () => {
       const fetchUserCompanyVisitSpot = async () => {
         try {
           const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
-            params: { userId: user.user.user_id },
+            params: { userCompanyId: user.user.company_id },
           });
-          const companyVisitList = companyVisitResponse.data;
-          setCompanyVisitSpotList(companyVisitList);
+          console.log('user.user.company_id Test: ', user.user.company_id);
+          setCompanyVisitSpotList(companyVisitResponse.data);
         } catch (error) {
           console.error('fetchUserCompanyVisitSpot 에서 error 발생: ', error);
+          setCompanyVisitSpotList([]);
         }
       };
       fetchUserCompanyVisitSpot();
     }
   }, [user]);
+
+  console.log('companyVisitList Test: ', companyVisitSpotList);
+  console.log('companyVisitList Test: ', companyVisitSpotList.length);
+  console.log('companyVisitList results Test: ', companyVisitSpotList.results);
+  console.log('companyVisitList Length Test: ', companyVisitSpotList.results);
+
+  const companyVisitListCount = 4;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -74,19 +82,19 @@ const TeamSpot = () => {
 
   return (
     <div style={{ minWidth: 1360 }}>
-      {user.user && user.user.company_id && companyVisitSpotList.length > 0 ? (
+      {user.user && user.user.company_id && companyVisitSpotList.safeResults ? (
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
           <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
             <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
               <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
-                {companyVisitSpotList[0].company_name}
+                {companyVisitSpotList.safeResults[0].company_name}
               </Text>
               <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
               >
                 <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
               </div>
-              {companyVisitSpotList.slice(0, 3).map((spot, index) => (
+              {companyVisitSpotList.safeResults.slice(0, 3).map((spot, index) => (
                 <CompanySpotCard key={index} spotList={spot} index={index} />
               ))}
             </Col>
@@ -103,7 +111,7 @@ const TeamSpot = () => {
               }}
             >
               <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
-                {companyVisitSpotList[0].industry_type}
+                {companyVisitSpotList.safeResults[0].industry_type}
               </Text>
               <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
@@ -112,7 +120,7 @@ const TeamSpot = () => {
                   비슷한 업종 사람들의 회식 장소
                 </Text>
               </div>
-              {companyVisitSpotList.slice(3, 6).map((spot, index) => (
+              {companyVisitSpotList.safeResults.slice(3, 6).map((spot, index) => (
                 <CompanySpotCard key={index} spotList={spot} index={index} />
               ))}
             </Col>
