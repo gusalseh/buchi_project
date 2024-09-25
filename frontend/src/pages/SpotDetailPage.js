@@ -74,6 +74,7 @@ const SpotDetailPage = () => {
     const fetchSpotData = async () => {
       try {
         const response = await axios.get(`http://localhost:80/api/spots/spotlistById/${id}`);
+        console.log(response.data);
         setSpotData(response.data);
       } catch (error) {
         console.error('식당 데이터를 가져오는데 실패했습니다:', error);
@@ -100,6 +101,12 @@ const SpotDetailPage = () => {
         spot_sub_img_4,
         spot_lat,
         spot_lng,
+        private_room,
+        parking_lot,
+        valet,
+        placard,
+        indoor_toilet,
+        wheelchair,
         corkage,
         start_time,
         end_time,
@@ -319,33 +326,45 @@ const SpotDetailPage = () => {
             <Divider />
 
             <Row gutter={[16, 16]}>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.parking} alt="주차 가능" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.valet} alt="발렛 가능" style={{ width: '100%' }} />
-              </Col>
+              {parking_lot > 0 && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.parking} alt="주차 가능" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {valet && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.valet} alt="발렛 가능" style={{ width: '100%' }} />
+                </Col>
+              )}
               <Col xs={8} sm={8} md={4}>
                 <img src={pictogram.rental} alt="단체석" style={{ width: '100%' }} />
               </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.privateRoom} alt="개인룸" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.indoorToilet} alt="실내화장실" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.corkage} alt="콜키지" style={{ width: '100%' }} />
-              </Col>
-            </Row>
+              {private_room && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.privateRoom} alt="개인룸" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {indoor_toilet && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.indoorToilet} alt="실내화장실" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {(corkage === 'free' || corkage === 'charge') && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.corkage} alt="콜키지" style={{ width: '100%' }} />
+                </Col>
+              )}
 
-            <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.placard} alt="플랜카드" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
-              </Col>
+              {placard && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.placard} alt="플랜카드" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {wheelchair && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
+                </Col>
+              )}
               <Col xs={8} sm={8} md={4}>
                 <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
               </Col>
