@@ -63,7 +63,7 @@ const Footer = () => {
                 </Title>
                 <Paragraph>
                   <Link
-                    href="https://www.notion.so/adapterz/BUCHI-1-56d5674dbb774f709e5283db2e050fed?pvs=4"
+                    href="https://veiled-crime-fc4.notion.site/BUCHI-10cb90490b358064a3b6e1ec5234e8ad"
                     style={{ color: '#595959' }}
                   >
                     이용 약관
@@ -71,7 +71,7 @@ const Footer = () => {
                 </Paragraph>
                 <Paragraph>
                   <Link
-                    href="https://www.notion.so/adapterz/c553f344519746e98bdfe2d261a7c450?pvs=4"
+                    href="https://veiled-crime-fc4.notion.site/10cb90490b358046a785c9b9a586f4d2"
                     style={{ color: '#595959' }}
                   >
                     개인정보 처리방침
