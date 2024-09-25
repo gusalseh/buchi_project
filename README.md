@@ -60,4 +60,6 @@ buchi_project
 └── docs/                      # 프로젝트 문서화
 ```
 
+### 인프라 구조
+
 ![인프라구조](./frontend/public/new_cloud_arch2.drawio.png)
