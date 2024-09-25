@@ -115,9 +115,9 @@ const VisitRankSpotCard = (sectionLabelSpot) => {
 
         <div style={{ marginTop: 16, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <StarFilled style={{ color: '#DB5744' }} />
-          <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: 'bold' }}>{averageRating || 0}</Text>
+          <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: 'bold' }}>{Math.round(averageRating) || 0}</Text>
           <Text type="secondary" style={{ marginLeft: 8 }}>
-            리뷰: {sectionLabelrating.reviewCount}개
+            리뷰 {sectionLabelrating.reviewCount}
           </Text>
         </div>
       </Card>

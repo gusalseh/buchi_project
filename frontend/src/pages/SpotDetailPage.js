@@ -45,6 +45,7 @@ const SpotDetailPage = () => {
   const [spotData, setSpotData] = useState(null);
   const [visibleMenuCount, setVisibleMenuCount] = useState(4);
   const [liked, setLiked] = useState(false);
+  const [valetValue, setValetValue] = useState('');
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.user.user_id);
@@ -67,6 +68,9 @@ const SpotDetailPage = () => {
         console.error('복사 오류:', error);
       });
   };
+  useEffect(() => {
+    setValetValue(getRandomValet());
+  }, []);
 
   useEffect(() => {
     const fetchSpotData = async () => {
@@ -267,10 +271,10 @@ const SpotDetailPage = () => {
               </Col>
               <Col>
                 <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-                  {averageRating}
+                  {Math.round(averageRating)}
                 </Text>
                 <Text type="secondary" style={{ marginLeft: 7, fontSize: '16px' }}>
-                  리뷰 {reviewCount}개
+                  리뷰 {reviewCount}
                 </Text>
               </Col>
             </Row>
@@ -373,7 +377,7 @@ const SpotDetailPage = () => {
             >
               <ul style={{ marginTop: 20, listStyleType: 'disc', color: '' }}>
                 <li style={{ marginTop: 8 }}>단체석 최대 {max_group_seats}인</li>
-                <li style={{ marginTop: 8 }}>발렛 요금 {getRandomValet()}원</li>
+                <li style={{ marginTop: 8 }}>발렛 요금 {valetValue}원</li>
                 <li style={{ marginTop: 8 }}>콜키지 {translatedCorkage}</li>
               </ul>
             </Text>

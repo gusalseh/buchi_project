@@ -13,6 +13,7 @@ const CompanySpotCard = (spotList) => {
   };
 
   const index = spotList.index;
+
   return (
     <Card
       onClick={handleCardClick}
@@ -77,9 +78,9 @@ const CompanySpotCard = (spotList) => {
           <div style={{ display: 'flex', alignItems: 'center', marginLeft: 18, marginTop: '8px' }}>
             <StarFilled style={{ color: '#DB5744', marginRight: '4px', width: 20, height: 20 }} />
             <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-              {spotList.spotList.rating}
+              {Math.round(spotList.spotList.rating)}
             </Text>
-            <Text></Text>
+            <Text>리뷰 1</Text>
           </div>
         </div>
         <div style={{ marginLeft: 'auto', height: 100 }}>
