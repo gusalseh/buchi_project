@@ -1,41 +1,64 @@
 const { sequelize } = require('../models');
+const { getVisitReviewJoinDB } = require('./visit');
 
 // 유저의 company_id로 방문 수 많은 Spot 데이터 불러오기.
 exports.getUserCompanyVisitData = async (req, res) => {
-  const { userId } = req.query;
-  console.log('userId Test: ', userId);
-  if (userId) {
-    const query = `
-    SELECT COUNT(b.spot_id) AS visit_count,
-       b.spot_id,
-       c.spot_name,
-       c.spot_main_img,
-       d.company_name,
-       d.industry_type,
-       e.tag_1,
-       e.tag_2,
-       e.tag_3,
-       f.main_section_1,
-       f.main_section_2, 
-       g.review_text,
-       g.rating       
-       FROM user
-       INNER JOIN visit b ON user.user_id = b.user_id
-       INNER JOIN spot c ON b.spot_id = c.spot_id
-       INNER JOIN company d ON user.company_id = d.company_id
-       LEFT JOIN card_label e ON c.spot_id = e.spot_id
-       LEFT JOIN section_label f ON c.spot_id = f.spot_id 
-       LEFT JOIN review g ON b.visit_id = g.visit_id   
-       WHERE user.user_id = :userId
-       GROUP BY b.spot_id, c.spot_name, c.spot_main_img, d.company_name, d.industry_type, e.tag_1, e.tag_2, e.tag_3, f.main_section_1, f.main_section_2, g.review_text, g.rating
-       ORDER BY visit_count DESC
-      LIMIT 6; 
-      `;
+  const { userCompanyId } = req.query;
+
+  if (userCompanyId) {
+    const query = `WITH ranked_spots AS (
+    SELECT 
+        v.spot_id,
+        COUNT(v.visit_id) AS visit_count,
+        COUNT(r.review_id) AS review_count,
+        AVG(r.rating) AS average_rating,
+        ROW_NUMBER() OVER (ORDER BY COUNT(v.visit_id) DESC) AS rn,
+        c.company_name,
+        c.industry_type
+    FROM 
+        visit v
+    JOIN 
+        \`user\` u ON v.user_id = u.user_id
+    JOIN 
+        company c ON u.company_id = c.company_id
+    LEFT JOIN 
+        review r ON v.visit_id = r.visit_id
+    WHERE 
+        u.company_id = :userCompanyId
+    GROUP BY 
+        v.spot_id, c.company_name, c.industry_type
+)
+SELECT 
+    s.*, 
+    rs.visit_count,
+    rs.review_count,
+    rs.average_rating,
+    rs.company_name,
+    rs.industry_type,
+    cl.tag_1,
+    cl.tag_2,
+    cl.tag_3,
+    sl.main_section_1,
+    sl.main_section_2
+FROM 
+    ranked_spots rs
+JOIN 
+    spot s ON rs.spot_id = s.spot_id
+LEFT JOIN 
+    card_label cl ON rs.spot_id = cl.spot_id
+LEFT JOIN 
+    section_label sl ON rs.spot_id = sl.spot_id
+WHERE 
+    rs.rn <= 6
+ORDER BY 
+    rs.visit_count DESC;`;
 
     const results = await sequelize.query(query, {
-      replacements: { userId: userId },
+      replacements: { userCompanyId: userCompanyId },
       type: sequelize.QueryTypes.SELECT,
     });
+
+    const safeResults = Array.isArray(results) ? results : [];
 
     const mappings_1 = {
       service: '서비스',
@@ -92,7 +115,18 @@ exports.getUserCompanyVisitData = async (req, res) => {
       results[i].industry_type = mappings_1[results[i].industry_type];
     }
 
-    res.json(results);
+    const visitsWithReviews = await getVisitReviewJoinDB();
+
+    const visitReviewData = visitsWithReviews.find(
+      (visitReview) => visitReview.spot_id === parseInt(results[0].spot_id, 10)
+    );
+
+    const mergedData = {
+      safeResults,
+      visitReviewData: visitReviewData || null,
+    };
+
+    res.json(mergedData);
   }
 };
 

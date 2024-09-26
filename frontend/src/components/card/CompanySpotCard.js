@@ -1,7 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Typography, Tag, Image } from 'antd';
-import { StarFilled, PictureOutlined } from '@ant-design/icons';
+import { StarFilled } from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -13,6 +12,8 @@ const CompanySpotCard = (spotList) => {
   };
 
   const index = spotList.index;
+  console.log('spotList Test: ', spotList);
+
   return (
     <Card
       onClick={handleCardClick}
@@ -77,9 +78,11 @@ const CompanySpotCard = (spotList) => {
           <div style={{ display: 'flex', alignItems: 'center', marginLeft: 18, marginTop: '8px' }}>
             <StarFilled style={{ color: '#DB5744', marginRight: '4px', width: 20, height: 20 }} />
             <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-              {spotList.spotList.rating}
+              {Math.round(spotList.spotList.average_rating)}
             </Text>
-            <Text></Text>
+            <Text style={{ color: '#737373', fontSize: 14, fontStyle: 'normal', fontWeight: 500 }}>
+              리뷰 {spotList.spotList.review_count}
+            </Text>
           </div>
         </div>
         <div style={{ marginLeft: 'auto', height: 100 }}>
@@ -88,7 +91,7 @@ const CompanySpotCard = (spotList) => {
             src={spotList.spotList.spot_main_img || '/default-image.jpg'}
             fallback="/default.png"
             preview={false}
-            style={{ width: 100, height: 100, objectFit: 'cover' }} // 이미지 크기는 유지하고 모서리만 둥글게
+            style={{ width: 100, height: 100, objectFit: 'cover' }}
           />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// 회사 데이터를 불러오기
+// 회사 데이터 불러오기
 export const fetchCompanies = createAsyncThunk('company/fetchCompanies', async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get(`http://localhost:80/api/companies`, {
@@ -16,7 +16,7 @@ export const fetchCompanies = createAsyncThunk('company/fetchCompanies', async (
   }
 });
 
-// 산업군 ENUM 데이터를 불러오기
+// 산업군 ENUM 데이터 불러오기
 export const fetchIndustryTypes = createAsyncThunk('company/fetchIndustryTypes', async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get(`http://localhost:80/api/companies/industry-types`, {
@@ -28,13 +28,13 @@ export const fetchIndustryTypes = createAsyncThunk('company/fetchIndustryTypes',
   }
 });
 
-// 새로운 회사를 추가하기
+// 새로운 회사 추가
 export const addCompany = createAsyncThunk('company/addCompany', async (newCompany) => {
   const response = await axios.post(`http://localhost:80/api/companies/add-company`, newCompany);
   return response.data;
 });
 
-// 회사명이 중복되는지 확인하는 Thunk
+// 회사명이 중복 확인
 export const checkCompanyName = createAsyncThunk(
   'company/checkCompanyName',
   async (companyName, { rejectWithValue }) => {

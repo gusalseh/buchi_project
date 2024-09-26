@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Button, Typography, Divider } from 'antd';
 import naverIcon from '../../assets/Img/naver.png';
 import kakaoIcon from '../../assets/Img/kakao.png';

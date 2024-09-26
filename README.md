@@ -1,5 +1,7 @@
 # buchi_project
 
+![로고](./frontend/public/buchi_logo_full.png)
+
 ## 프로젝트 개요
 
 부장님의 취향(일명 부취 프로젝트!!)은 회식 장소 선정의 어려움을 겪는 직장인(회식 담당자)에게
@@ -8,6 +10,10 @@
 예산과 회식 목적에 맞는 식당을 추천하고, 팀별 회식 장소를 기록하며
 회식 구성원의 취향에 적합한 장소를 제안하여
 만족도를 높이고, 회식 장소 선정의 부담감을 줄이는 서비스입니다.
+
+## 플로우 차트
+
+![flowchart](./frontend/public/buchi_FlowChart.png)
 
 ## 사용된 기술 스택
 
@@ -32,89 +38,69 @@
 - **passport-naver-v2**: Naver OAuth 2.0 인증 전략을 위한 Passport.js 라이브러리입니다.
 - **sequelize**: Node.js에서 SQL 기반의 데이터베이스를 ORM(Object-Relational Mapping) 방식으로 사용할 수 있게 해주는 라이브러리입니다. MySQL 등과 함께 사용되어 데이터를 객체로 관리할 수 있습니다.
 
-### 기타
+# 기타
 
-### 폴더 구조
+## 폴더 구조
 
 ```
 buchi_project
-├─ backend
-│ ├─ package.json
-│ └─ src
-│ │ ├─ app.js
-│ │ ├─ aws
-│ │ │ ├─ index.js
-│ │ │ └─ s3.js
-│ │ ├─ config
-│ │ │ └─ config.js
-│ │ ├─ controllers
-│ │ │ └─ auth.js
-│ │ ├─ middlewares
-│ │ │ ├─ cors.js
-│ │ │ └─ index.js
-│ │ ├─ models
-│ │ │ ├─ company.js
-│ │ │ ├─ index.js
-│ │ │ ├─ tag.js
-│ │ │ ├─ user.js
-│ │ │ └─ userTag.js
-│ │ ├─ passport
-│ │ │ ├─ index.js
-│ │ │ └─ naverStrategy.js
-│ │ └─ routes
-│ │ │ ├─ auth.js
-│ │ │ └─ s3.js
-│ │ │
-├─ frontend
-│ ├─ package.json
-│ ├─ postcss.config.js
-│ ├─ public
-│ │ ├─ .DS_Store
-│ │ ├─ Img
-│ │ │ ├─ .DS_Store
-│ │ │ ├─ buchi_logo_full.png
-│ │ │ └─ naver.png
-│ │ ├─ favicon.ico
-│ │ ├─ index.html
-│ │ ├─ manifest.json
-│ │ └─ robots.txt
-│src/
-├── assets/
-│   ├── images/
-│   │   └── logo.svg
-├── components/
-│   ├── common/
-│   │   └── SearchInput.js
-│   └── auth/
-│       └── Login.js
-├── features/
-│   ├── user/
-│   │   ├── userSlice.js
-│   │   └── userThunks.js
-├── pages/
-│   ├── HomePage.js
-│   ├── LoginPage.js
-├── routes/
-│   ├── RoutesSetup.js
-│   └── layout/
-│       ├── Header.js
-│       └── index.js
-├── store/
-│   └── store.js
-├── styles/
-│   ├── global.css
-│   └── App.css
-├── App.jsx
-├── index.jsx
-├── react-app-env.d.js
-├── reportWebVitals.js
-└── setupTests.js
-│ │ ├─ setupTests.js
-│ │ ├─ store.js
-│ │ └─ styles
-│ │ ├─ global.css
-│ │ └─ mainPageTemporary.css
-│ ├─ tailwind.config.js
-│ └─ tsconfig.json
-└─ package.json
+├── backend
+│   ├── src
+│   │   ├── aws/               # AWS 관련 설정과 유틸리티 파일들
+│   │   ├── config/            # 서버 설정 파일 (DB, 환경 변수 등)
+│   │   ├── controllers/       # API 요청을 처리하는 컨트롤러
+│   │   ├── middlewares/       # 요청을 처리하는 미들웨어
+│   │   ├── models/            # 데이터베이스 모델 정의
+│   │   ├── passport/          # 인증 관련 로직 (Passport.js)
+│   │   └── routes/            # API 엔드포인트 정의
+│   └── server.js              # 백엔드 서버의 시작점
+├── frontend
+│   ├── src
+│   │   ├── assets/            # 이미지, 폰트 등의 정적 파일
+│   │   ├── components/        # 재사용 가능한 UI 컴포넌트
+│   │   ├── features/          # 상태 관리나 주요 기능 관련 로직
+│   │   ├── pages/             # 각각의 페이지 컴포넌트
+│   │   ├── routes/            # 라우팅 설정
+│   │   ├── store/             # 글로벌 상태 관리 (Redux 등)
+│   └── └── styles/            # 스타일 관련 파일 (CSS, SCSS 등)
+└── docs/                      # 프로젝트 문서화
 ```
+
+## ERD
+
+![ERD](./frontend/public/buchi_ERD.png)
+
+## 인프라 구조
+
+![인프라구조](./frontend/public/new_cloud_arch2.drawio.png)
+
+## 구현 결과
+
+### 메인페이지
+
+![구현결과1](./frontend/public/buchi_1.png)
+
+### 회사 등록 모달
+
+![구현결과2](./frontend/public/buchi_2.png)
+
+### 위치 입력 모달
+
+![구현결과3](./frontend/public/buchi_3.png)
+
+### 필터 페이지
+
+![구현결과4](./frontend/public/buchi_4.png)
+
+### 필터 페이지 필터링
+
+![구현결과5](./frontend/public/buchi_5.png)
+
+### 식당 상세 페이지
+
+![구현결과5](./frontend/public/buchi_6.png)
+
+## 개발자
+
+도현민 (Development Team Leader/ Front-End, Back-End)
+강준영 (Front-End, Back-End)

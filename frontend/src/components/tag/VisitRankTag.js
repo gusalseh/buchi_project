@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSelectedLocation, getCurrentLocation } from '../../features/userLocationThunk';

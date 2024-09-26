@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
@@ -80,7 +80,7 @@ const Filter = () => {
       const getReverseGeocode = async (latitude, longitude) => {
         try {
           setIsLoading(true);
-          const response = await fetch(`http://localhost:80/reverse_geocode?lat=${latitude}&lon=${longitude}`);
+          const response = await fetch(`http://localhost:80/api/reverse_geocode?lat=${latitude}&lon=${longitude}`);
 
           if (!response.ok) {
             const text = await response.text();
@@ -186,7 +186,7 @@ const Filter = () => {
 
   const getCoordinates = async (address) => {
     try {
-      const response = await fetch(`http://localhost:80/geocode`, {
+      const response = await fetch(`http://localhost:80/api/geocode`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Input, Pagination, Button, List, Typography, Select, message } from 'antd';
 import { fetchCompanies, fetchIndustryTypes, addCompany, checkCompanyName } from '../../features/companyThunk';
 import { setSearchTerm, setCurrentPage } from '../../features/companySlice';
-import '../../styles/companyModal.css';
 import { updateUserCompany, fetchUser } from '../../features/userThunk';
 import { getIndustryType, getReverseIndustryType } from '../../enums/Enum';
+import '../../styles/companyModal.css';
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -55,7 +55,7 @@ const CompanyModal = ({ visible, onClose }) => {
       const response = await dispatch(updateUserCompany({ companyId: selectedItemId })).unwrap();
 
       if (response.message === 'Company ID updated successfully') {
-        onClose(); // 모달 닫기
+        onClose();
         window.location.reload();
       } else {
         console.log('Failed to update Company ID');
@@ -67,10 +67,8 @@ const CompanyModal = ({ visible, onClose }) => {
 
   const handleRegisterDirectInput = async () => {
     try {
-      // 회사명 중복 체크
       const checkResponse = await dispatch(checkCompanyName(companyName)).unwrap();
 
-      // 이미 존재하는 회사인 경우
       if (checkResponse.exists) {
         message.error('이미 존재하는 회사입니다. 검색을 통해 진행해주세요.');
         return;
@@ -82,11 +80,11 @@ const CompanyModal = ({ visible, onClose }) => {
         addCompany({ company_name: companyName, industry_type: industryTypeKey })
       ).unwrap();
 
-      // 사용자 테이블 업데이트 (회사 ID 추가)
       const response = await dispatch(updateUserCompany({ companyId: newCompany.company.company_id })).unwrap();
 
-      onClose(); // 모달 닫기
-      if (response.user.company_id) window.location.reload(); // 페이지 리로드
+      onClose();
+
+      if (response.user.company_id) window.location.reload();
     } catch (error) {
       if (error === '이미 존재하는 회사입니다. 검색을 통해 진행해주세요.') {
         message.error(error);
@@ -253,7 +251,7 @@ const CompanyModal = ({ visible, onClose }) => {
                   total={filteredCompanies.length}
                   onChange={handlePageChange}
                   showSizeChanger={false}
-                  style={{ textAlign: 'center' }} // 페이지 네이션 중앙 정렬
+                  style={{ textAlign: 'center' }}
                 />
               </div>
             </>
@@ -278,13 +276,13 @@ const CompanyModal = ({ visible, onClose }) => {
 
       <Button
         type="primary"
-        disabled={!selectedItemId && !(companyName && industryType)} // 선택된 항목이 없거나 직접 입력 시 비활성화
-        onClick={isDirectInput ? handleRegisterDirectInput : handleRegister} // 조건에 따른 함수 실행
+        disabled={!selectedItemId && !(companyName && industryType)}
+        onClick={isDirectInput ? handleRegisterDirectInput : handleRegister}
         style={{
           marginTop: 16,
           width: '100%',
           height: 48,
-          backgroundColor: selectedItemId || (companyName && industryType) ? '#CC3C28' : '#A3A3A3', // 선택되거나 직접 입력 시 붉은색
+          backgroundColor: selectedItemId || (companyName && industryType) ? '#CC3C28' : '#A3A3A3',
           borderColor: selectedItemId || (companyName && industryType) ? '#CC3C28' : '#A3A3A3',
           color: 'white',
         }}

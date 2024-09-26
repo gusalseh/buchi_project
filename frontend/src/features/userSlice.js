@@ -11,6 +11,8 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
+      //fetchUser
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -23,6 +25,8 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
+      //logoutUser
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
       });

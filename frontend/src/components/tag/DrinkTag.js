@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSelectedLocation, getCurrentLocation } from '../../features/userLocationThunk';
@@ -55,7 +55,7 @@ const DrinkTag = () => {
       setSelectedLatitude(37.500483);
       setSelectedLongitude(127.036707);
     }
-  }, [selectedLocation, user]); // 빈 배열: 컴포넌트가 처음 마운트될 때 한 번 실행
+  }, [selectedLocation, user]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 

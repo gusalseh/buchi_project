@@ -1,4 +1,3 @@
-// src/thunks/userLocationThunk.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -83,7 +82,6 @@ export const fetchSelectedLocation = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error('Error fetching selected location:', error);
-      // 기본값으로 지정된 주소를 반환 (에러 시)
       return { location_road_address: '역삼역 2번 출구' };
     }
   }

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import axios from 'axios';
-import { getDistance } from '../utils/distance';
 import { getRandomValet } from '../utils/randomValet';
-import { Collapse, Card, Row, Col, Typography, Button, Tag, Image, Divider, message } from 'antd';
+import { Card, Row, Col, Typography, Button, Tag, Image, Divider, message } from 'antd';
 import {
   EnvironmentOutlined,
   PhoneOutlined,
@@ -20,7 +20,6 @@ import DummyReviewCard from '../components/card/DummyReviewCard';
 import pictogram from '../assets/ pictogram';
 import '../styles/HeartIconComponent.css';
 
-const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
 const isOpen = (start_time, end_time) => {
@@ -44,6 +43,7 @@ const SpotDetailPage = () => {
   const [spotData, setSpotData] = useState(null);
   const [visibleMenuCount, setVisibleMenuCount] = useState(4);
   const [liked, setLiked] = useState(false);
+  const [valetValue, setValetValue] = useState('');
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.user.user_id);
@@ -66,11 +66,15 @@ const SpotDetailPage = () => {
         console.error('복사 오류:', error);
       });
   };
+  useEffect(() => {
+    setValetValue(getRandomValet());
+  }, []);
 
   useEffect(() => {
     const fetchSpotData = async () => {
       try {
         const response = await axios.get(`http://localhost:80/api/spots/spotlistById/${id}`);
+        console.log(response.data);
         setSpotData(response.data);
       } catch (error) {
         console.error('식당 데이터를 가져오는데 실패했습니다:', error);
@@ -97,6 +101,12 @@ const SpotDetailPage = () => {
         spot_sub_img_4,
         spot_lat,
         spot_lng,
+        private_room,
+        parking_lot,
+        valet,
+        placard,
+        indoor_toilet,
+        wheelchair,
         corkage,
         start_time,
         end_time,
@@ -122,10 +132,8 @@ const SpotDetailPage = () => {
 
   const translatedCorkage = translateCorkage(corkage);
 
-  const distance = getDistance(37.5665, 126.978, spot_lat, spot_lng); // 예시 사용자 위치 (서울)
-
   const handleLoadMore = () => {
-    setVisibleMenuCount((prevCount) => prevCount + 4); // 4개씩 추가로 표시
+    setVisibleMenuCount((prevCount) => prevCount + 4);
   };
 
   return (
@@ -142,8 +150,16 @@ const SpotDetailPage = () => {
         marginTop: 40,
       }}
     >
+      <Helmet>
+        <title>{spot_name} - 매장 정보</title>
+        <meta name="description" content={`부장님의 취향에서 알아본! ${spot_name}`} />
+        <meta property="og:title" content={spot_name} />
+        <meta property="og:description" content={`${spot_name}`} />
+        <meta property="og:image" content={spot_main_img} />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+
       <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 20 }}>
-        {/* 메인 이미지 (큰 이미지) */}
         <Col xs={24} md={12}>
           <Image
             alt={spot_name}
@@ -157,11 +173,9 @@ const SpotDetailPage = () => {
               maxWidth: 'none',
               maxHeight: 'none',
             }}
-            preview={false}
           />
         </Col>
 
-        {/* 서브 이미지 (작은 이미지 4개) */}
         <Col xs={24} md={12}>
           <Row gutter={[16, 16]}>
             <Col xs={12}>
@@ -170,19 +184,19 @@ const SpotDetailPage = () => {
                 src={spot_sub_img_1 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
+
             <Col xs={12}>
               <Image
                 alt={`${spot_name} - sub 2`}
                 src={spot_sub_img_2 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
           </Row>
+
           <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
             <Col xs={12}>
               <Image
@@ -190,16 +204,15 @@ const SpotDetailPage = () => {
                 src={spot_sub_img_3 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
+
             <Col xs={12}>
               <Image
                 alt={`${spot_name} - sub 4`}
                 src={spot_sub_img_4 || '/default-image.jpg'}
                 fallback="/default.png"
                 style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '1/1' }}
-                preview={false}
               />
             </Col>
           </Row>
@@ -211,11 +224,8 @@ const SpotDetailPage = () => {
         justify="start"
         style={{ padding: 0, display: 'flex', justifyContent: 'flex-start', width: '100%' }}
       >
-        {/* 왼쪽 섹션: 매장 정보 및 메뉴 상세 */}
         <Col xs={24} lg={13} style={{ padding: 0 }}>
-          {/* 매장 정보 */}
           <Card bordered={false} style={{ padding: 0, boxShadow: 'none' }}>
-            {/* 상단 가게 이름과 리뷰, 아이콘 */}
             <Row justify="space-between" align="middle">
               <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                 <Title
@@ -254,25 +264,22 @@ const SpotDetailPage = () => {
                 />
               </Col>
             </Row>
-
-            {/* 리뷰 및 평점 */}
             <Row align="middle" gutter={[8, 8]} style={{ marginTop: 8 }}>
               <Col>
                 <StarFilled style={{ color: '#DB5744', fontSize: '20px' }} />
               </Col>
               <Col>
                 <Text strong style={{ fontSize: '16px', marginRight: '8px' }}>
-                  {averageRating}
+                  {Math.round(averageRating)}
                 </Text>
                 <Text type="secondary" style={{ marginLeft: 7, fontSize: '16px' }}>
-                  리뷰 {reviewCount}개
+                  리뷰 {reviewCount}
                 </Text>
               </Col>
             </Row>
 
             <Divider />
 
-            {/* 주소 및 취창업센터 거리 */}
             <Row align="middle" style={{ marginBottom: '8px' }}>
               <Col>
                 <EnvironmentOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
@@ -289,7 +296,6 @@ const SpotDetailPage = () => {
               </Col>
             </Row>
 
-            {/* 영업시간 */}
             {start_time && end_time && (
               <Row align="middle" style={{ marginBottom: '8px' }}>
                 <Col>
@@ -308,7 +314,6 @@ const SpotDetailPage = () => {
               </Row>
             )}
 
-            {/* 전화번호 */}
             <Row align="middle">
               <Col>
                 <PhoneOutlined style={{ fontSize: '18px', marginRight: '8px' }} />
@@ -320,42 +325,51 @@ const SpotDetailPage = () => {
 
             <Divider />
 
-            {/* 픽토그램 그리드 */}
             <Row gutter={[16, 16]}>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.parking} alt="주차 가능" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.valet} alt="발렛 가능" style={{ width: '100%' }} />
-              </Col>
+              {parking_lot > 0 && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.parking} alt="주차 가능" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {valet && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.valet} alt="발렛 가능" style={{ width: '100%' }} />
+                </Col>
+              )}
               <Col xs={8} sm={8} md={4}>
                 <img src={pictogram.rental} alt="단체석" style={{ width: '100%' }} />
               </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.privateRoom} alt="개인룸" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.indoorToilet} alt="실내화장실" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.corkage} alt="콜키지" style={{ width: '100%' }} />
-              </Col>
-            </Row>
+              {private_room && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.privateRoom} alt="개인룸" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {indoor_toilet && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.indoorToilet} alt="실내화장실" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {(corkage === 'free' || corkage === 'charge') && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.corkage} alt="콜키지" style={{ width: '100%' }} />
+                </Col>
+              )}
 
-            {/* 두 번째 줄 */}
-            <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.placard} alt="플랜카드" style={{ width: '100%' }} />
-              </Col>
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
-              </Col>
+              {placard && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.placard} alt="플랜카드" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {wheelchair && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
+                </Col>
+              )}
               <Col xs={8} sm={8} md={4}>
                 <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
               </Col>
             </Row>
 
-            {/* 하단 텍스트 */}
             <Text
               style={{
                 color: '#404040',
@@ -368,7 +382,7 @@ const SpotDetailPage = () => {
             >
               <ul style={{ marginTop: 20, listStyleType: 'disc', color: '' }}>
                 <li style={{ marginTop: 8 }}>단체석 최대 {max_group_seats}인</li>
-                <li style={{ marginTop: 8 }}>발렛 요금 {getRandomValet()}원</li>
+                <li style={{ marginTop: 8 }}>발렛 요금 {valetValue}원</li>
                 <li style={{ marginTop: 8 }}>콜키지 {translatedCorkage}</li>
               </ul>
             </Text>
@@ -376,7 +390,6 @@ const SpotDetailPage = () => {
 
           <Divider />
 
-          {/* 메뉴 상세 섹션 */}
           <Card
             title={<span style={{ fontSize: '30px', fontStyle: 'normal', fontWeight: 500 }}>메뉴 상세</span>}
             bordered={false}
@@ -399,7 +412,6 @@ const SpotDetailPage = () => {
                       width={140}
                       height={140}
                       style={{ objectFit: 'cover' }}
-                      preview={false}
                       bordered={false}
                     />
                   </Col>

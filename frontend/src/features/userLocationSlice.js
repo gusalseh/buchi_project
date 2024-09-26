@@ -12,21 +12,21 @@ import {
 const userLocationSlice = createSlice({
   name: 'userLocation',
   initialState: {
-    locations: [], // 유저의 위치 목록
-    selectedLocation: null, // 선택된 위치
+    locations: [],
+    selectedLocation: null,
     loading: false,
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // getCurrentLocation의 상태 관리
+
+      //getCurrenLocation
       .addCase(getCurrentLocation.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getCurrentLocation.fulfilled, (state, action) => {
-        // selectedLocation이 null인 경우 객체로 초기화하고 위치 정보를 저장
         state.selectedLocation = {
           latitude: action.payload.latitude,
           longitude: action.payload.longitude,
@@ -37,20 +37,21 @@ const userLocationSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      // Create Location
+
+      //createLocation
       .addCase(createLocation.pending, (state) => {
         state.loading = true;
       })
       .addCase(createLocation.fulfilled, (state, action) => {
         state.loading = false;
-        state.locations.push(action.payload); // 새로운 위치 추가
+        state.locations.push(action.payload);
       })
       .addCase(createLocation.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Update Selected Location
+      //updateSelectedLocation
       .addCase(updateSelectedLocation.pending, (state) => {
         state.loading = true;
       })
@@ -58,7 +59,7 @@ const userLocationSlice = createSlice({
         state.loading = false;
         const index = state.locations.findIndex((loc) => loc.id === action.payload.id);
         if (index !== -1) {
-          state.locations[index] = action.payload; // 위치 업데이트
+          state.locations[index] = action.payload;
         }
       })
       .addCase(updateSelectedLocation.rejected, (state, action) => {
@@ -66,13 +67,12 @@ const userLocationSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Delete Location
       .addCase(deleteLocation.pending, (state) => {
         state.loading = true;
       })
       .addCase(deleteLocation.fulfilled, (state, action) => {
         state.loading = false;
-        state.locations = state.locations.filter((loc) => loc.id !== action.meta.arg); // 삭제된 위치 제거
+        state.locations = state.locations.filter((loc) => loc.id !== action.meta.arg);
       })
       .addCase(deleteLocation.rejected, (state, action) => {
         state.loading = false;
@@ -85,7 +85,7 @@ const userLocationSlice = createSlice({
       })
       .addCase(fetchUserLocations.fulfilled, (state, action) => {
         state.loading = false;
-        state.locations = action.payload; // 위치 목록 저장
+        state.locations = action.payload;
       })
       .addCase(fetchUserLocations.rejected, (state, action) => {
         state.loading = false;
@@ -98,14 +98,14 @@ const userLocationSlice = createSlice({
       })
       .addCase(fetchSelectedLocation.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedLocation = action.payload; // 선택된 위치 저장
+        state.selectedLocation = action.payload;
       })
       .addCase(fetchSelectedLocation.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Update Location By Type
+      // UpdateLocationByType
       .addCase(updateLocationByType.pending, (state) => {
         state.loading = true;
       })
@@ -113,7 +113,7 @@ const userLocationSlice = createSlice({
         state.loading = false;
         const index = state.locations.findIndex((loc) => loc.id === action.payload.id);
         if (index !== -1) {
-          state.locations[index] = action.payload; // 유형별 위치 업데이트
+          state.locations[index] = action.payload;
         }
       })
       .addCase(updateLocationByType.rejected, (state, action) => {

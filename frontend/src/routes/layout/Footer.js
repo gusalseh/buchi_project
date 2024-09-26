@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout, Row, Col, Typography } from 'antd';
 import logo from '../../assets/Img/buchi_logo_full.png';
 
@@ -63,12 +62,18 @@ const Footer = () => {
                   서비스
                 </Title>
                 <Paragraph>
-                  <Link href="#" style={{ color: '#595959' }}>
+                  <Link
+                    href="https://veiled-crime-fc4.notion.site/BUCHI-10cb90490b358064a3b6e1ec5234e8ad"
+                    style={{ color: '#595959' }}
+                  >
                     이용 약관
                   </Link>
                 </Paragraph>
                 <Paragraph>
-                  <Link href="#" style={{ color: '#595959' }}>
+                  <Link
+                    href="https://veiled-crime-fc4.notion.site/10cb90490b358046a785c9b9a586f4d2"
+                    style={{ color: '#595959' }}
+                  >
                     개인정보 처리방침
                   </Link>
                 </Paragraph>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Carousel } from 'antd';
 import promotion1 from '../../assets/Img/promotiontest1.webp';
 import promotion2 from '../../assets/Img/promotiontest2.webp';

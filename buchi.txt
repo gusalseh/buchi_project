@@ -1,73 +1,21 @@
 buchi_project
-├─ backend
-│ ├─ package.json
-│ └─ src
-│ │ ├─ app.js
-│ │ ├─ aws
-│ │ │ ├─ index.js
-│ │ │ └─ s3.js
-│ │ ├─ config
-│ │ │ ├─ config.js
-│ │ │ └─ config.json
-│ │ ├─ controllers
-│ │ │ └─ auth.js
-│ │ ├─ middlewares
-│ │ │ ├─ cors.js
-│ │ │ └─ index.js
-│ │ ├─ models
-│ │ │ ├─ company.js
-│ │ │ ├─ index.js
-│ │ │ ├─ tag.js
-│ │ │ ├─ user.js
-│ │ │ └─ userTag.js
-│ │ ├─ passport
-│ │ │ ├─ index.js
-│ │ │ └─ naverStrategy.js
-│ │ └─ routes
-│ │ ├─ auth.js
-│ │ └─ s3.js
-├─ frontend
-│ ├─ package.json
-│ ├─ postcss.config.js
-│ ├─ public
-│ │ ├─ .DS_Store
-│ │ ├─ Img
-│ │ │ ├─ .DS_Store
-│ │ │ ├─ buchi_logo_full.png
-│ │ │ └─ naver.png
-│ │ ├─ favicon.ico
-│ │ ├─ index.html
-│ │ ├─ manifest.json
-│ │ └─ robots.txt
-│ ├─ src
-│ │ ├─ .DS_Store
-│ │ ├─ App.css
-│ │ ├─ App.jsx
-│ │ ├─ App.test.jsx
-│ │ ├─ components
-│ │ │ ├─ .DS_Store
-│ │ │ ├─ Login.js
-│ │ │ └─ SearchInput.js
-│ │ ├─ features
-│ │ │ └─ userSlice.js
-│ │ ├─ index.css
-│ │ ├─ index.jsx
-│ │ ├─ logo.svg
-│ │ ├─ react-app-env.d.js
-│ │ ├─ reportWebVitals.js
-│ │ ├─ routes
-│ │ │ ├─ ImagePage.js
-│ │ │ ├─ LoginPage.js
-│ │ │ ├─ MainPage.js
-│ │ │ ├─ RoutesSetup.js
-│ │ │ └─ layout
-│ │ │ ├─ Header.js
-│ │ │ └─ index.js
-│ │ ├─ setupTests.js
-│ │ ├─ store.js
-│ │ └─ styles
-│ │ ├─ global.css
-│ │ └─ mainPageTemporary.css
-│ ├─ tailwind.config.js
-│ └─ tsconfig.json
-└─ package.json
+├── backend
+│   ├── src
+│   │   ├── aws/               # AWS 관련 설정과 유틸리티 파일들
+│   │   ├── config/            # 서버 설정 파일 (DB, 환경 변수 등)
+│   │   ├── controllers/       # API 요청을 처리하는 컨트롤러
+│   │   ├── middlewares/       # 요청을 처리하는 미들웨어
+│   │   ├── models/            # 데이터베이스 모델 정의
+│   │   ├── passport/          # 인증 관련 로직 (Passport.js)
+│   │   └── routes/            # API 엔드포인트 정의
+│   └── server.js              # 백엔드 서버의 시작점
+├── frontend
+│   ├── src
+│   │   ├── assets/            # 이미지, 폰트 등의 정적 파일
+│   │   ├── components/        # 재사용 가능한 UI 컴포넌트
+│   │   ├── features/          # 상태 관리나 주요 기능 관련 로직
+│   │   ├── pages/             # 각각의 페이지 컴포넌트
+│   │   ├── routes/            # 라우팅 설정
+│   │   ├── store/             # 글로벌 상태 관리 (Redux 등)
+│   └── └── styles/            # 스타일 관련 파일 (CSS, SCSS 등)
+└── docs/                      # 프로젝트 문서화
