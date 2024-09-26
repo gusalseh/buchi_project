@@ -16,7 +16,6 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
   const menu = spot.Menus;
 
   const averageRating = sectionLabelrating.averageRating;
-  const review = sectionLabelrating.reviews[0].Review.review_text;
 
   const distance = getDistance(
     sectionLabelSpot.selectedLatitude,
@@ -30,7 +29,7 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
   };
 
   return (
-    <div onClick={handleCardClick} style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+    <div onClick={handleCardClick} style={{ display: 'flex', flexWrap: 'wrap', gap: 20, position: 'relative' }}>
       <Card
         hoverable
         cover={
@@ -48,7 +47,6 @@ const SpotCard = (sectionLabelSpot, selectedLatitude, selectedLongitude) => {
           width: 360,
           height: 510,
           padding: 20,
-          margin: 20,
           boxShadow: 'none',
           transition: 'box-shadow 0.3s ease-in-out',
         }}
