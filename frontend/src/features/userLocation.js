@@ -56,7 +56,7 @@ export const fetchSelectedLocation = async (userId) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching selected location:', error);
-    return { location_road_address: '역삼역 2번 출구' };
+    return { location_road_address: '역삼역 2번 출구', location_lat: '37.5000263', location_lng: '127.0365456' };
   }
 };
 
