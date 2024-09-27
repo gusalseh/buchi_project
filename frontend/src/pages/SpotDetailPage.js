@@ -308,7 +308,7 @@ const SpotDetailPage = () => {
                     <Text style={{ fontSize: '16px', fontWeight: 'bold', color: 'red' }}>영업 종료</Text>
                   )}
                   <Text type="secondary" style={{ marginLeft: '8px', fontSize: '16px' }}>
-                    {end_time}에 영업 종료
+                    {end_time.substring(0, 5)} 에 영업 종료
                   </Text>
                 </Col>
               </Row>

@@ -22,6 +22,7 @@ const CompanyModal = ({ visible, onClose }) => {
   const [isDirectInput, setIsDirectInput] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [industryType, setIndustryType] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (status === 'idle') {
@@ -110,6 +111,16 @@ const CompanyModal = ({ visible, onClose }) => {
     setSelectedItemId(false);
   };
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    if (value.length <= 20) {
+      setCompanyName(value);
+      setErrorMessage('');
+    } else {
+      setErrorMessage('최대 20자까지만 가능합니다.');
+    }
+  };
+
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedCompanies = filteredCompanies.slice(startIndex, startIndex + pageSize);
 
@@ -183,8 +194,10 @@ const CompanyModal = ({ visible, onClose }) => {
               placeholder="회사명을 입력해주세요"
               style={{ width: '100%', height: 48, fontSize: '16px' }}
               value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              onChange={handleInputChange}
+              maxLength={20}
             />
+            {errorMessage && <span style={{ color: 'red', fontSize: '14px' }}>{errorMessage}</span>}
           </div>
           <div>
             <label style={{ fontSize: '16px', display: 'block', marginBottom: '8px' }}>산업군</label>
