@@ -29,7 +29,7 @@ router.get(
     console.log('GET /auth/naver route hit'); // 네이버 로그인 라우트 확인
     next();
   },
-  passport.authenticate('naver', { authType: 'reprompt' })
+  passport.authenticate('naver', { authType: 'reauthenticate' })
 );
 
 // GET /auth/naver/callback
