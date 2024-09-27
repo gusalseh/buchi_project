@@ -482,7 +482,7 @@ const SpotDetailPage = () => {
           </Card>
         </Col>
 
-        <Col xs={24} lg={8} style={{ marginLeft: 30 }}>
+        <Col xs={24} lg={8} style={{ backgroundColor: 'white', zIndex: 4, marginLeft: 30 }}>
           <MenuSimulation menu={Menus} />
         </Col>
       </Row>

@@ -38,8 +38,10 @@ const TeamSpot = () => {
       try {
         if (!user || !user.user || !user.user.company_id) {
           setCompanyId(null);
+          console.log('유저 없거나 회사 정보 없음');
         } else {
           setCompanyId(user.user.company_id);
+          console.log('회사 정보 있음');
         }
       } catch (error) {
         console.error('회사 ID를 가져오는 중 오류 발생:', error);
