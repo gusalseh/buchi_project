@@ -365,9 +365,16 @@ const SpotDetailPage = () => {
                   <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
                 </Col>
               )}
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
-              </Col>
+              {spot_name === '다돈식당' && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.bbq} alt="고기구워주는집" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {spot_name !== '다돈식당' && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
+                </Col>
+              )}
             </Row>
 
             <Text
