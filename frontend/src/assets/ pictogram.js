@@ -1,4 +1,5 @@
 const pictogram = {
+  bbq: require('./Img/spotdetailpicto/pictoX2/bbq.png'),
   parking: require('./Img/spotdetailpicto/pictoX2/parking.png'),
   valet: require('./Img/spotdetailpicto/pictoX2/valet.png'),
   rental: require('./Img/spotdetailpicto/pictoX2/rental.png'),
