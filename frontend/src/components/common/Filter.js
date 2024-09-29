@@ -23,16 +23,16 @@ const Filter = () => {
   const user = useSelector((state) => state.user.user);
   const [locationName, setLocationName] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalKey, setModalKey] = useState(0); // 모달을 다시 렌더링하기 위한 key
+  const [modalKey, setModalKey] = useState(0);
   const [isLoginAlertVisible, setIsLoginAlertVisible] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); // TODO: 날짜, 시간, 인원의 정보를 한꺼번에 state 관리해주는게 좋아보임
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [selectedLatitude, setSelectedLatitude] = useState(null);
   const [selectedLongitude, setSelectedLongitude] = useState(null);
-  const [isSelectOpen, setIsSelectOpen] = useState(false); // 시간 선택 filter 열릴지 말지
-  const [isLocationFetched, setIsLocationFetched] = useState(false); // 첫 번째 useEffect 완료 여부
-  const [isLoading, setIsLoading] = useState(false); // 현재 위치 주소 받기 로딩 상태
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [isLocationFetched, setIsLocationFetched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,7 +73,6 @@ const Filter = () => {
 
       const onError = (error) => {
         console.error(error);
-        // alert('위치를 가져올 수 없습니다.');
         setLocationName('역삼역 2번 출구');
       };
 
@@ -162,7 +161,6 @@ const Filter = () => {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
-    // const dow = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(today); //(추후사용) 한글 요일로 바꿔주는 로직
 
     return `${year}년 ${month < 10 ? `0${month}` : month}월 ${day < 10 ? `0${day}` : day}일`;
   };
@@ -256,9 +254,9 @@ const Filter = () => {
               }}
               onClick={() => {
                 if (user) {
-                  showLocationModal(); // 유저가 있을 때 위치 모달을 열기
+                  showLocationModal();
                 } else {
-                  setIsLoginAlertVisible(true); // 유저가 없을 때 로그인 알림을 보여주기
+                  setIsLoginAlertVisible(true);
                 }
               }}
             >

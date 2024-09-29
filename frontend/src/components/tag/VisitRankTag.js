@@ -17,7 +17,6 @@ const VisitRankTag = (user) => {
   const dispatch = useDispatch();
 
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
-  // const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     if (!user) {

@@ -12,7 +12,6 @@ const CompanySpotCard = (spotList) => {
   };
 
   const index = spotList.index;
-  console.log('spotList Test: ', spotList);
 
   return (
     <Card
