@@ -26,17 +26,18 @@
 
 ### 백엔드
 
-- **Node.js**: 서버사이드 자바스크립트 런타임 환경.
+- **Node.js**
 - **Express**: 빠르고 간단한 웹 프레임워크로, 서버와 API를 쉽게 구축할 수 있습니다.
-- **axios**: HTTP 클라이언트로, 서버 간의 API 통신을 비동기적으로 처리하기 위해 사용됩니다.
 - **bcryptjs**: 비밀번호 해싱 라이브러리로, 사용자 비밀번호를 안전하게 저장하기 위해 사용됩니다.
 - **cors**: Cross-Origin Resource Sharing을 설정하여, 다른 도메인에서 서버에 요청을 허용할 수 있도록 합니다.
 - **dotenv**: 환경 변수들을 파일로 관리할 수 있게 도와주는 라이브러리입니다. `.env` 파일을 통해 환경 변수를 설정하고 사용합니다.
 - **express-session**: 세션 관리를 위한 미들웨어로, 사용자 인증 및 상태를 서버에서 유지하기 위해 사용됩니다.
-- **mysql2**: MySQL 데이터베이스와 상호작용하기 위한 클라이언트입니다.
 - **passport**: 사용자 인증을 위한 미들웨어로, 다양한 전략(Strategy)을 사용하여 인증을 처리할 수 있습니다.
 - **passport-naver-v2**: Naver OAuth 2.0 인증 전략을 위한 Passport.js 라이브러리입니다.
+- **mysql2**: MySQL 데이터베이스와 상호작용하기 위한 클라이언트입니다.
 - **sequelize**: Node.js에서 SQL 기반의 데이터베이스를 ORM(Object-Relational Mapping) 방식으로 사용할 수 있게 해주는 라이브러리입니다. MySQL 등과 함께 사용되어 데이터를 객체로 관리할 수 있습니다.
+- **naverMap API**: naver에서 제공하는 지도를 활용할 수 있는 오픈API 서비스입니다.
+- **kakao 주소검색 API**: kakao에서 제공하는 전국 도로명 주소를 검색할 수 있는 오픈API 서비스입니다.
 
 # 기타
 
@@ -68,11 +69,11 @@ buchi_project
 
 ## ERD
 
-![ERD](./frontend/public/buchi_ERD.png)
+![ERD](./frontend/public/buchi_erd.png)
 
 ## 인프라 구조
 
-![인프라구조](./frontend/public/new_cloud_arch2.drawio.png)
+![인프라구조](./frontend/public/cloud structure.drawio.png)
 
 ## 구현 결과
 
