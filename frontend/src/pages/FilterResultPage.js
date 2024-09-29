@@ -599,20 +599,18 @@ const FilterResultPage = () => {
                   position: 'relative',
                   backgroundColor: '#FAFAFA',
                 }}
+                onClick={() => {
+                  if (user) {
+                    showLocationModal();
+                  } else {
+                    setIsLoginAlertVisible(true);
+                  }
+                }}
               >
                 <span>{locationName}</span>
-                {user ? (
-                  <DownOutlined
-                    onClick={showLocationModal}
-                    style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-                  />
-                ) : (
-                  <DownOutlined
-                    onClick={() => setIsLoginAlertVisible(true)}
-                    style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-                  />
-                )}
+                <DownOutlined style={{ fontSize: '15px', position: 'absolute', right: '10px' }} />
               </Button>
+
               <div
                 style={{
                   position: 'absolute',
