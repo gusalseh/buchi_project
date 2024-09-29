@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Company, User } = require('../models'); // sequelize 불러오기
+const { Company, User } = require('../models');
 
 // 모든 회사 정보를 가져오는 엔드포인트
 router.get('/', async (req, res) => {
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 // industry_type ENUM 값을 가져오는 엔드포인트
 router.get('/industry-types', (req, res) => {
   try {
-    const enumValues = Company.getIndustryTypes(); // 모델에서 직접 ENUM 값을 가져옴
+    const enumValues = Company.getIndustryTypes();
     res.json(enumValues);
   } catch (error) {
     res.status(500).json({ error: '산업군 정보를 가져오는 중 오류가 발생했습니다.' });
@@ -40,7 +40,6 @@ router.post('/check-company', async (req, res) => {
   }
 });
 
-// 백엔드 코드 (예: Express.js)
 router.post('/add-company', async (req, res) => {
   const { company_name, industry_type } = req.body;
 
@@ -49,9 +48,7 @@ router.post('/add-company', async (req, res) => {
       company_name,
       industry_type,
     });
-    console.log('New Company Created:', newCompany); // 생성된 회사 로그 확인
 
-    // 새로 생성된 회사의 ID를 포함하여 응답 반환
     return res.status(201).json({ message: '새 회사가 추가되었습니다.', company: newCompany });
   } catch (error) {
     console.error('새 회사 추가 중 오류 발생:', error);

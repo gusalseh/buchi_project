@@ -13,30 +13,25 @@ console.log('isNotLoggedIn:', isNotLoggedIn);
 
 const router = express.Router();
 
-// POST /auth/join
 router.post('/join', isNotLoggedIn, join);
 
-// POST /auth/login
 router.post('/login', isNotLoggedIn, login);
 
-// GET /auth/logout
 router.get('/logout', isLoggedIn, logout);
 
-// GET /auth/naver
 router.get(
   '/naver',
   (req, res, next) => {
-    console.log('GET /auth/naver route hit'); // 네이버 로그인 라우트 확인
+    console.log('GET /auth/naver route hit');
     next();
   },
   passport.authenticate('naver', { authType: 'reauthenticate' })
 );
 
-// GET /auth/naver/callback
 router.get(
   '/naver/callback',
   (req, res, next) => {
-    console.log('GET /auth/naver/callback route hit'); // 콜백 라우트 확인
+    console.log('GET /auth/naver/callback route hit');
     next();
   },
   passport.authenticate('naver', {
@@ -47,7 +42,7 @@ router.get(
       email: req.user.email,
       nickname: req.user.nickname,
     };
-    console.log('Naver login successful, redirecting...'); // 로그인 성공 후 리다이렉트 확인
+    console.log('Naver login successful, redirecting...');
     res.redirect('http://localhost:3000/');
   }
 );
@@ -64,7 +59,7 @@ router.get('/api/user', (req, res) => {
 // 사용자 company_id Update 엔드포인트
 router.put('/update-company', isLoggedIn, async (req, res) => {
   console.log('PUT /auth/update-company hit');
-  console.log('Authenticated user:', req.user); // req.user가 설정되어 있는지 확인
+  console.log('Authenticated user:', req.user);
 
   const { companyId } = req.body;
 
@@ -73,14 +68,14 @@ router.put('/update-company', isLoggedIn, async (req, res) => {
   }
 
   try {
-    const user = await User.findByPk(req.user.user_id); // 현재 로그인한 사용자 정보를 가져옴
-    console.log('Found user:', user); // user 객체를 출력하여 확인
+    const user = await User.findByPk(req.user.user_id);
+    console.log('Found user:', user);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    user.company_id = companyId; // company_id 업데이트
+    user.company_id = companyId;
 
-    await user.save(); // 변경 사항 저장
+    await user.save();
 
     res.json({ message: 'Company ID updated successfully', user });
   } catch (saveError) {

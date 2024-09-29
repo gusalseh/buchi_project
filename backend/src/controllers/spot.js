@@ -8,7 +8,7 @@ exports.getSpotList = async (req, res) => {
     const sectionSpotList = await SectionLabel.findAll({
       include: [
         {
-          model: Spot, // Spot 테이블과 연결
+          model: Spot,
           include: [
             {
               model: TagLabel,
@@ -22,7 +22,6 @@ exports.getSpotList = async (req, res) => {
       limit: 10,
     });
 
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -67,24 +66,19 @@ exports.getSpotList = async (req, res) => {
       sectionSpotList[i].Spot.TagLabel.tag_3 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_3];
     }
 
-    // Visit 및 Review 데이터 불러오기
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = sectionSpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
@@ -157,7 +151,6 @@ exports.getSpotById = async (req, res) => {
     sectionSpot.Spot.TagLabel.tag_3 = mappings_2[sectionSpot.Spot.TagLabel.tag_3];
 
     const visitsWithReviews = await getVisitReviewJoinDB();
-    console.log('getVisitReveiwJoinDB() Test: ', visitsWithReviews);
 
     const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === parseInt(spot_id, 10));
 
@@ -237,8 +230,6 @@ exports.getSpotByDist = async (req, res) => {
           walking_time: walkingTime,
         };
       });
-
-    console.log(updatedSpots);
 
     return res.json(updatedSpots);
   } catch (error) {

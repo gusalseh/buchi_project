@@ -80,7 +80,6 @@ router.get('/fetchUserLocation/:user_id', async (req, res) => {
 
   try {
     const locations = await UserLocation.findAll({ where: { user_id } });
-    console.log('fetched user locations', locations);
     res.status(200).json(locations);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch locations' });

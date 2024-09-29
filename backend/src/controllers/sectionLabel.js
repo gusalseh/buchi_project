@@ -14,25 +14,21 @@ exports.getSectionLabel = async (req, res) => {
 // main_section_2의 값을 랜덤으로 선택하여 해당하는 SectionLabel을 조회하는 함수
 exports.getRandomSectionType = async (req, res) => {
   try {
-    // main_section_2의 ENUM 타입 값들을 가져옴
     const [enumValuesQuery] = await sequelize.query(`
         SHOW COLUMNS FROM section_label WHERE Field = 'main_section_2';
       `);
     let enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
-    // 따옴표를 기준으로 나누고 pork_libs 제외
     let enumValuesArray = enumValuesString
       .split(',')
       .map((val) => val.trim().replace(/'/g, ''))
       .filter((val) => val !== 'pork_libs');
-    // 배열을 다시 문자열로 변환
+
     enumValuesString = enumValuesArray.join(',');
     const mainSection2Types = enumValuesString.replace(/'/g, '').split(',');
 
-    // 랜덤으로 하나의 main_section_2 값을 선택
     const randomIndex = Math.floor(Math.random() * mainSection2Types.length);
     const randomMainSection2 = mainSection2Types[randomIndex];
 
-    // 영어-한글 맵핑 함수
     function mainSection2TypeMappings() {
       return {
         pork_belly: '삼겹살',
@@ -57,8 +53,6 @@ exports.getSectionLabelList = async (req, res) => {
   try {
     const { mainSection2 } = req.query;
 
-    console.log('check mainSection2', mainSection2); // MenuTag에서 전달된 main_section_2 값
-    // 영어-한글 맵핑 함수
     function reverseMainSection2TypeMappings() {
       return {
         삼겹살: 'pork_belly',
@@ -69,12 +63,8 @@ exports.getSectionLabelList = async (req, res) => {
       };
     }
 
-    //AND \`SectionLabel\`.\`main_section_2\` = '${reverseMainSection2}'
-    //\`SectionLabel\`.\`spot_id\` = \`Spot\`.\`spot_id\`
-
     const mappings = reverseMainSection2TypeMappings();
     const reverseMainSection2 = mappings[mainSection2];
-    console.log('reverseMainSection: ', reverseMainSection2);
     const sectionSpotList = await SectionLabel.findAll({
       include: [
         {
@@ -95,16 +85,6 @@ exports.getSectionLabelList = async (req, res) => {
       limit: 10,
     });
 
-    // 데이터가 없으면 'no data' 메시지 반환
-    console.log('check sectionSpotList', sectionSpotList);
-    console.log('check sectionSpot', sectionSpotList[0]);
-    console.log('check sectionSpot.Spot', sectionSpotList[0].Spot);
-    console.log('check sectionSpot.Spot.TagLabel', sectionSpotList[0].Spot.TagLabel);
-    console.log('check sectionSpot.Spot.TagLabel.tag_1', sectionSpotList[0].Spot.TagLabel.tag_1);
-    console.log('check sectionSpot.Spot.TagLabel.tag_2', sectionSpotList[0].Spot.TagLabel.tag_2);
-    console.log('check sectionSpot.Spot.TagLabel.tag_3', sectionSpotList[0].Spot.TagLabel.tag_3);
-
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -149,24 +129,19 @@ exports.getSectionLabelList = async (req, res) => {
       sectionSpotList[i].Spot.TagLabel.tag_3 = mappings_2[sectionSpotList[i].Spot.TagLabel.tag_3];
     }
 
-    // Visit 및 Review 데이터 불러오기
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = sectionSpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
@@ -176,7 +151,6 @@ exports.getSectionLabelList = async (req, res) => {
 // sub_section_1의 값을 랜덤으로 선택하여 해당하는 SectionLabel을 조회하는 함수
 exports.getRandomSubSection1Type = async (req, res) => {
   try {
-    // sub_section_1의 ENUM 타입 값들을 가져옴
     const [enumValuesQuery] = await sequelize.query(`
           SHOW COLUMNS FROM section_label WHERE Field = 'sub_section_1';
         `);
@@ -184,11 +158,9 @@ exports.getRandomSubSection1Type = async (req, res) => {
     const enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
     const subSection1Types = enumValuesString.replace(/'/g, '').split(',');
 
-    // 랜덤으로 하나의 sub_section_1 값을 선택
     const randomIndex = Math.floor(Math.random() * subSection1Types.length);
     const randomSubSection1 = subSection1Types[randomIndex];
 
-    // 영어-한글 맵핑 함수
     const mapping = {
       small: '4인 이하 추천',
       medium: '12인 이하 추천',
@@ -217,11 +189,10 @@ exports.getSubSection1LabelList = async (req, res) => {
     };
 
     const reverseSubSection1 = mappings[subSection1];
-    console.log('reverseSubSection1: ', reverseSubSection1);
     const subSection1SpotList = await SectionLabel.findAll({
       include: [
         {
-          model: Spot, // Spot 테이블과 연결
+          model: Spot,
           include: [
             {
               model: TagLabel,
@@ -237,16 +208,7 @@ exports.getSubSection1LabelList = async (req, res) => {
       },
       limit: 10,
     });
-    // 데이터가 없으면 'no data' 메시지 반환
-    console.log('check subSection1SpotList', subSection1SpotList);
-    console.log('check subSection1SpotList', subSection1SpotList[0]);
-    console.log('check subSection1SpotList.Spot', subSection1SpotList[0].Spot);
-    console.log('check subSection1SpotList.Spot.TagLabel', subSection1SpotList[0].Spot.TagLabel);
-    console.log('check subSection1SpotList.Spot.TagLabel.tag_1', subSection1SpotList[0].Spot.TagLabel.tag_1);
-    console.log('check subSection1SpotList.Spot.TagLabel.tag_2', subSection1SpotList[0].Spot.TagLabel.tag_2);
-    console.log('check subSection1SpotList.Spot.TagLabel.tag_3', subSection1SpotList[0].Spot.TagLabel.tag_3);
 
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -290,24 +252,20 @@ exports.getSubSection1LabelList = async (req, res) => {
       subSection1SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection1SpotList[i].Spot.TagLabel.tag_2];
       subSection1SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection1SpotList[i].Spot.TagLabel.tag_3];
     }
-    // Visit 및 Review 데이터 불러오기
+
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = subSection1SpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
@@ -317,7 +275,6 @@ exports.getSubSection1LabelList = async (req, res) => {
 // sub_section_2의 값을 랜덤으로 선택하여 해당하는 SectionLabel을 조회하는 함수
 exports.getRandomSubSection2Type = async (req, res) => {
   try {
-    // sub_section_2의 ENUM 타입 값들을 가져옴
     const [enumValuesQuery] = await sequelize.query(`
             SHOW COLUMNS FROM section_label WHERE Field = 'sub_section_2';
           `);
@@ -325,11 +282,9 @@ exports.getRandomSubSection2Type = async (req, res) => {
     const enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
     const subSection2Types = enumValuesString.replace(/'/g, '').split(',');
 
-    // 랜덤으로 하나의 sub_section_2 값을 선택
     const randomIndex = Math.floor(Math.random() * subSection2Types.length);
     const randomSubSection2 = subSection2Types[randomIndex];
 
-    // 영어-한글 맵핑 함수
     const mapping = {
       light: '가볍게 먹기 좋은',
       heavy: '푸짐한',
@@ -350,9 +305,6 @@ exports.getSubSection2LabelList = async (req, res) => {
   try {
     const { subSection2 } = req.query;
 
-    console.log('check subSection2', subSection2); // FoodQuantityTag에서 전달된 sub_section_2 값
-
-    // 영어-한글 맵핑 함수
     const mappings = {
       '가볍게 먹기 좋은': 'light',
       푸짐한: 'heavy',
@@ -360,11 +312,10 @@ exports.getSubSection2LabelList = async (req, res) => {
     };
 
     const reverseSubSection2 = mappings[subSection2];
-    console.log('reverseSubSection2: ', reverseSubSection2);
     const subSection2SpotList = await SectionLabel.findAll({
       include: [
         {
-          model: Spot, // Spot 테이블과 연결
+          model: Spot,
           include: [
             {
               model: TagLabel,
@@ -381,15 +332,6 @@ exports.getSubSection2LabelList = async (req, res) => {
       limit: 10,
     });
 
-    console.log('check subSection2SpotList', subSection2SpotList);
-    console.log('check subSection2SpotList', subSection2SpotList[0]);
-    console.log('check subSection2SpotList.Spot', subSection2SpotList[0].Spot);
-    console.log('check subSection2SpotList.Spot.TagLabel', subSection2SpotList[0].Spot.TagLabel);
-    console.log('check subSection2SpotList.Spot.TagLabel.tag_1', subSection2SpotList[0].Spot.TagLabel.tag_1);
-    console.log('check subSection2SpotList.Spot.TagLabel.tag_2', subSection2SpotList[0].Spot.TagLabel.tag_2);
-    console.log('check subSection2SpotList.Spot.TagLabel.tag_3', subSection2SpotList[0].Spot.TagLabel.tag_3);
-
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -433,24 +375,19 @@ exports.getSubSection2LabelList = async (req, res) => {
       subSection2SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection2SpotList[i].Spot.TagLabel.tag_2];
       subSection2SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection2SpotList[i].Spot.TagLabel.tag_3];
     }
-    // Visit 및 Review 데이터 불러오기
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = subSection2SpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
@@ -460,7 +397,6 @@ exports.getSubSection2LabelList = async (req, res) => {
 // sub_section_3의 값을 랜덤으로 선택하여 해당하는 SectionLabel을 조회하는 함수
 exports.getRandomSubSection3Type = async (req, res) => {
   try {
-    // sub_section_3의 ENUM 타입 값들을 가져옴
     const [enumValuesQuery] = await sequelize.query(`
               SHOW COLUMNS FROM section_label WHERE Field = 'sub_section_3';
             `);
@@ -468,11 +404,9 @@ exports.getRandomSubSection3Type = async (req, res) => {
     const enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
     const subSection3Types = enumValuesString.replace(/'/g, '').split(',');
 
-    // 랜덤으로 하나의 sub_section_3 값을 선택
     const randomIndex = Math.floor(Math.random() * subSection3Types.length);
     const randomSubSection3 = subSection3Types[randomIndex];
 
-    // 영어-한글 맵핑 함수
     const mapping = {
       korean_liquar: '전통주',
       wine: '와인',
@@ -494,9 +428,6 @@ exports.getSubSection3LabelList = async (req, res) => {
   try {
     const { subSection3 } = req.query;
 
-    console.log('check subSection3', subSection3); // DrinkTag에서 전달된 sub_section_3 값
-
-    // 영어-한글 맵핑 함수
     const mappings = {
       전통주: 'korean_liquar',
       와인: 'wine',
@@ -505,11 +436,10 @@ exports.getSubSection3LabelList = async (req, res) => {
     };
 
     const reverseSubSection3 = mappings[subSection3];
-    console.log('reverseSubSection3: ', reverseSubSection3);
     const subSection3SpotList = await SectionLabel.findAll({
       include: [
         {
-          model: Spot, // Spot 테이블과 연결
+          model: Spot,
           include: [
             {
               model: TagLabel,
@@ -526,7 +456,6 @@ exports.getSubSection3LabelList = async (req, res) => {
       limit: 10,
     });
 
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -570,24 +499,19 @@ exports.getSubSection3LabelList = async (req, res) => {
       subSection3SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection3SpotList[i].Spot.TagLabel.tag_2];
       subSection3SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection3SpotList[i].Spot.TagLabel.tag_3];
     }
-    // Visit 및 Review 데이터 불러오기
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = subSection3SpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
@@ -597,7 +521,6 @@ exports.getSubSection3LabelList = async (req, res) => {
 // sub_section_4의 값을 랜덤으로 선택하여 해당하는 SectionLabel을 조회하는 함수
 exports.getRandomSubSection4Type = async (req, res) => {
   try {
-    // sub_section_4의 ENUM 타입 값들을 가져옴
     const [enumValuesQuery] = await sequelize.query(`
                 SHOW COLUMNS FROM section_label WHERE Field = 'sub_section_4';
               `);
@@ -605,11 +528,9 @@ exports.getRandomSubSection4Type = async (req, res) => {
     const enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
     const subSection4Types = enumValuesString.replace(/'/g, '').split(',');
 
-    // 랜덤으로 하나의 sub_section_4 값을 선택
     const randomIndex = Math.floor(Math.random() * subSection4Types.length);
     const randomSubSection4 = subSection4Types[randomIndex];
 
-    // 영어-한글 맵핑 함수
     const mapping = {
       both_prefer: '남녀 모두 좋아하는',
       male_prefer: '남성이 좋아하는',
@@ -630,9 +551,6 @@ exports.getSubSection4LabelList = async (req, res) => {
   try {
     const { subSection4 } = req.query;
 
-    console.log('check subSection4', subSection4); // GenderTag에서 전달된 sub_section_4 값
-
-    // 영어-한글 맵핑 함수
     const mappings = {
       '남녀 모두 좋아하는': 'both_prefer',
       '남성이 좋아하는': 'male_prefer',
@@ -640,11 +558,10 @@ exports.getSubSection4LabelList = async (req, res) => {
     };
 
     const reverseSubSection4 = mappings[subSection4];
-    console.log('reverseSubSection4: ', reverseSubSection4);
     const subSection4SpotList = await SectionLabel.findAll({
       include: [
         {
-          model: Spot, // Spot 테이블과 연결
+          model: Spot,
           include: [
             {
               model: TagLabel,
@@ -661,7 +578,6 @@ exports.getSubSection4LabelList = async (req, res) => {
       limit: 10,
     });
 
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -705,24 +621,19 @@ exports.getSubSection4LabelList = async (req, res) => {
       subSection4SpotList[i].Spot.TagLabel.tag_2 = mappings_2[subSection4SpotList[i].Spot.TagLabel.tag_2];
       subSection4SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection4SpotList[i].Spot.TagLabel.tag_3];
     }
-    // Visit 및 Review 데이터 불러오기
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = subSection4SpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
@@ -732,7 +643,6 @@ exports.getSubSection4LabelList = async (req, res) => {
 // sub_section_5의 값을 랜덤으로 선택하여 해당하는 SectionLabel을 조회하는 함수
 exports.getRandomSubSection5Type = async (req, res) => {
   try {
-    // sub_section_5의 ENUM 타입 값들을 가져옴
     const [enumValuesQuery] = await sequelize.query(`
                   SHOW COLUMNS FROM section_label WHERE Field = 'sub_section_5';
                 `);
@@ -740,11 +650,9 @@ exports.getRandomSubSection5Type = async (req, res) => {
     const enumValuesString = enumValuesQuery[0].Type.match(/enum\((.*)\)/)[1];
     const subSection5Types = enumValuesString.replace(/'/g, '').split(',');
 
-    // 랜덤으로 하나의 sub_section_5 값을 선택
     const randomIndex = Math.floor(Math.random() * subSection5Types.length);
     const randomSubSection5 = subSection5Types[randomIndex];
 
-    // 영어-한글 맵핑 함수
     const mapping = {
       hot: '더운날',
       cold: '추운날',
@@ -766,9 +674,6 @@ exports.getSubSection5LabelList = async (req, res) => {
   try {
     const { subSection5 } = req.query;
 
-    console.log('check subSection5', subSection5); // WeatherTag에서 전달된 sub_section_5 값
-
-    // 영어-한글 맵핑 함수
     const mappings = {
       더운날: 'hot',
       추운날: 'cold',
@@ -777,11 +682,10 @@ exports.getSubSection5LabelList = async (req, res) => {
     };
 
     const reverseSubSection5 = mappings[subSection5];
-    console.log('reverseSubSection5: ', reverseSubSection5);
     const subSection5SpotList = await SectionLabel.findAll({
       include: [
         {
-          model: Spot, // Spot 테이블과 연결
+          model: Spot,
           include: [
             {
               model: TagLabel,
@@ -798,7 +702,6 @@ exports.getSubSection5LabelList = async (req, res) => {
       limit: 10,
     });
 
-    // 영어-한글 맵핑 함수
     const mappings_2 = {
       friendly: '친한사람과 함께',
       partner: '동료와 함께',
@@ -843,24 +746,19 @@ exports.getSubSection5LabelList = async (req, res) => {
       subSection5SpotList[i].Spot.TagLabel.tag_3 = mappings_2[subSection5SpotList[i].Spot.TagLabel.tag_3];
     }
 
-    // Visit 및 Review 데이터 불러오기
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    // 두 데이터를 spot_id 기준으로 병합
     const mergedData = subSection5SpotList.map((sectionSpot) => {
       const spotId = sectionSpot.spot_id;
 
-      // visit + review 데이터를 해당 spot_id와 매칭
       const visitReviewData = visitsWithReviews.find((visitReview) => visitReview.spot_id === spotId);
 
       return {
         sectionSpot,
-        visitReviewData: visitReviewData || null, // 방문 및 리뷰 데이터가 없을 수 있음
+        visitReviewData: visitReviewData || null,
       };
     });
 
-    // 데이터가 있으면 해당 데이터를 반환
-    console.log('test mergedData', mergedData);
     res.json(mergedData);
   } catch (error) {
     res.status(500).json({ error: 'mergedData 데이터를 불러 올 수 없습니다.' });
