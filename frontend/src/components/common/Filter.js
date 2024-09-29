@@ -326,7 +326,8 @@ const Filter = () => {
               suffixIcon={<UserOutlined />}
               min={1}
               max={100}
-              value={selectedAmount}
+              value={selectedAmount === null ? undefined : selectedAmount}
+              onFocus={() => setSelectedAmount(selectedAmount || 3)}
               onChange={(value) => {
                 if (value < 1) {
                   return 1;
