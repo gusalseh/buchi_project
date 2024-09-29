@@ -620,7 +620,15 @@ const UserLocation = ({ saveLocation, visible }) => {
           <Input
             placeholder="해당 장소의 명칭을 입력해주세요"
             value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
+            onChange={(e) => {
+              const input = e.target.value;
+              const maxLength = 15;
+              const koreanCharCount = (input.match(/[가-힣]/g) || []).length;
+
+              if (input.length - koreanCharCount + koreanCharCount * 2 <= maxLength) {
+                setLocationName(input);
+              }
+            }}
             style={{
               borderColor: '#d9d9d9',
               color: '#737373',
