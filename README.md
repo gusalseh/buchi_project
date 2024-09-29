@@ -69,7 +69,7 @@ buchi_project
 
 ## ERD
 
-![ERD](./frontend/public/buchi_erd.png)
+![ERD](./frontend/public/erd.png)
 
 ## 인프라 구조
 
