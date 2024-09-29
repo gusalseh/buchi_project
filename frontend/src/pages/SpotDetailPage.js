@@ -291,7 +291,7 @@ const SpotDetailPage = () => {
             <Row style={{ marginBottom: '16px' }}>
               <Col offset={1}>
                 <Text style={{ fontSize: 17, fontStyle: 'normal', fontWeight: 500, color: '#CC3C28' }}>
-                  취창업센터에서 도보 2분
+                  취창업센터에서 도보 1분
                 </Text>
               </Col>
             </Row>

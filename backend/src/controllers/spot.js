@@ -181,21 +181,6 @@ exports.getSpotByDist = async (req, res) => {
   }
 
   try {
-    // const query = `
-    //   SELECT
-    //     *,
-    //     ST_Distance_Sphere(
-    //         point(spot_lng, spot_lat),
-    //         point(:longitude, :latitude)
-    //     ) AS distance
-    //   FROM spot
-    //   WHERE ST_Distance_Sphere(
-    //       point(spot_lng, spot_lat),
-    //       point(:longitude, :latitude)
-    //   ) <= 700
-    //   ORDER BY distance ASC
-    // `;
-
     const query = `
       SELECT
           s.*,
