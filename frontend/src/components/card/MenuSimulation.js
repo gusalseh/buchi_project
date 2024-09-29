@@ -47,6 +47,8 @@ const MenuSimulation = (menus) => {
   return (
     <div
       style={{
+        position: 'sticky',
+        top: 100,
         borderRadius: 8,
         border: '1px solid var(--0Gray-200, #E5E5E5)',
         padding: '15px',
