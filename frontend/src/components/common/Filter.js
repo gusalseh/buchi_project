@@ -79,7 +79,9 @@ const Filter = () => {
       const getReverseGeocode = async (latitude, longitude) => {
         try {
           setIsLoading(true);
-          const response = await fetch(`http://localhost:80/api/reverse_geocode?lat=${latitude}&lon=${longitude}`);
+          const response = await fetch(
+            `https://d6utypy1uf0r7.cloudfront.net/api/reverse_geocode?lat=${latitude}&lon=${longitude}`
+          );
 
           if (!response.ok) {
             const text = await response.text();
@@ -184,7 +186,7 @@ const Filter = () => {
 
   const getCoordinates = async (address) => {
     try {
-      const response = await fetch(`http://localhost:80/api/geocode`, {
+      const response = await fetch(`https://d6utypy1uf0r7.cloudfront.net/api/geocode`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

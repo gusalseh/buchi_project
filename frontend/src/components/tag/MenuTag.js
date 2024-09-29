@@ -30,13 +30,18 @@ const MenuTag = (user) => {
   useEffect(() => {
     const fetchRandomMainSection2 = async () => {
       try {
-        const randomResponse = await axios.get(`http://localhost:80/api/sectionLabels/main_section_2_random`);
+        const randomResponse = await axios.get(
+          `https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/main_section_2_random`
+        );
         const randomMainSection2 = randomResponse.data;
         setRandomMainSection2(randomMainSection2);
 
-        const sectionLabelResponse = await axios.get('http://localhost:80/api/sectionLabels/main_section_list', {
-          params: { mainSection2: randomMainSection2 },
-        });
+        const sectionLabelResponse = await axios.get(
+          'https://d6utypy1uf0r7.cloudfront.net/api/sectionLabels/main_section_list',
+          {
+            params: { mainSection2: randomMainSection2 },
+          }
+        );
         setSectionLabelSpotList(sectionLabelResponse.data);
       } catch (error) {
         console.error('랜덤 mainSection2 값을 가져오거나 sectionLabels를 불러오는 데 실패했습니다:', error);

@@ -73,7 +73,7 @@ const SpotDetailPage = () => {
   useEffect(() => {
     const fetchSpotData = async () => {
       try {
-        const response = await axios.get(`http://localhost:80/api/spots/spotlistById/${id}`);
+        const response = await axios.get(`https://d6utypy1uf0r7.cloudfront.net/api/spots/spotlistById/${id}`);
         setSpotData(response.data);
       } catch (error) {
         console.error('식당 데이터를 가져오는데 실패했습니다:', error);

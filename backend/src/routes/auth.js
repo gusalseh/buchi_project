@@ -43,7 +43,7 @@ router.get(
       nickname: req.user.nickname,
     };
     console.log('Naver login successful, redirecting...');
-    res.redirect('http://localhost:3000/');
+    res.redirect('https://d6utypy1uf0r7.cloudfront.net/');
   }
 );
 

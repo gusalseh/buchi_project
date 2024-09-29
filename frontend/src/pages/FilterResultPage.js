@@ -83,7 +83,10 @@ const FilterResultPage = () => {
           longitude: longitude,
           amount: amount,
         };
-        const response = await axios.post('http://localhost:80/api/spots/getSpotByDistance', currentPosition);
+        const response = await axios.post(
+          'https://d6utypy1uf0r7.cloudfront.net/api/spots/getSpotByDistance',
+          currentPosition
+        );
 
         const updatedPlaces = response.data.map((place) => {
           const serviceTags = [];
@@ -405,7 +408,7 @@ const FilterResultPage = () => {
 
   const getCoordinates = async (address) => {
     try {
-      const response = await fetch(`http://localhost:80/api/geocode`, {
+      const response = await fetch(`https://d6utypy1uf0r7.cloudfront.net/api/geocode`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
