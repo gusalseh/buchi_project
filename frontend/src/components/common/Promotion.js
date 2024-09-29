@@ -1,9 +1,10 @@
 import { Carousel } from 'antd';
-import promotion1 from '../../assets/Img/promotion/promotion1.png';
-import promotion2 from '../../assets/Img/promotion/promotion2.png';
-import promotion3 from '../../assets/Img/promotion/promotion3.png';
-import promotion4 from '../../assets/Img/promotion/promotion4.png';
-import promotion5 from '../../assets/Img/promotion/promotion5.png';
+
+const promotion1 = 'https://team01-buchi-bucket.s3.ap-northeast-2.amazonaws.com/promotion1.png';
+const promotion2 = 'https://team01-buchi-bucket.s3.ap-northeast-2.amazonaws.com/promotion2.png';
+const promotion3 = 'https://team01-buchi-bucket.s3.ap-northeast-2.amazonaws.com/promotion3.png';
+const promotion4 = 'https://team01-buchi-bucket.s3.ap-northeast-2.amazonaws.com/promotion4.png';
+const promotion5 = 'https://team01-buchi-bucket.s3.ap-northeast-2.amazonaws.com/promotion5.png';
 
 const images = [promotion1, promotion2, promotion3, promotion4, promotion5];
 
