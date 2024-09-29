@@ -65,6 +65,7 @@ const Footer = () => {
                   <Link
                     href="https://veiled-crime-fc4.notion.site/BUCHI-10cb90490b358064a3b6e1ec5234e8ad"
                     style={{ color: '#595959' }}
+                    target="_blank"
                   >
                     이용 약관
                   </Link>
@@ -73,6 +74,7 @@ const Footer = () => {
                   <Link
                     href="https://veiled-crime-fc4.notion.site/10cb90490b358046a785c9b9a586f4d2"
                     style={{ color: '#595959' }}
+                    target="_blank"
                   >
                     개인정보 처리방침
                   </Link>

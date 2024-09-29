@@ -1,4 +1,3 @@
-import React from 'react';
 import RoutesSetup from './routes/RoutesSetup';
 import './styles/global.css';
 

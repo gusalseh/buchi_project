@@ -80,7 +80,6 @@ router.get('/fetchUserLocation/:user_id', async (req, res) => {
 
   try {
     const locations = await UserLocation.findAll({ where: { user_id } });
-    console.log('fetched user locations', locations);
     res.status(200).json(locations);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch locations' });
@@ -96,7 +95,9 @@ router.get('/selectedLocation/:user_id', async (req, res) => {
     });
 
     if (!selectedLocation) {
-      return res.status(200).json({ location_road_address: '역삼역 2번 출구' });
+      return res
+        .status(200)
+        .json({ location_road_address: '역삼역 2번 출구', location_lat: '37.5000263', location_lng: '127.0365456' });
     }
 
     res.status(200).json(selectedLocation);

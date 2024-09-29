@@ -8,7 +8,7 @@ import LeftVector from '../../assets/Img/LeftVector.png';
 import VisitRankSpotCard from '../card/VisitRankSpotCard';
 import axios from 'axios';
 
-const VisitRankTag = () => {
+const VisitRankTag = (user) => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState([]);
   const [filterSpot, setFilterSpot] = useState([]);
   const [selectedLatitude, setSelectedLatitude] = useState(null);
@@ -17,7 +17,6 @@ const VisitRankTag = () => {
   const dispatch = useDispatch();
 
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
-  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     if (!user) {

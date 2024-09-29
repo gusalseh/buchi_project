@@ -10,6 +10,7 @@ const { Text } = Typography;
 const MenuSimulation = (menus) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [activeKey, setActiveKey] = useState('key');
 
   const user = useSelector((state) => state.user.user);
 
@@ -52,11 +53,17 @@ const MenuSimulation = (menus) => {
         maxWidth: '600px',
         width: 520,
         margin: '0 auto',
+        zIndex: 4,
       }}
     >
       <Text style={{ fontSize: 24, fontStyle: 'normal', fontWeight: 600 }}>메뉴</Text>
-      <Collapse style={{ marginTop: 10, backgroundColor: 'white', marginBottom: 8 }}>
-        <Panel header="메인">
+      <Collapse
+        accordion
+        activeKey={activeKey}
+        onChange={(key) => setActiveKey(key)}
+        style={{ marginTop: 10, backgroundColor: 'white', marginBottom: 8 }}
+      >
+        <Panel header="메인" key="1">
           {mainDishes.map((menu) => (
             <div
               key={menu.menu_id}
@@ -71,8 +78,14 @@ const MenuSimulation = (menus) => {
           ))}
         </Panel>
       </Collapse>
-      <Collapse style={{ backgroundColor: 'white', marginBottom: 8 }}>
-        <Panel header="사이드">
+
+      <Collapse
+        accordion
+        activeKey={activeKey}
+        onChange={(key) => setActiveKey(key)}
+        style={{ backgroundColor: 'white', marginBottom: 8 }}
+      >
+        <Panel header="사이드" key="2">
           {sideDishes.map((menu) => (
             <div
               key={menu.menu_id}
@@ -87,8 +100,14 @@ const MenuSimulation = (menus) => {
           ))}
         </Panel>
       </Collapse>
-      <Collapse style={{ backgroundColor: 'white', marginBottom: 8 }}>
-        <Panel header="주류">
+
+      <Collapse
+        accordion
+        activeKey={activeKey}
+        onChange={(key) => setActiveKey(key)}
+        style={{ backgroundColor: 'white', marginBottom: 8 }}
+      >
+        <Panel header="주류" key="3">
           {liquors.map((menu) => (
             <div
               key={menu.menu_id}
@@ -103,8 +122,14 @@ const MenuSimulation = (menus) => {
           ))}
         </Panel>
       </Collapse>
-      <Collapse style={{ backgroundColor: 'white' }}>
-        <Panel header="음료">
+
+      <Collapse
+        accordion
+        activeKey={activeKey}
+        onChange={(key) => setActiveKey(key)}
+        style={{ backgroundColor: 'white' }}
+      >
+        <Panel header="음료" key="4">
           {beverages.map((menu) => (
             <div
               key={menu.menu_id}
@@ -122,7 +147,7 @@ const MenuSimulation = (menus) => {
 
       <Divider />
 
-      {selectedItems.length > 0 && (
+      {selectedItems.length >= 0 && (
         <div>
           <Text strong style={{ marginLeft: 5 }}>
             선택된 메뉴

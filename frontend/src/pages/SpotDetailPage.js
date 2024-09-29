@@ -74,7 +74,6 @@ const SpotDetailPage = () => {
     const fetchSpotData = async () => {
       try {
         const response = await axios.get(`http://localhost:80/api/spots/spotlistById/${id}`);
-        console.log(response.data);
         setSpotData(response.data);
       } catch (error) {
         console.error('식당 데이터를 가져오는데 실패했습니다:', error);
@@ -291,7 +290,7 @@ const SpotDetailPage = () => {
             <Row style={{ marginBottom: '16px' }}>
               <Col offset={1}>
                 <Text style={{ fontSize: 17, fontStyle: 'normal', fontWeight: 500, color: '#CC3C28' }}>
-                  취창업센터에서 도보 2분
+                  취창업센터에서 도보 1분
                 </Text>
               </Col>
             </Row>
@@ -308,7 +307,7 @@ const SpotDetailPage = () => {
                     <Text style={{ fontSize: '16px', fontWeight: 'bold', color: 'red' }}>영업 종료</Text>
                   )}
                   <Text type="secondary" style={{ marginLeft: '8px', fontSize: '16px' }}>
-                    {end_time}에 영업 종료
+                    {end_time.substring(0, 5)} 에 영업 종료
                   </Text>
                 </Col>
               </Row>
@@ -365,9 +364,16 @@ const SpotDetailPage = () => {
                   <img src={pictogram.wheelchair} alt="휠체어 가능" style={{ width: '100%' }} />
                 </Col>
               )}
-              <Col xs={8} sm={8} md={4}>
-                <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
-              </Col>
+              {spot_name === '다돈식당' && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.bbq} alt="고기구워주는집" style={{ width: '100%' }} />
+                </Col>
+              )}
+              {spot_name !== '다돈식당' && (
+                <Col xs={8} sm={8} md={4}>
+                  <img src={pictogram.shoesOff} alt="신발 off" style={{ width: '100%' }} />
+                </Col>
+              )}
             </Row>
 
             <Text
@@ -482,7 +488,7 @@ const SpotDetailPage = () => {
           </Card>
         </Col>
 
-        <Col xs={24} lg={8} style={{ marginLeft: 30 }}>
+        <Col xs={24} lg={8} style={{ backgroundColor: 'white', zIndex: 4, marginLeft: 30 }}>
           <MenuSimulation menu={Menus} />
         </Col>
       </Row>

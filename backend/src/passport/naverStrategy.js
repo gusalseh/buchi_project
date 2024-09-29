@@ -6,7 +6,7 @@ const axios = require('axios');
 const User = require('../models/user');
 
 module.exports = () => {
-  console.log('Initializing Naver Strategy'); // 전략 초기화 시 로그
+  console.log('Initializing Naver Strategy');
   passport.use(
     new NaverStrategy(
       {
@@ -40,20 +40,16 @@ module.exports = () => {
             });
           }
 
-          // 약관 동의 상태 확인 API 호출
           const response = await axios.get('https://openapi.naver.com/v1/nid/agreement', {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           });
 
-          // term4, term5가 존재하는지 확인
           const agreementData = response.data;
           const hasTerm4 = agreementData.agreementInfos.some((info) => info.termCode === 'term4');
           const hasTerm5 = agreementData.agreementInfos.some((info) => info.termCode === 'term5');
 
-          // term4가 존재하면 agreement_sms 칼럼을 true로 업데이트
-          // term5가 존재하면 agreement_email 칼럼을 true로 업데이트
           if (hasTerm4) {
             await User.update({ agreement_sms: true }, { where: { email } });
           } else {

@@ -8,7 +8,7 @@ import Vector from '../../assets/Img/Vector.svg';
 import LeftVector from '../../assets/Img/LeftVector.png';
 import SpotCard from '../card/SpotCard';
 
-const DrinkTag = () => {
+const DrinkTag = (user) => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState([]);
   const [randomSubSection3, setRandomSubSection3] = useState('');
   const [selectedLatitude, setSelectedLatitude] = useState(null);
@@ -18,7 +18,6 @@ const DrinkTag = () => {
   const dispatch = useDispatch();
 
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
-  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     if (!user) {

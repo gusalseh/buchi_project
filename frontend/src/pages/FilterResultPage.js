@@ -127,8 +127,6 @@ const FilterResultPage = () => {
         setPlaces(updatedPlaces);
         setOriginalPlaces(updatedPlaces);
         applyFilters(updatedPlaces, selectedRange);
-
-        console.log('places:', updatedPlaces);
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       }
@@ -144,7 +142,6 @@ const FilterResultPage = () => {
       zoom: 16,
     });
 
-    // 설정위치 빨간 원
     new window.naver.maps.Marker({
       position: new window.naver.maps.LatLng(latitude, longitude),
       map: map,
@@ -163,7 +160,6 @@ const FilterResultPage = () => {
       },
     });
 
-    // 주변 반경 원
     new window.naver.maps.Circle({
       map: map,
       center: new window.naver.maps.LatLng(latitude, longitude),
@@ -180,11 +176,9 @@ const FilterResultPage = () => {
 
   useEffect(() => {
     if (places.length > 0) {
-      // 기존 마커 제거
       markers.forEach((marker) => marker.setMap(null));
       setMarkers([]);
 
-      // 새로운 마커 생성 및 저장
       const newMarkers = places.map((place) => {
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(place.lat, place.lng),
@@ -263,9 +257,9 @@ const FilterResultPage = () => {
 
   useEffect(() => {
     if (isFilterVisible) {
-      document.body.style.overflow = 'hidden'; // 스크롤 비활성화
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto'; // 스크롤 활성화
+      document.body.style.overflow = 'auto';
     }
   }, [isFilterVisible]);
 
@@ -515,7 +509,6 @@ const FilterResultPage = () => {
 
         if (groupFilters.length === 0) return true;
 
-        // 시설·서비스 그룹에 대해서는 모든 선택된 필터가 포함되어 있는지 확인
         if (filterGroup === '시설·서비스') {
           return groupFilters.every((filter) => tagGroup['시설·서비스'].includes(filter));
         }
@@ -527,18 +520,13 @@ const FilterResultPage = () => {
 
       const isWithinBudget = totalCost >= selectedRange[0] && totalCost <= selectedRange[1];
 
-      console.log('예산필터:', isWithinBudget);
-
       return matchesAllFilters && isWithinBudget;
     });
-
-    console.log('filteredPlaces', filteredPlaces);
 
     setPlaces(filteredPlaces);
     setFilteredCount(filteredPlaces.length);
   };
 
-  // 기존 마커 제거 및 필터링된 장소로 마커 업데이트
   const handleFilterResults = () => {
     markers.forEach((marker) => marker.setMap(null));
     setMarkers([]);
@@ -599,20 +587,18 @@ const FilterResultPage = () => {
                   position: 'relative',
                   backgroundColor: '#FAFAFA',
                 }}
+                onClick={() => {
+                  if (user) {
+                    showLocationModal();
+                  } else {
+                    setIsLoginAlertVisible(true);
+                  }
+                }}
               >
                 <span>{locationName}</span>
-                {user ? (
-                  <DownOutlined
-                    onClick={showLocationModal}
-                    style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-                  />
-                ) : (
-                  <DownOutlined
-                    onClick={() => setIsLoginAlertVisible(true)}
-                    style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-                  />
-                )}
+                <DownOutlined style={{ fontSize: '15px', position: 'absolute', right: '10px' }} />
               </Button>
+
               <div
                 style={{
                   position: 'absolute',

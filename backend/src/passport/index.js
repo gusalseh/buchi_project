@@ -20,6 +20,6 @@ module.exports = () => {
       })
       .catch((err) => done(err));
   });
-  console.log('Initializing Naver Strategy in index.js'); // 네이버 전략 초기화 로그
+  console.log('Initializing Naver Strategy in index.js');
   naver();
 };
