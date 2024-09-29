@@ -254,20 +254,16 @@ const Filter = () => {
                 fontWeight: 300,
                 position: 'relative',
               }}
-              value="location"
+              onClick={() => {
+                if (user) {
+                  showLocationModal(); // 유저가 있을 때 위치 모달을 열기
+                } else {
+                  setIsLoginAlertVisible(true); // 유저가 없을 때 로그인 알림을 보여주기
+                }
+              }}
             >
               <span>{locationName}</span>
-              {user ? (
-                <DownOutlined
-                  onClick={showLocationModal}
-                  style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-                />
-              ) : (
-                <DownOutlined
-                  onClick={() => setIsLoginAlertVisible(true)}
-                  style={{ fontSize: '15px', position: 'absolute', right: '10px' }}
-                />
-              )}
+              <DownOutlined style={{ fontSize: '15px', position: 'absolute', right: '10px' }} />
             </Button>
           )}
 
