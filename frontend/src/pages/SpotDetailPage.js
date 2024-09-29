@@ -74,7 +74,6 @@ const SpotDetailPage = () => {
     const fetchSpotData = async () => {
       try {
         const response = await axios.get(`http://localhost:80/api/spots/spotlistById/${id}`);
-        console.log(response.data);
         setSpotData(response.data);
       } catch (error) {
         console.error('식당 데이터를 가져오는데 실패했습니다:', error);

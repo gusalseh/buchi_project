@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Button, Row, Col, Typography } from 'antd';
-import { useSelector } from 'react-redux';
 import CompanyModal from './CompanyModal';
 import LoginAlert from '../alert/LoginAlert';
 import CompanySpotCard from '../card/CompanySpotCard';
@@ -31,17 +30,13 @@ const TeamSpot = (user) => {
     setIsModalVisible(false);
   };
 
-  // const user = useSelector((state) => state.user);
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         if (!user || !user.user || !user.user.company_id) {
           setCompanyId(null);
-          console.log('유저 없거나 회사 정보 없음');
         } else {
           setCompanyId(user.user.company_id);
-          console.log('회사 정보 있음');
         }
       } catch (error) {
         console.error('회사 ID를 가져오는 중 오류 발생:', error);
@@ -60,7 +55,6 @@ const TeamSpot = (user) => {
           const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
             params: { userCompanyId: user.user.company_id },
           });
-          console.log('user.user.company_id Test: ', user.user.company_id);
           setCompanyVisitSpotList(companyVisitResponse.data);
         } catch (error) {
           console.error('fetchUserCompanyVisitSpot 에서 error 발생: ', error);
@@ -70,13 +64,6 @@ const TeamSpot = (user) => {
       fetchUserCompanyVisitSpot();
     }
   }, [user]);
-
-  console.log('companyVisitList Test: ', companyVisitSpotList);
-  console.log('companyVisitList Test: ', companyVisitSpotList.length);
-  console.log('companyVisitList results Test: ', companyVisitSpotList.results);
-  console.log('companyVisitList Length Test: ', companyVisitSpotList.results);
-
-  const companyVisitListCount = 4;
 
   if (isLoading) {
     return <div>Loading...</div>;

@@ -10,29 +10,25 @@ import {
   deleteLocation,
   updateLocationByType,
 } from '../../features/userLocation';
-
 import { fetchSelectedLocation } from '../../features/userLocationThunk';
 
-// TODO: registeredLocations 우선 순위로 배열하는 로직 -> utils 모듈로 독립
-// TODO: 3개의 Modal들 -> alert(modal) 디렉토리로 독립
 const UserLocation = ({ saveLocation, visible }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [address, setAddress] = useState('');
-  const [locationType, setLocationType] = useState(null); // 등록할 주소 타입
-  const [locationName, setLocationName] = useState(''); // 등록할 주소 이름
+  const [locationType, setLocationType] = useState(null);
+  const [locationName, setLocationName] = useState('');
   const [isIframeVisible, setIsIframeVisible] = useState(false);
-  const [registeredLocations, setRegisteredLocations] = useState([]); // 백엔드에서 받은 주소목록
-  const [addressDetail, setAddressDetail] = useState({ roadAddress: '', jibunAddress: '', buildingName: '' }); // 등록할 주소 정보
-  const [loading, setLoading] = useState(false); // 카카오 지도 뜨기전 로딩바
-  const [isAlertVisible, setIsAlertVisible] = useState(false); // 10개 이상 주소 등록할때 경고모달
-  const [isConfirmVisible, setIsConfirmVisible] = useState(false); // 현재 설정 위치 변경 확인모달
-  const [isLimitVisible, setIsLimitVisible] = useState(false); // 근무지, 출장지는 1개씩 제한모달
-  const [selectedLocationId, setSelectedLocationId] = useState(null); // 선택된 위치 ID
-  const [limitMessage, setLimitMessage] = useState(''); // 근무지, 출장지 1개 제한 모달의 내용을 담는 상태
+  const [registeredLocations, setRegisteredLocations] = useState([]);
+  const [addressDetail, setAddressDetail] = useState({ roadAddress: '', jibunAddress: '', buildingName: '' });
+  const [loading, setLoading] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const [isLimitVisible, setIsLimitVisible] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState(null);
+  const [limitMessage, setLimitMessage] = useState('');
 
-  // 모달이 열릴 때마다 상태를 초기화
   useEffect(() => {
     if (visible) {
       setIsAddressSelected(false);
@@ -42,7 +38,7 @@ const UserLocation = ({ saveLocation, visible }) => {
       setAddressDetail({ roadAddress: '', jibunAddress: '', buildingName: '' });
       setIsIframeVisible(false);
       setLoading(false);
-      // 모달 진입시 유저 등록주소 받아오기
+
       const fetchData = async () => {
         try {
           const fetchLocations = await fetchUserLocations(user.user_id);
@@ -153,8 +149,6 @@ const UserLocation = ({ saveLocation, visible }) => {
         location_building_name: addressDetail.buildingName || null,
       });
 
-      // 주소를 등록한 후, 해당 유저의 주소 리스트를 다시 가져와 상태 업데이트
-      // 사실 등록한 직후에는 useState에서 관리하는 주소목록으로 핸들링하는게 서버 부담 적을듯
       const fetchLocations = await fetchUserLocations(user.user_id);
       fetchLocations.sort((a, b) => {
         if (b.selected && !a.selected) return 1;
@@ -191,7 +185,6 @@ const UserLocation = ({ saveLocation, visible }) => {
         location_building_name: addressDetail.buildingName || null,
       });
 
-      // 주소 목록을 다시 가져와 상태 업데이트
       const fetchLocations = await fetchUserLocations(user.user_id);
       fetchLocations.sort((a, b) => {
         if (b.selected && !a.selected) return 1;
@@ -239,7 +232,6 @@ const UserLocation = ({ saveLocation, visible }) => {
     }
   };
 
-  // TODO: 지금은 아이콘이랑 주소 정보 있는 칸만 클릭해야 Trigger - 이것도 후에 더 범용성있게 수정해야할듯
   const handleSelectLocation = async (locationId) => {
     try {
       await updateSelectedLocation(locationId, { selected: true, user_id: user.user_id });
@@ -351,7 +343,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               >
                 주소 검색하기
               </Button>
-              {/* 등록주소 10개일 경우, 등록하기 시 오래된 주소 삭제 후 설정 */}
+
               <Modal
                 visible={isAlertVisible}
                 onCancel={handleAlertClose}
@@ -405,7 +397,7 @@ const UserLocation = ({ saveLocation, visible }) => {
               </style>
             </div>
           )}
-          {/* 등록된 주소지가 유무에 따른 UI 구분 */}
+
           {!isIframeVisible &&
             (registeredLocations.length === 0 ? (
               <div style={{ marginTop: 200, color: '#737373' }}>근무지(출발 위치)를 검색해주세요</div>
