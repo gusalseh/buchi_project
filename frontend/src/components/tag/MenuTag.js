@@ -20,6 +20,8 @@ const MenuTag = (user) => {
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
   // const user = useSelector((state) => state.user.user);
 
+  console.log('wtf user?!: ', user.user);
+
   useEffect(() => {
     if (!user) {
       dispatch(getCurrentLocation());

@@ -8,7 +8,7 @@ import axios from 'axios';
 
 const { Text } = Typography;
 
-const TeamSpot = () => {
+const TeamSpot = (user) => {
   const [companyId, setCompanyId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -31,7 +31,7 @@ const TeamSpot = () => {
     setIsModalVisible(false);
   };
 
-  const user = useSelector((state) => state.user);
+  // const user = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchUserData = async () => {

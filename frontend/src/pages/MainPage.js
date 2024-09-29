@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet';
+import { useSelector } from 'react-redux';
 import Filter from '../components/common/Filter';
 import MenuTag from '../components/tag/MenuTag';
 import VisitRankTag from '../components/tag/VisitRankTag';
@@ -12,6 +13,8 @@ import Promotion from '../components/common/Promotion';
 import logo from '../assets/Img/buchi_logo_full.png';
 
 const MainPage = () => {
+  const user = useSelector((state) => state.user.user);
+
   return (
     <div style={{ width: '99%' }}>
       <Helmet>
@@ -24,15 +27,15 @@ const MainPage = () => {
       </Helmet>
 
       <Filter />
-      <MenuTag />
-      <TeamSpot />
-      <VisitRankTag />
+      <MenuTag user={user} />
+      <TeamSpot user={user} />
+      <VisitRankTag user={user} />
       <Promotion />
-      <PeopleCountTag />
-      <FoodQuantityTag />
-      <DrinkTag />
-      <GenderTag />
-      <WeatherTag />
+      <PeopleCountTag user={user} />
+      <FoodQuantityTag user={user} />
+      <DrinkTag user={user} />
+      <GenderTag user={user} />
+      <WeatherTag user={user} />
     </div>
   );
 };

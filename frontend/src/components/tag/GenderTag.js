@@ -8,7 +8,7 @@ import Vector from '../../assets/Img/Vector.svg';
 import LeftVector from '../../assets/Img/LeftVector.png';
 import SpotCard from '../card/SpotCard';
 
-const GenderTag = () => {
+const GenderTag = (user) => {
   const [sectionLabelSpotList, setSectionLabelSpotList] = useState([]);
   const [randomSubSection4, setRandomSubSection4] = useState('');
   const [filterSpot, setFilterSpot] = useState([]);
@@ -18,7 +18,7 @@ const GenderTag = () => {
   const dispatch = useDispatch();
 
   const selectedLocation = useSelector((state) => state.userLocation.selectedLocation);
-  const user = useSelector((state) => state.user.user);
+  // const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     if (!user) {
