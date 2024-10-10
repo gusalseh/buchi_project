@@ -32,6 +32,7 @@ const TeamSpot = (user) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      console.log('user Test: ', user.user);
       try {
         if (!user || !user.user || !user.user.company_id) {
           setCompanyId(null);
@@ -49,13 +50,15 @@ const TeamSpot = (user) => {
   }, [user]);
 
   useEffect(() => {
-    if (user.user && user.user.company_id) {
+    if (user && user.user && user.user.company_id) {
       const fetchUserCompanyVisitSpot = async () => {
         try {
           const companyVisitResponse = await axios.get('http://localhost:80/api/company_spot_visits', {
             params: { userCompanyId: user.user.company_id },
           });
+          console.log('companyVisitResponse.data Test: ', companyVisitResponse.data);
           setCompanyVisitSpotList(companyVisitResponse.data);
+          console.log('companyVisitSpotList Test: ', companyVisitSpotList);
         } catch (error) {
           console.error('fetchUserCompanyVisitSpot 에서 error 발생: ', error);
           setCompanyVisitSpotList([]);
@@ -71,50 +74,136 @@ const TeamSpot = (user) => {
 
   return (
     <div style={{ minWidth: 1360 }}>
-      {user.user && user.user.company_id && companyVisitSpotList.safeResults ? (
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
-          <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
-            <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
-              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
-                {companyVisitSpotList.safeResults[0].company_name}
-              </Text>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
-              >
-                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>우리 회사 사원들의 회식 장소</Text>
-              </div>
-              {companyVisitSpotList.safeResults.slice(0, 3).map((spot, index) => (
-                <CompanySpotCard key={index} spotList={spot} index={index} />
-              ))}
-            </Col>
-
-            <Col
-              style={{
-                width: 620,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 12,
-                borderLeft: 'solid, #E5E5E5',
-                borderLeftWidth: 1,
-                paddingLeft: 20,
-              }}
-            >
-              <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
-                {companyVisitSpotList.safeResults[0].industry_type}
-              </Text>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
-              >
-                <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
-                  비슷한 업종 사람들의 회식 장소
+      {user.user && user.user.company_id ? (
+        companyVisitSpotList.length !== 0 ? (
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
+            <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
+              <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
+                <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+                  {companyVisitSpotList.safeResults[0].company_name}
                 </Text>
-              </div>
-              {companyVisitSpotList.safeResults.slice(3, 6).map((spot, index) => (
-                <CompanySpotCard key={index} spotList={spot} index={index} />
-              ))}
-            </Col>
-          </Row>
-        </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+                    우리 회사 사원들의 회식 장소
+                  </Text>
+                </div>
+                {companyVisitSpotList.safeResults.slice(0, 3).map((spot, index) => (
+                  <CompanySpotCard key={index} spotList={spot} index={index} />
+                ))}
+              </Col>
+
+              <Col
+                style={{
+                  width: 620,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  borderLeft: 'solid, #E5E5E5',
+                  borderLeftWidth: 1,
+                  paddingLeft: 20,
+                }}
+              >
+                <Text strong style={{ fontSize: '15px', fontStyle: 'normal', fontWeight: 700 }}>
+                  {companyVisitSpotList.safeResults[0].industry_type}
+                </Text>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+                    비슷한 업종 사람들의 회식 장소
+                  </Text>
+                </div>
+                {companyVisitSpotList.safeResults.slice(3, 6).map((spot, index) => (
+                  <CompanySpotCard key={index} spotList={spot} index={index} />
+                ))}
+              </Col>
+            </Row>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 80, height: 620, padding: '20px' }}>
+            <Row style={{ width: '100%', padding: '20px', display: 'flex', justifyContent: 'center' }} gutter={16}>
+              <Col style={{ width: 620, display: 'flex', flexDirection: 'column', gap: 12, marginRight: 10 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+                    우리 회사 사원들의 회식 장소
+                  </Text>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: '#f9f9f9',
+                  }}
+                >
+                  <div style={{ fontSize: 18, fontWeight: 400, textAlign: 'center', color: '#808080' }}>
+                    죄송해요 아직은 정보가 부족해요.
+                  </div>
+                </div>
+              </Col>
+
+              <Col
+                style={{
+                  width: 620,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  borderLeft: 'solid, #E5E5E5',
+                  borderLeftWidth: 1,
+                  paddingLeft: 20,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <Text style={{ fontSize: 36, fontStyle: 'normal', fontWeight: 300 }}>
+                    비슷한 업종 사람들의 회식 장소
+                  </Text>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: '#f9f9f9',
+                  }}
+                >
+                  <div style={{ fontSize: 18, fontWeight: 400, textAlign: 'center', color: '#808080' }}>
+                    죄송해요 아직은 정보가 부족해요.
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </div>
+        )
       ) : (
         <div style={{ width: '100%', textAlign: 'center', padding: '50px 0', backgroundColor: '#fff5f5' }}>
           <Text>회사 정보를 입력하면 더욱 자세히 맞춤형 정보를 받을 수 있습니다.</Text>
@@ -135,6 +224,7 @@ const TeamSpot = (user) => {
           )}
         </div>
       )}
+      ;
     </div>
   );
 };

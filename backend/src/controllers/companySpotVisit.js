@@ -1,7 +1,6 @@
 const { sequelize } = require('../models');
 const { getVisitReviewJoinDB } = require('./visit');
 
-// 유저의 company_id로 방문 수 많은 Spot 데이터 불러오기.
 exports.getUserCompanyVisitData = async (req, res) => {
   const { userCompanyId } = req.query;
 
@@ -117,15 +116,18 @@ ORDER BY
 
     const visitsWithReviews = await getVisitReviewJoinDB();
 
-    const visitReviewData = visitsWithReviews.find(
-      (visitReview) => visitReview.spot_id === parseInt(results[0].spot_id, 10)
-    );
+    if (safeResults.length > 0) {
+      const visitReviewData = visitsWithReviews.find(
+        (visitReview) => visitReview.spot_id === parseInt(results[0].spot_id, 10)
+      );
+      const mergedData = {
+        safeResults,
+        visitReviewData: visitReviewData || null,
+      };
 
-    const mergedData = {
-      safeResults,
-      visitReviewData: visitReviewData || null,
-    };
+      return res.json(mergedData);
+    }
 
-    res.json(mergedData);
+    return res.json(safeResults);
   }
 };
